@@ -36,12 +36,14 @@ public class ClientModelStore extends ModelStore<ClientAttribute, ClientPresenta
 
     /**
      * Constructs a client model store with default capacities.
+     *
      * @see ModelStoreConfig
      */
     public ClientModelStore(final ModelSynchronizer modelSynchronizer) {
         this(modelSynchronizer, new ModelStoreConfig());
     }
 
+    @Deprecated
     public ClientModelStore(final ModelSynchronizer modelSynchronizer, final ModelStoreConfig config) {
         super(config);
         this.modelSynchronizer = modelSynchronizer;
@@ -68,6 +70,7 @@ public class ClientModelStore extends ModelStore<ClientAttribute, ClientPresenta
         delete(model, true);
     }
 
+    @Deprecated
     public void delete(ClientPresentationModel model, boolean notify) {
         if (model == null) return;
         if (containsPresentationModel(model.getId())) {
@@ -94,7 +97,7 @@ public class ClientModelStore extends ModelStore<ClientAttribute, ClientPresenta
         attribute.addPropertyChangeListener(attributeChangeListener);
     }
 
-
+    @Deprecated
     public ClientPresentationModel createModel(String id, String presentationModelType, ClientAttribute... attributes) {
         ClientPresentationModel result = new ClientPresentationModel(id, Arrays.asList(attributes));
         result.setPresentationModelType(presentationModelType);

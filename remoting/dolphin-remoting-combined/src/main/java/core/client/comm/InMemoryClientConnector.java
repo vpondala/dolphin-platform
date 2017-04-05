@@ -31,6 +31,7 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+@Deprecated
 public class InMemoryClientConnector extends AbstractClientConnector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryClientConnector.class);

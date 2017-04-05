@@ -34,6 +34,7 @@ import java.util.concurrent.Executor;
  * Subclasses JavaFxInMemoryConfig and SwingInMemoryConfig additionally set the threading model
  * as appropriate for the UI (JavaFX or Swing, respectively.)
  */
+@Deprecated
 public class DefaultInMemoryConfig implements Provider<ClientConnector> {
 
     private final ClientDolphin clientDolphin;

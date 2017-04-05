@@ -84,6 +84,7 @@ public class ModelStore<A extends Attribute, P extends PresentationModel<A>> {
      * @param config specifies the default capacities for the model store
      * @see ModelStoreConfig
      */
+    @Deprecated
     public ModelStore(ModelStoreConfig config) {
         presentationModels      = new HashMap<String, P>        (config.getPmCapacity());
         modelsPerType           = new HashMap<String, List<P>>  (config.getTypeCapacity());
