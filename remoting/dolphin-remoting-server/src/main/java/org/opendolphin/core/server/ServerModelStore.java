@@ -89,13 +89,14 @@ public class ServerModelStore extends ModelStore<ServerAttribute, ServerPresenta
         return true;
     }
 
+    @Deprecated
     public boolean checkClientAdded(ServerPresentationModel model) {
         boolean added = super.add(model);
         //FIXME: Currently the client has the same event for a add answer and a add trigger
 
-//        if (!added) {
-  //          throw new IllegalStateException("Model " + model + " already defined on server!");
-    //    }
+        if (!added) {
+            throw new IllegalStateException("Model " + model + " already defined on server!");
+        }
         model.setModelStore(this);
         return true;
     }
@@ -116,14 +117,12 @@ public class ServerModelStore extends ModelStore<ServerAttribute, ServerPresenta
         return deleted;
     }
 
-    public boolean checkClientRemoved(ServerPresentationModel pm) {
+    @Deprecated
+    public void removedByClient(ServerPresentationModel pm) {
         boolean deleted = super.remove(pm);
-
-        //FIXME: Currently the client has the same event for a remove answer and a remove trigger
-      //  if (!deleted) {
-      //      throw new IllegalStateException("Model " + pm + " not found on the server!");
-      //  }
-        return deleted;
+        if (!deleted) {
+            throw new IllegalStateException("Model " + pm + " not found on the server!");
+        }
     }
 
     /**

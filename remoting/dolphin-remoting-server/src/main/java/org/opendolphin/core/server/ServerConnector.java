@@ -71,7 +71,7 @@ public class ServerConnector {
         ((ArrayList<CommandHandler>) actionsCopy).addAll(actions);
         try {
             for (CommandHandler action : actionsCopy) {
-                action.handleCommand(command, response);
+                action.handleCommand(command);
             }
 
         } catch (Exception exception) {
@@ -93,8 +93,8 @@ public class ServerConnector {
             LOG.warning("attempt to initialize default actions more than once!");
             return;
         }
-        register(new StoreValueChangeAction());
-        register(new StoreAttributeAction());
+        register(new ValueChangeAction());
+        register(new QualifierChangeAction());
         register(new CreatePresentationModelAction());
         register(new DeletePresentationModelAction());
     }

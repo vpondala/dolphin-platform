@@ -15,4 +15,12 @@ public interface RemotingConstants {
     String SOURCE_SYSTEM_CLIENT = "client";
 
     String SOURCE_SYSTEM_SERVER = "server";
+
+    String ID_NAME = "id";
+
+    String QUALIFIER_NAME = "qualifier";
+
+    String VALUE_NAME = "value";
+
+    String PROPERTY_NAME = "propertyName";
 }

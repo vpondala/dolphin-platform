@@ -77,7 +77,6 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
 
     public DolphinPlatformHttpClientConnector(ClientConfiguration configuration, ClientDolphin clientDolphin, Codec codec, ForwardableCallback<DolphinRemotingException> remotingErrorHandler, ExceptionHandler onException) {
         super(clientDolphin.getModelStore(), Assert.requireNonNull(configuration, "configuration").getUiExecutor(), new BlindCommandBatcher(), onException, configuration.getBackgroundExecutor());
-        setStrictMode(false);
 
         this.servletUrl = configuration.getServerEndpoint();
 

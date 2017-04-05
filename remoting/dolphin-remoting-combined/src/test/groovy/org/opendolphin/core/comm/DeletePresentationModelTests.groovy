@@ -20,7 +20,6 @@ import org.opendolphin.core.client.ClientDolphin
 import org.opendolphin.core.client.comm.OnFinishedHandler
 import org.opendolphin.core.server.DefaultServerDolphin
 import org.opendolphin.core.server.ServerDolphin
-import org.opendolphin.core.server.ServerModelStore
 import org.opendolphin.core.server.action.DolphinServerAction
 import org.opendolphin.core.server.comm.ActionRegistry
 import org.opendolphin.core.server.comm.CommandHandler
@@ -105,8 +104,8 @@ class DeletePresentationModelTests extends GroovyTestCase {
         registerAction(serverDolphin, TriggerDeleteCommand.class, new CommandHandler<TriggerDeleteCommand>() {
 
             @Override
-            void handleCommand(TriggerDeleteCommand command, List<Command> response) {
-                ServerModelStore.deleteCommand(response, modelId)
+            void handleCommand(TriggerDeleteCommand command) {
+                serverDolphin.getModelStore().currentResponse.add(new DeletePresentationModelCommand(modelId));
             }
         });
         // when we now delete the pm

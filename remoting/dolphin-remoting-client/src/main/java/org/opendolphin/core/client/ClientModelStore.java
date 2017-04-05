@@ -63,6 +63,7 @@ public class ClientModelStore extends ModelStore<ClientAttribute, ClientPresenta
         return success;
     }
 
+    @Deprecated
     public void delete(ClientPresentationModel model) {
         delete(model, true);
     }

@@ -135,7 +135,6 @@ public class DolphinPlatformSpringTestBootstrap {
 
         DolphinTestClientConnector inMemoryClientConnector = new DolphinTestClientConnector(config.getClientDolphin().getModelStore(), config.getClientExecutor(), dolphinContext);
 
-        inMemoryClientConnector.setStrictMode(false);
         config.getClientDolphin().setClientConnector(inMemoryClientConnector);
 
         return dolphinContext;

@@ -199,10 +199,6 @@ public abstract class AbstractClientConnector implements ClientConnector {
         pushEnabled.set(false);
     }
 
-    public void setStrictMode(boolean strictMode) {
-        this.responseHandler.setStrictMode(strictMode);
-    }
-
     public void setOnException(ExceptionHandler onException) {
         this.onException = onException;
     }

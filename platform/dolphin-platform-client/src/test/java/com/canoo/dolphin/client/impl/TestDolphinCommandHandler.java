@@ -25,7 +25,6 @@ import org.opendolphin.core.server.comm.ActionRegistry;
 import org.opendolphin.core.server.comm.CommandHandler;
 import org.testng.annotations.Test;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
@@ -48,7 +47,7 @@ public class TestDolphinCommandHandler extends AbstractDolphinBasedTest {
             public void registerIn(ActionRegistry registry) {
                 registry.register(TestChangeCommand.class, new CommandHandler() {
                     @Override
-                    public void handleCommand(Command command, List response) {
+                    public void handleCommand(Command command) {
                         serverDolphin.getModelStore().findPresentationModelById(modelId).getAttribute("myAttribute").setValue("Hello World");
                     }
                 });

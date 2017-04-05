@@ -15,21 +15,23 @@
  */
 package org.opendolphin.core.server.action;
 
-import org.opendolphin.core.comm.DeletedPresentationModelNotification;
+import org.opendolphin.core.comm.DeletePresentationModelCommand;
 import org.opendolphin.core.server.ServerPresentationModel;
 import org.opendolphin.core.server.comm.ActionRegistry;
 import org.opendolphin.core.server.comm.CommandHandler;
 
-import java.util.List;
-
+/**
+ * Models should be only deleted on the server
+ */
+@Deprecated
 public class DeletePresentationModelAction extends DolphinServerAction {
 
     public void registerIn(ActionRegistry registry) {
-        registry.register(DeletedPresentationModelNotification.class, new CommandHandler<DeletedPresentationModelNotification>() {
+        registry.register(DeletePresentationModelCommand.class, new CommandHandler<DeletePresentationModelCommand>() {
             @Override
-            public void handleCommand(final DeletedPresentationModelNotification command, List response) {
+            public void handleCommand(final DeletePresentationModelCommand command) {
                 ServerPresentationModel model = getServerModelStore().findPresentationModelById(command.getPmId());
-                getServerModelStore().checkClientRemoved(model);
+                getServerModelStore().removedByClient(model);
             }
         });
     }

@@ -240,7 +240,7 @@ class ServerPresentationModelTests extends GroovyTestCase {
                 registry.register(CreatePresentationModelCommand.class, new CommandHandler<CreatePresentationModelCommand>() {
 
                     @Override
-                    void handleCommand(CreatePresentationModelCommand command, List<Command> response) {
+                    void handleCommand(CreatePresentationModelCommand command) {
                         receivedCommands << command
                     }
                 });

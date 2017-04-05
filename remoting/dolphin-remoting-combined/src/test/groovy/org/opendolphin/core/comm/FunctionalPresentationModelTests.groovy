@@ -319,7 +319,7 @@ class FunctionalPresentationModelTests extends GroovyTestCase {
         boolean reached = false
         registerAction(serverDolphin, JavaCommand.class, new CommandHandler<JavaCommand>() {
             @Override
-            void handleCommand(JavaCommand command, List<Command> response) {
+            void handleCommand(JavaCommand command) {
                 reached = true
             }
         });
