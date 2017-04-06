@@ -114,7 +114,7 @@ class CommunicationTests extends GroovyTestCase {
 
             @Override
             void handleCommand(CreatePresentationModelCommand command) {
-                response << new ValueChangedCommand(
+                serverConnector.serverModelStore.currentResponse << new ValueChangedCommand(
                         attributeId: command.attributes.id.first(),
                         newValue: "set from server",
                         oldValue: null
