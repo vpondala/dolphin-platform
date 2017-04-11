@@ -17,15 +17,18 @@ package com.canoo.dolphin.client.impl;
 
 import com.canoo.dolphin.client.ClientBeanManager;
 import com.canoo.dolphin.impl.BeanManagerImpl;
-import com.canoo.dolphin.internal.BeanBuilder;
+import com.canoo.dolphin.impl.PresentationModelBuilderFactory;
+import com.canoo.dolphin.impl.collections.ListMapperImpl;
 import com.canoo.dolphin.internal.BeanRepository;
-import org.opendolphin.core.client.ClientDolphin;
+import com.canoo.dolphin.internal.ClassRepository;
+import com.canoo.dolphin.internal.EventDispatcher;
+import org.opendolphin.core.ModelStore;
 
 @Deprecated
 public class ClientBeanManagerImpl extends BeanManagerImpl implements ClientBeanManager {
 
-    public ClientBeanManagerImpl(BeanRepository beanRepository, BeanBuilder beanBuilder, ClientDolphin dolphin) {
-        super(beanRepository, beanBuilder);
+    public ClientBeanManagerImpl(final BeanRepository beanRepository, final ClassRepository classRepository, final ModelStore modelStore, final PresentationModelBuilderFactory builderFactory, final EventDispatcher dispatcher) {
+        super(beanRepository, new ClientBeanBuilderImpl(classRepository, beanRepository, new ListMapperImpl(modelStore, classRepository, beanRepository, builderFactory, dispatcher), builderFactory, dispatcher));
     }
 
 }

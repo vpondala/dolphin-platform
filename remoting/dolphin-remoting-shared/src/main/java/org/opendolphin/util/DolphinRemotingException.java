@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.canoo.dolphin.util;
+package org.opendolphin.util;
 
 /**
  * This exception is thrown if an error occurs in the protocol (request / response body)
  */
-public class DolphinRemotingException extends RuntimeException {
+public class DolphinRemotingException extends Exception {
 
     private static final long serialVersionUID = 1934440187016337212L;
-
-    public DolphinRemotingException() {
-    }
 
     public DolphinRemotingException(String message) {
         super(message);
@@ -33,7 +30,4 @@ public class DolphinRemotingException extends RuntimeException {
         super(message, cause);
     }
 
-    public DolphinRemotingException(Throwable cause) {
-        super(cause);
-    }
 }

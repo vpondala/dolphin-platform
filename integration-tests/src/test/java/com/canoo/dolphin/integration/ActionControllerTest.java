@@ -29,12 +29,13 @@ public class ActionControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Test if controller and model can be created")
     public void testCreateController(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<ActionTestBean> controller = createController(context, ACTION_CONTROLLER_NAME);
             Assert.assertNotNull(controller);
             Assert.assertNotNull(controller.getModel());
             Assert.assertEquals(controller.getModel().getClass(), ActionTestBean.class);
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -43,11 +44,12 @@ public class ActionControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Tests if an public action method can be called")
     public void testCallPublicMethod(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<ActionTestBean> controller = createController(context, ACTION_CONTROLLER_NAME);
             invoke(controller, PUBLIC_ACTION, containerType);
             Assert.assertTrue(controller.getModel().getBooleanValue());
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -56,11 +58,12 @@ public class ActionControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Tests if an private action method can be called")
     public void testCallPrivateMethod(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<ActionTestBean> controller = createController(context, ACTION_CONTROLLER_NAME);
             invoke(controller, PRIVATE_ACTION, containerType);
             Assert.assertTrue(controller.getModel().getBooleanValue());
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -69,12 +72,13 @@ public class ActionControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Tests if an private action method can be called")
     public void testCallWithParam(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<ActionTestBean> controller = createController(context, ACTION_CONTROLLER_NAME);
             invoke(controller, WITH_STRING_PARAM_ACTION, containerType, new Param(PARAM_NAME, "Yeah!"));
             Assert.assertTrue(controller.getModel().getBooleanValue());
             Assert.assertEquals(controller.getModel().getStringValue(), "Yeah!");
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -83,7 +87,7 @@ public class ActionControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Tests if an private action method can be called")
     public void testCallWithParams(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<ActionTestBean> controller = createController(context, ACTION_CONTROLLER_NAME);
 
             String value1 = "Hello Dolphin Platform!";
@@ -94,6 +98,7 @@ public class ActionControllerTest extends AbstractIntegrationTest {
             Assert.assertTrue(controller.getModel().getBooleanValue());
             Assert.assertEquals(controller.getModel().getStringValue(), value1 + value2 + value3);
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }

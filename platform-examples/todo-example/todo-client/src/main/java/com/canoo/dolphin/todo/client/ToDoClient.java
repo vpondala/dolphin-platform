@@ -16,39 +16,20 @@
 package com.canoo.dolphin.todo.client;
 
 import com.canoo.dolphin.client.ClientContext;
-import com.canoo.dolphin.client.ClientInitializationException;
-import com.canoo.dolphin.client.DolphinRuntimeException;
-import com.canoo.dolphin.client.javafx.DolphinPlatformApplication;
-import com.canoo.dolphin.client.javafx.JavaFXConfiguration;
+import com.canoo.dolphin.client.javafx.SimpleDolphinPlatformApplication;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class ToDoClient extends DolphinPlatformApplication {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ToDoClient.class);
+public class ToDoClient extends SimpleDolphinPlatformApplication {
 
     @Override
     protected URL getServerEndpoint() throws MalformedURLException {
         return new URL("http://localhost:8080/todo-app/dolphin");
-    }
-
-    @Override
-    protected JavaFXConfiguration getClientConfiguration() {
-        try {
-            JavaFXConfiguration configuration = new JavaFXConfiguration(new URL("http://localhost:8080/todo-app/dolphin"));
-            return configuration;
-        } catch (MalformedURLException e) {
-            throw new ClientInitializationException("Error in creating config", e);
-        }
     }
 
     @Override
@@ -57,30 +38,12 @@ public class ToDoClient extends DolphinPlatformApplication {
         Scene scene = new Scene(viewController.getParent());
         scene.getStylesheets().add(ToDoClient.class.getResource("style.css").toExternalForm());
         primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest(e -> System.exit(0));
         primaryStage.show();
     }
 
-    private void showError(Window parent, String header, String content, Exception e) {
-        LOG.error("Dolphin Platform error!", e);
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-        Platform.exit();
-    }
-
-    @Override
-    protected void onInitializationError(Stage primaryStage, ClientInitializationException initializationException) {
-        showError(primaryStage, "Error on initialization", "A error happened while initializing the Client and Connection", initializationException);
-    }
-
-    @Override
-    protected void onRuntimeError(Stage primaryStage, DolphinRuntimeException runtimeException) {
-        showError(primaryStage, "Error at runtime", "A error happened at runtime", runtimeException);
-    }
-
     public static void main(String[] args) {
+        Platform.setImplicitExit(false);
         Application.launch(args);
     }
 }

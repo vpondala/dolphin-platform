@@ -61,3 +61,16 @@ mvn archetype:generate -Dfilter=com.canoo.dolphin-platform:
 
 This will start a Maven build that creates a full client-server Maven project for you. A full documentation of the
 jumpstart can be found here.
+
+== Supported JavaEE containers / application servers
+
+Since the Dolphin Platform depend only on the JavaEE spec it should run in any JavaEE container
+that is compatible with JavaEE 6.
+We run several integration tests again Dolphin Platform applications on different application servers
+with each buid. Based on this we can check the functionallity of the Dolphin Platform explicit in
+a specific application server version. At the moment we run integration tests against the following JavaEE servers:
+* TomEE 7.0
+* Payara 4.1
+* Wildfly 10.1
+
+In future we will add more server versions and types.

@@ -15,6 +15,8 @@
  */
 package org.opendolphin.core.client.comm
 
+import com.canoo.dolphin.impl.commands.InterruptLongPollCommand
+import com.canoo.dolphin.impl.commands.StartLongPollCommand
 import groovy.util.logging.Log
 import org.opendolphin.RemotingConstants
 import org.opendolphin.core.client.*
@@ -37,13 +39,13 @@ class ClientConnectorTests extends GroovyTestCase {
 	/**
 	 * Since command transmission is done in parallel to test execution thread the test method might finish
 	 * before the command processing is complete. Therefore {@link #tearDown()} waits for this CountDownLatch
-	 * (which btw. is initialized in {@link #setUp()} and decremented in the handler of a {@code dolphin.sync()} call).
-	 * Also putting asserts in the callback handler of a {@code dolphin.sync()} call seems not to be reliable since JUnit
+     * (which btw. is initialized in {@link #setUp()} and decremented in the handler of a {@code dolphin.sync ( )} call).
+     * Also putting asserts in the callback handler of a {@code dolphin.sync ( )} call seems not to be reliable since JUnit
 	 * seems not to be informed (reliably) of failing assertions.
 	 *
 	 * Therefore the following approach for the test methods has been taken to:
-	 * - initialize the CountDownLatch in {@code testBaseValueChange#setup()}
-	 * - after the 'act' section of a test method: call {@code syncAndWaitUntilDone()} which releases the latch inside a dolphin.sync handler and then (in the main thread) waits for the latch
+     * - initialize the CountDownLatch in {@code testBaseValueChange # setup ( )}
+     * - after the 'act' section of a test method: call {@code syncAndWaitUntilDone ( )} which releases the latch inside a dolphin.sync handler and then (in the main thread) waits for the latch
 	 * - performs all assertions
 	 */
 	CountDownLatch syncDone
@@ -52,9 +54,9 @@ class ClientConnectorTests extends GroovyTestCase {
 	@Override
 	protected void setUp() {
 		dolphin = new ClientDolphin()
-		ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<ClientConnector>() {
+        ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
 			@Override
-			ClientConnector get() {
+            AbstractClientConnector get() {
 				return dolphin.clientConnector;
 			}
 		});
@@ -64,6 +66,8 @@ class ClientConnectorTests extends GroovyTestCase {
 		dolphin.clientConnector = clientConnector;
 
 		attributeChangeListener = dolphin.getModelStore().@attributeChangeListener
+
+        clientConnector.connect(false);
 
 		initLatch()
 	}
@@ -94,7 +98,7 @@ class ClientConnectorTests extends GroovyTestCase {
 	}
 
 	void testSevereLogWhenCommandNotFound() {
-		clientConnector.dispatchHandle( new EmptyNotification() )
+        clientConnector.dispatchHandle(new EmptyNotification())
 		syncAndWaitUntilDone()
 		assertOnlySyncCommandWasTransmitted()
 	}
@@ -249,6 +253,8 @@ class ClientConnectorTests extends GroovyTestCase {
 //		// 3: DeletedPresentationModelNotification caused by delete of p2
 //		assertCommandsTransmitted(4)
 //		assert 1 == clientConnector.transmittedCommands.findAll { it instanceof DeletedPresentationModelNotification }.size()
+            it instanceof DeletedPresentationModelNotification
+        }.size()
 //	}
 
 	@Log
@@ -257,7 +263,7 @@ class ClientConnectorTests extends GroovyTestCase {
 		List<Command> transmittedCommands = []
 
 		TestClientConnector(ClientModelStore modelStore, Executor uiExecutor) {
-			super(modelStore, uiExecutor, new CommandBatcher(), new SimpleExceptionHandler(uiExecutor), Executors.newCachedThreadPool());
+            super(modelStore, uiExecutor, new CommandBatcher(), new SimpleExceptionHandler(), Executors.newCachedThreadPool());
 		}
 
 		int getTransmitCount() {
@@ -275,7 +281,9 @@ class ClientConnectorTests extends GroovyTestCase {
 
 		List<Command> transmitCommand(Command command) {
 			println "transmitCommand: $command"
+            if (command != null && !(command instanceof StartLongPollCommand) && !(command instanceof InterruptLongPollCommand)) {
 			transmittedCommands << command
+            }
 			return construct(command)
 		}
 

@@ -54,7 +54,7 @@ public class DolphinPlatformThreadFactoryImpl implements DolphinPlatformThreadFa
             @Override
             public Thread run() {
                 final Thread backgroundThread = new Thread(task);
-                backgroundThread.setName("Dolphin-Platform-Background-Thread" + threadNumber.getAndIncrement());
+                backgroundThread.setName("Dolphin-Platform-Background-Thread-" + threadNumber.getAndIncrement());
                 backgroundThread.setDaemon(false);
                 uncaughtExceptionHandlerLock.lock();
                 try {

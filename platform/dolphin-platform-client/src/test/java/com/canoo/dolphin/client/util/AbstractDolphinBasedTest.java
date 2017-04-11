@@ -19,11 +19,7 @@ import com.canoo.dolphin.BeanManager;
 import com.canoo.dolphin.client.impl.ClientBeanBuilderImpl;
 import com.canoo.dolphin.client.impl.ClientEventDispatcher;
 import com.canoo.dolphin.client.impl.ClientPresentationModelBuilderFactory;
-import com.canoo.dolphin.impl.BeanManagerImpl;
-import com.canoo.dolphin.impl.BeanRepositoryImpl;
-import com.canoo.dolphin.impl.ClassRepositoryImpl;
-import com.canoo.dolphin.impl.Converters;
-import com.canoo.dolphin.impl.PresentationModelBuilderFactory;
+import com.canoo.dolphin.impl.*;
 import com.canoo.dolphin.impl.collections.ListMapperImpl;
 import com.canoo.dolphin.internal.BeanBuilder;
 import com.canoo.dolphin.internal.ClassRepository;
@@ -34,7 +30,7 @@ import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.client.DefaultModelSynchronizer;
 import org.opendolphin.core.client.ModelSynchronizer;
-import org.opendolphin.core.client.comm.ClientConnector;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.opendolphin.core.comm.Command;
 import org.opendolphin.core.server.ServerDolphin;
 import org.opendolphin.core.server.ServerModelStore;
@@ -65,11 +61,11 @@ public abstract class AbstractDolphinBasedTest {
         }
     }
 
-    protected ClientDolphin createClientDolphin(final ClientConnector connector) {
+    protected ClientDolphin createClientDolphin(final AbstractClientConnector connector) {
         final ClientDolphin dolphin = new ClientDolphin();
-        ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<ClientConnector>() {
+        ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
             @Override
-            public ClientConnector get() {
+            public AbstractClientConnector get() {
                 return connector;
             }
         });
@@ -89,12 +85,12 @@ public abstract class AbstractDolphinBasedTest {
     }
 
     protected BeanManager createBeanManager(ClientDolphin dolphin) {
-        final EventDispatcher dispatcher = new ClientEventDispatcher(dolphin);
-        final BeanRepositoryImpl beanRepository = new BeanRepositoryImpl(dolphin, dispatcher);
+        final EventDispatcher dispatcher = new ClientEventDispatcher(dolphin.getModelStore());
+        final BeanRepositoryImpl beanRepository = new BeanRepositoryImpl(dolphin.getModelStore(), dispatcher);
         final Converters converters = new Converters(beanRepository);
-        final PresentationModelBuilderFactory builderFactory = new ClientPresentationModelBuilderFactory(dolphin);
-        final ClassRepository classRepository = new ClassRepositoryImpl(dolphin, converters, builderFactory);
-        final ListMapper listMapper = new ListMapperImpl(dolphin, classRepository, beanRepository, builderFactory, dispatcher);
+        final PresentationModelBuilderFactory builderFactory = new ClientPresentationModelBuilderFactory(dolphin.getModelStore());
+        final ClassRepository classRepository = new ClassRepositoryImpl(dolphin.getModelStore(), converters, builderFactory);
+        final ListMapper listMapper = new ListMapperImpl(dolphin.getModelStore(), classRepository, beanRepository, builderFactory, dispatcher);
         final BeanBuilder beanBuilder = new ClientBeanBuilderImpl(classRepository, beanRepository, listMapper, builderFactory, dispatcher);
         return new BeanManagerImpl(beanRepository, beanBuilder);
     }

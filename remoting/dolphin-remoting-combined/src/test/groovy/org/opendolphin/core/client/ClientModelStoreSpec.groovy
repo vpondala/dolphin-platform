@@ -17,7 +17,7 @@ package org.opendolphin.core.client
 import core.client.comm.InMemoryClientConnector
 import org.opendolphin.core.ModelStoreEvent
 import org.opendolphin.core.ModelStoreListener
-import org.opendolphin.core.client.comm.ClientConnector
+import org.opendolphin.core.client.comm.AbstractClientConnector
 import org.opendolphin.core.client.comm.CommandBatcher
 import org.opendolphin.core.server.ServerConnector
 import org.opendolphin.util.DirectExecutor
@@ -31,14 +31,14 @@ class ClientModelStoreSpec extends Specification {
 
 	def setup(){
         def clientDolphin = new ClientDolphin()
-		ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<ClientConnector>() {
+		ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
 			@Override
-			ClientConnector get() {
+			AbstractClientConnector get() {
 				return clientDolphin.getClientConnector();
 			}
 		});
 		modelStore = new ClientModelStore(defaultModelSynchronizer)
-		ClientConnector clientConnector = new InMemoryClientConnector(modelStore, [:] as ServerConnector, new CommandBatcher(), DirectExecutor.getInstance());
+		AbstractClientConnector clientConnector = new InMemoryClientConnector(modelStore, [:] as ServerConnector, new CommandBatcher(), DirectExecutor.getInstance());
 
         clientDolphin.clientConnector = clientConnector;
 		clientDolphin.clientModelStore = modelStore

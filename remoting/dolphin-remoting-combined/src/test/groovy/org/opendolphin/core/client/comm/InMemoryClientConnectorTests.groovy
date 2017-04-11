@@ -34,9 +34,9 @@ class InMemoryClientConnectorTests extends GroovyTestCase {
         }] as ServerConnector
 
         ClientDolphin clientDolphin = new ClientDolphin();
-        ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<ClientConnector>() {
+        ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
             @Override
-            ClientConnector get() {
+            AbstractClientConnector get() {
                 return clientDolphin.getClientConnector();
             }
         });
@@ -57,9 +57,9 @@ class InMemoryClientConnectorTests extends GroovyTestCase {
         }] as ServerConnector
 
         ClientDolphin clientDolphin = new ClientDolphin();
-        ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<ClientConnector>() {
+        ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
             @Override
-            ClientConnector get() {
+            AbstractClientConnector get() {
                 return clientDolphin.getClientConnector();
             }
         });
@@ -82,9 +82,9 @@ class InMemoryClientConnectorTests extends GroovyTestCase {
         }] as ServerConnector
 
         ClientDolphin clientDolphin = new ClientDolphin();
-        ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<ClientConnector>() {
+        ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
             @Override
-            ClientConnector get() {
+            AbstractClientConnector get() {
                 return clientDolphin.getClientConnector();
             }
         });

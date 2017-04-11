@@ -160,10 +160,21 @@ public class ControllerHandler {
         Assert.requireNonBlank(bean.getActionName(), "bean.getActionName()");
         try {
             final Object controller = controllers.get(bean.getControllerId());
+            if(controller == null) {
+                throw new InvokeActionException("No controller for id " + bean.getControllerId() + " found");
+            }
             final Class controllerClass = controllerClassMapping.get(bean.getControllerId());
+            if(controllerClass == null) {
+                throw new InvokeActionException("No controllerClass for id " + bean.getControllerId() + " found");
+            }
             final Method actionMethod = getActionMethod(controllerClass, bean.getActionName());
+            if(actionMethod == null) {
+                throw new InvokeActionException("No actionMethod with name " + bean.getActionName() + " in controller class " + controllerClass.getName() + " found");
+            }
             final List<Object> args = getArgs(actionMethod, bean);
             ReflectionHelper.invokePrivileged(actionMethod, controller, args.toArray());
+        } catch (InvokeActionException e) {
+            throw e;
         } catch (Exception e) {
             throw new InvokeActionException(e);
         }

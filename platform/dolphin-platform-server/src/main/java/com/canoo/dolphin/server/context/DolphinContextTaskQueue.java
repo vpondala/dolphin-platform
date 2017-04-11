@@ -15,17 +15,16 @@
  */
 package com.canoo.dolphin.server.context;
 
-import com.canoo.dolphin.impl.IdentitySet;
 import com.canoo.dolphin.server.DolphinSession;
 import com.canoo.dolphin.util.Assert;
 import com.google.common.util.concurrent.SettableFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -38,11 +37,9 @@ public class DolphinContextTaskQueue {
 
     private static final Logger LOG = LoggerFactory.getLogger(DolphinContextTaskQueue.class);
 
-    private final IdentitySet<Runnable> tasks;
+    private final BlockingQueue<Runnable> tasks;
 
     private final String dolphinSessionId;
-
-    private final AtomicBoolean interrupted = new AtomicBoolean(false);
 
     private final long maxExecutionTime;
 
@@ -56,7 +53,7 @@ public class DolphinContextTaskQueue {
 
     public DolphinContextTaskQueue(final String dolphinSessionId, final DolphinSessionProvider sessionProvider, final long maxExecutionTime, final TimeUnit maxExecutionTimeUnit) {
         this.dolphinSessionId = Assert.requireNonBlank(dolphinSessionId, "dolphinSessionId");
-        this.tasks = new IdentitySet<>();
+        this.tasks = new LinkedBlockingQueue<>();
         this.sessionProvider = Assert.requireNonNull(sessionProvider, "sessionProvider");
         this.maxExecutionTime = maxExecutionTime;
         this.maxExecutionTimeUnit = Assert.requireNonNull(maxExecutionTimeUnit, "maxExecutionTimeUnit");
@@ -64,32 +61,32 @@ public class DolphinContextTaskQueue {
 
     public Future<Void> addTask(final Runnable task) {
         Assert.requireNonNull(task, "task");
+        final SettableFuture<Void> future = SettableFuture.create();
+        tasks.offer(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    task.run();
+                    future.set(null);
+                } catch (Exception e) {
+                    future.setException(e);
+                }
+            }
+        });
+        LOG.trace("Tasks added to Dolphin Platform context {}", dolphinSessionId);
         taskLock.lock();
         try {
-            final SettableFuture<Void> future = SettableFuture.create();
-            tasks.add(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        task.run();
-                        future.set(null);
-                    } catch (Exception e) {
-                        future.setException(e);
-                    }
-                }
-            });
-            LOG.trace("Tasks added to Dolphin Platform context {}", dolphinSessionId);
             taskCondition.signal();
-            return future;
         } finally {
             taskLock.unlock();
         }
+        return future;
+
     }
 
     public void interrupt() {
         taskLock.lock();
         try {
-            interrupted.set(true);
             LOG.trace("Tasks in Dolphin Platform context {} interrupted", dolphinSessionId);
             taskCondition.signal();
         } finally {
@@ -97,51 +94,47 @@ public class DolphinContextTaskQueue {
         }
     }
 
-    public synchronized void executeTasks() {
-        DolphinSession currentSession = sessionProvider.getCurrentDolphinSession();
+    public void executeTasks() {
+        final DolphinSession currentSession = sessionProvider.getCurrentDolphinSession();
         if (currentSession == null || !dolphinSessionId.equals(currentSession.getId())) {
             throw new IllegalStateException("Not in Dolphin Platform session " + dolphinSessionId);
         }
-        taskLock.lock();
-        try {
-            LOG.trace("Running {} tasks in Dolphin Platform session {}", tasks.size(), dolphinSessionId);
-            long endTime = System.currentTimeMillis() + maxExecutionTimeUnit.toMillis(maxExecutionTime);
-            while (!interrupted.get()) {
-                if (tasks.isEmpty()) {
+
+        LOG.trace("Running {} tasks in Dolphin Platform session {}", tasks.size(), dolphinSessionId);
+        long endTime = System.currentTimeMillis() + maxExecutionTimeUnit.toMillis(maxExecutionTime);
+
+        while (true) {
+            final Runnable task = tasks.poll();
+            if (task == null) {
+                try {
+                    taskLock.lock();
                     try {
-                        if (!taskCondition.await(endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)) {
-                            interrupted.set(true);
-                        } else {
-                            if (interrupted.get()) {
-                                interrupted.set(false);
-                                return;
-                            }
+                        if (tasks.isEmpty() && !taskCondition.await(endTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS)) {
+                            LOG.trace("Task executor for Dolphin Platform session {} ended after {} seconds with {} task still open", dolphinSessionId, maxExecutionTimeUnit.toSeconds(maxExecutionTime), tasks.size());
+                            break;
                         }
-                    } catch (InterruptedException e) {
-                        interrupted.set(true);
+                    } finally {
+                        taskLock.unlock();
                     }
-                } else {
-                    Iterator<Runnable> taskIterator = tasks.iterator();
-                    if (taskIterator.hasNext()) {
-                        Runnable task = taskIterator.next();
-                        try {
-                            task.run();
-                            LOG.trace("Executed task in Dolphin Platform session {}", dolphinSessionId);
-                        } catch (Exception e) {
-                            throw new DolphinTaskException("Error in running task in Dolphin Platform session " + dolphinSessionId, e);
-                        } finally {
-                            interrupted.set(true);
-                            tasks.remove(task);
-                        }
-                    } else {
-                        interrupted.set(true);
+                    if (tasks.isEmpty()) {
+                        break;
                     }
+                } catch (Exception e) {
+                    LOG.error("Concurrency error in task executor for Dolphin Platform session {}", dolphinSessionId);
+                    throw new IllegalStateException("Concurrency error in task executor for Dolphin Platform session " + dolphinSessionId);
+                }
+            } else {
+                try {
+                    task.run();
+                    LOG.trace("Task executor executed task in Dolphin Platform session {}", dolphinSessionId);
+                } catch (Exception e) {
+                    throw new DolphinTaskException("Error in running task in Dolphin Platform session " + dolphinSessionId, e);
+                } finally {
+                    LOG.info("Task executor for Dolphin Platform session {} ended after running task with {} task still open", dolphinSessionId, tasks.size());
+                    break;
                 }
             }
-            interrupted.set(false);
-            LOG.trace("Task executor in Dolphin Platform session {} interrupted. Still {} tasks open", dolphinSessionId, tasks.size());
-        } finally {
-            taskLock.unlock();
         }
+        LOG.trace("Task executor in Dolphin Platform session {} interrupted. Still {} tasks open", dolphinSessionId, tasks.size());
     }
 }

@@ -16,4 +16,5 @@
 
 dependencies {
     compile "com.google.code.gson:gson:$gsonVersion"
+    testCompile "org.slf4j:slf4j-simple:$slf4jVersion"
 }

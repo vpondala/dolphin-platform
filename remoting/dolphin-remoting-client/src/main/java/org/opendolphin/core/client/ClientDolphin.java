@@ -16,7 +16,7 @@
 package org.opendolphin.core.client;
 
 import org.opendolphin.core.Dolphin;
-import org.opendolphin.core.client.comm.ClientConnector;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.opendolphin.core.client.comm.OnFinishedHandler;
 import org.opendolphin.core.comm.EmptyNotification;
 
@@ -31,14 +31,14 @@ public class ClientDolphin implements Dolphin<ClientAttribute, ClientPresentatio
 
     private ClientModelStore clientModelStore;
 
-    private ClientConnector clientConnector;
+    private AbstractClientConnector clientConnector;
 
     @Override
     public ClientModelStore getModelStore() {
         return clientModelStore;
     }
 
-    public ClientConnector getClientConnector() {
+    public AbstractClientConnector getClientConnector() {
         return clientConnector;
     }
 
@@ -70,7 +70,7 @@ public class ClientDolphin implements Dolphin<ClientAttribute, ClientPresentatio
      * @param clientConnector
      */
     @Deprecated
-    public void setClientConnector(ClientConnector clientConnector) {
+    public void setClientConnector(AbstractClientConnector clientConnector) {
         this.clientConnector = clientConnector;
     }
 

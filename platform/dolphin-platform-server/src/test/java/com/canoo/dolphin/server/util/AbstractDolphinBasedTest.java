@@ -58,11 +58,11 @@ public abstract class AbstractDolphinBasedTest {
 
     protected BeanManager createBeanManager(ServerDolphin dolphin) {
         final EventDispatcher dispatcher = new ServerEventDispatcher(dolphin);
-        final BeanRepositoryImpl beanRepository = new BeanRepositoryImpl(dolphin, dispatcher);
+        final BeanRepositoryImpl beanRepository = new BeanRepositoryImpl(dolphin.getModelStore(), dispatcher);
         final Converters converters = new Converters(beanRepository);
         final PresentationModelBuilderFactory builderFactory = new ServerPresentationModelBuilderFactory(dolphin);
-        final ClassRepository classRepository = new ClassRepositoryImpl(dolphin, converters, builderFactory);
-        final ListMapper listMapper = new ListMapperImpl(dolphin, classRepository, beanRepository, builderFactory, dispatcher);
+        final ClassRepository classRepository = new ClassRepositoryImpl(dolphin.getModelStore(), converters, builderFactory);
+        final ListMapper listMapper = new ListMapperImpl(dolphin.getModelStore(), classRepository, beanRepository, builderFactory, dispatcher);
         final DolphinPlatformConfiguration configurationForGc = new DolphinPlatformConfiguration();
         final GarbageCollector garbageCollector = new GarbageCollector(configurationForGc, new GarbageCollectionCallback() {
             @Override

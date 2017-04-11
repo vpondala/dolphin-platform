@@ -15,10 +15,6 @@
  */
 package com.canoo.dolphin.client;
 
-import com.canoo.dolphin.event.Subscription;
-import com.canoo.dolphin.util.Callback;
-import com.canoo.dolphin.util.DolphinRemotingException;
-
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -55,12 +51,5 @@ public interface ClientContext {
      */
     CompletableFuture<Void> disconnect();
 
-    /**
-     * This methods adds an error handler for the remoting layer of the client. Based on the cause of the
-     * receiving {@link DolphinRemotingException} you can check what error happened.
-     * @param callback the error handler
-     * @return a {@link Subscription} that can be used to removePresentationModel the added error handler
-     */
-    Subscription onRemotingError(Callback<DolphinRemotingException> callback);
-
+    CompletableFuture<Void> connect();
 }

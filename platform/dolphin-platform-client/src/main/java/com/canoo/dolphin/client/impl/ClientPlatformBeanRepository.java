@@ -22,17 +22,17 @@ import com.canoo.dolphin.internal.BeanRepository;
 import com.canoo.dolphin.internal.DolphinEventHandler;
 import com.canoo.dolphin.internal.EventDispatcher;
 import org.opendolphin.core.PresentationModel;
-import org.opendolphin.core.client.ClientDolphin;
+import org.opendolphin.core.client.ClientModelStore;
 
 public class ClientPlatformBeanRepository {
 
-    private final ClientDolphin dolphin;
+    private final ClientModelStore modelStore;
     private final Converters converters;
 
     private InternalAttributesBean internalAttributesBean;
 
-    public ClientPlatformBeanRepository(final ClientDolphin dolphin, final BeanRepository beanRepository, final EventDispatcher dispatcher, final Converters converters) {
-        this.dolphin = dolphin;
+    public ClientPlatformBeanRepository(final ClientModelStore modelStore, final BeanRepository beanRepository, final EventDispatcher dispatcher, final Converters converters) {
+        this.modelStore = modelStore;
         this.converters = converters;
 
         dispatcher.onceInternalAttributesBeanAddedHandler(new DolphinEventHandler() {
@@ -44,7 +44,7 @@ public class ClientPlatformBeanRepository {
     }
 
     public ClientControllerActionCallBean createControllerActionCallBean(String controllerId, String actionName, Param... params) {
-        return new ClientControllerActionCallBean(dolphin, converters, controllerId, actionName, params);
+        return new ClientControllerActionCallBean(modelStore, converters, controllerId, actionName, params);
     }
 
     public InternalAttributesBean getInternalAttributesBean() {

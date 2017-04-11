@@ -16,7 +16,6 @@
 package org.opendolphin.core.comm
 
 import core.client.comm.InMemoryClientConnector
-import org.junit.Ignore
 import org.opendolphin.LogConfig
 import org.opendolphin.core.PresentationModel
 import org.opendolphin.core.client.ClientAttribute
@@ -24,12 +23,10 @@ import org.opendolphin.core.client.ClientDolphin
 import org.opendolphin.core.client.comm.BlindCommandBatcher
 import org.opendolphin.core.client.comm.OnFinishedHandler
 import org.opendolphin.core.client.comm.RunLaterUiThreadHandler
-import org.opendolphin.core.client.comm.SynchronousInMemoryClientConnector
 import org.opendolphin.core.server.*
 import org.opendolphin.core.server.action.DolphinServerAction
 import org.opendolphin.core.server.comm.ActionRegistry
 import org.opendolphin.core.server.comm.CommandHandler
-import org.opendolphin.util.DirectExecutor
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -91,12 +88,6 @@ class FunctionalPresentationModelTests extends GroovyTestCase {
     void testPerformanceWithBlindCommandBatcher() {
         def batcher = new BlindCommandBatcher(mergeValueChanges: true, deferMillis: 100)
         def connector = new InMemoryClientConnector(context.clientDolphin.modelStore, serverDolphin.serverConnector, batcher, new RunLaterUiThreadHandler())
-        context.clientDolphin.clientConnector = connector
-        doTestPerformance()
-    }
-
-    void testPerformanceWithSynchronousConnector() {
-        def connector = new SynchronousInMemoryClientConnector(context.clientDolphin.getModelStore(), serverDolphin.serverConnector)
         context.clientDolphin.clientConnector = connector
         doTestPerformance()
     }
@@ -229,63 +220,6 @@ class FunctionalPresentationModelTests extends GroovyTestCase {
             void onFinished() {
                 assert user.getAttribute("loggedIn").value
                 context.assertionsDone()
-            }
-        }
-    }
-
-    void testAsynchronousExceptionOnTheServer() {
-        LogConfig.logOnLevel(Level.INFO);
-        def count = 0
-        clientDolphin.clientConnector.onException = { count++ }
-
-        registerAction serverDolphin, SomeCommand.class, { cmd, response ->
-            throw new RuntimeException("EXPECTED: some arbitrary exception on the server")
-        }
-
-        clientDolphin.getClientConnector().send new SomeCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                fail "the onFinished handler will not be reached in this case"
-            }
-        }
-        clientDolphin.sync {
-            assert count == 1
-        }
-
-        // provoke a second exception
-        clientDolphin.getClientConnector().send new SomeCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                fail "the onFinished handler will not be reached either"
-            }
-        }
-        clientDolphin.sync {
-            assert count == 2
-        }
-        clientDolphin.sync {
-            context.assertionsDone()
-        }
-    }
-
-    @Ignore
-    void testAsynchronousExceptionInOnFinishedHandler() {
-        context = new TestInMemoryConfig(DirectExecutor.getInstance());
-        serverDolphin = context.serverDolphin
-        clientDolphin = context.clientDolphin
-
-        // not "run later" we need it immediately here
-        clientDolphin.clientConnector.onException = { context.assertionsDone() }
-
-        registerAction serverDolphin, SomeCommand.class, { cmd, response ->
-            // nothing to do
-        }
-        clientDolphin.getClientConnector().send new SomeCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                throw new RuntimeException("EXPECTED: some arbitrary exception in the onFinished handler")
             }
         }
     }

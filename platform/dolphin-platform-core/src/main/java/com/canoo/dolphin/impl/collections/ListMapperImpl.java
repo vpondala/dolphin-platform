@@ -18,16 +18,12 @@ package com.canoo.dolphin.impl.collections;
 import com.canoo.dolphin.collections.ListChangeEvent;
 import com.canoo.dolphin.impl.PlatformConstants;
 import com.canoo.dolphin.impl.PresentationModelBuilderFactory;
-import com.canoo.dolphin.internal.BeanRepository;
-import com.canoo.dolphin.internal.ClassRepository;
-import com.canoo.dolphin.internal.DolphinEventHandler;
-import com.canoo.dolphin.internal.EventDispatcher;
-import com.canoo.dolphin.internal.PresentationModelBuilder;
+import com.canoo.dolphin.internal.*;
 import com.canoo.dolphin.internal.collections.ListMapper;
 import com.canoo.dolphin.internal.info.ClassInfo;
 import com.canoo.dolphin.internal.info.PropertyInfo;
 import com.canoo.dolphin.mapping.MappingException;
-import org.opendolphin.core.Dolphin;
+import org.opendolphin.core.ModelStore;
 import org.opendolphin.core.PresentationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +35,11 @@ public class ListMapperImpl implements ListMapper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ListMapperImpl.class);
 
-
-    private final Dolphin dolphin;
     private final BeanRepository beanRepository;
     private final ClassRepository classRepository;
     protected final PresentationModelBuilderFactory builderFactory;
 
-    public ListMapperImpl(Dolphin dolphin, ClassRepository classRepository, BeanRepository beanRepository, PresentationModelBuilderFactory builderFactory, EventDispatcher dispatcher) {
-        this.dolphin = dolphin;
+    public ListMapperImpl(final ModelStore modelStore, ClassRepository classRepository, BeanRepository beanRepository, PresentationModelBuilderFactory builderFactory, EventDispatcher dispatcher) {
         this.beanRepository = beanRepository;
         this.classRepository = classRepository;
         this.builderFactory = builderFactory;
@@ -82,7 +75,7 @@ public class ListMapperImpl implements ListMapper {
                     LOG.error("Invalid LIST_SPLICE command received: " + model, ex);
                 } finally {
                     if (model != null) {
-                        ListMapperImpl.this.dolphin.getModelStore().remove(model);
+                        modelStore.remove(model);
                     }
                 }
 

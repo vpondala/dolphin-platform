@@ -123,8 +123,8 @@ public class DolphinContext {
 
         //Init BeanManager
         final PresentationModelBuilderFactory builderFactory = new ServerPresentationModelBuilderFactory(dolphin);
-        final ClassRepository classRepository = new ClassRepositoryImpl(dolphin, converters, builderFactory);
-        final ListMapper listMapper = new ListMapperImpl(dolphin, classRepository, beanRepository, builderFactory, dispatcher);
+        final ClassRepository classRepository = new ClassRepositoryImpl(dolphin.getModelStore(), converters, builderFactory);
+        final ListMapper listMapper = new ListMapperImpl(dolphin.getModelStore(), classRepository, beanRepository, builderFactory, dispatcher);
         final ServerBeanBuilder beanBuilder = new ServerBeanBuilderImpl(classRepository, beanRepository, listMapper, builderFactory, dispatcher, garbageCollector);
         beanManager = new BeanManagerImpl(beanRepository, beanBuilder);
 

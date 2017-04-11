@@ -16,31 +16,24 @@
 package com.canoo.dolphin.client;
 
 import com.canoo.dolphin.BeanManager;
-import com.canoo.dolphin.client.util.AbstractDolphinBasedTest;
-import com.canoo.dolphin.client.util.ChildModel;
-import com.canoo.dolphin.client.util.ListReferenceModel;
-import com.canoo.dolphin.client.util.SimpleAnnotatedTestModel;
-import com.canoo.dolphin.client.util.SimpleTestModel;
-import com.canoo.dolphin.client.util.SingleReferenceModel;
+import com.canoo.dolphin.client.util.*;
 import com.canoo.dolphin.impl.BeanDefinitionException;
 import mockit.Mocked;
 import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.client.ClientPresentationModel;
-import org.opendolphin.core.client.comm.ClientConnector;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.testng.annotations.Test;
 
 import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 public class TestModelDeletion extends AbstractDolphinBasedTest {
 
     @Test
-    public void testWithAnnotatedSimpleModel(@Mocked ClientConnector connector) {
+    public void testWithAnnotatedSimpleModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -58,7 +51,7 @@ public class TestModelDeletion extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithSimpleModel(@Mocked ClientConnector connector) {
+    public void testWithSimpleModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -76,7 +69,7 @@ public class TestModelDeletion extends AbstractDolphinBasedTest {
     }
 
     @Test(expectedExceptions = BeanDefinitionException.class)
-    public void testWithWrongModelType(@Mocked ClientConnector connector) {
+    public void testWithWrongModelType(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -84,7 +77,7 @@ public class TestModelDeletion extends AbstractDolphinBasedTest {
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testWithNull(@Mocked ClientConnector connector) {
+    public void testWithNull(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -92,7 +85,7 @@ public class TestModelDeletion extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithSingleReferenceModel(@Mocked ClientConnector connector) {
+    public void testWithSingleReferenceModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -110,7 +103,7 @@ public class TestModelDeletion extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithListReferenceModel(@Mocked ClientConnector connector) {
+    public void testWithListReferenceModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -128,7 +121,7 @@ public class TestModelDeletion extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithInheritedModel(@Mocked ClientConnector connector) {
+    public void testWithInheritedModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 

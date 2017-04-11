@@ -20,7 +20,7 @@ import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.client.DefaultModelSynchronizer;
 import org.opendolphin.core.client.ModelSynchronizer;
-import org.opendolphin.core.client.comm.ClientConnector;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.opendolphin.core.client.comm.CommandBatcher;
 import org.opendolphin.core.server.ServerDolphin;
 import org.opendolphin.core.server.ServerDolphinFactory;
@@ -35,7 +35,7 @@ import java.util.concurrent.Executor;
  * as appropriate for the UI (JavaFX or Swing, respectively.)
  */
 @Deprecated
-public class DefaultInMemoryConfig implements Provider<ClientConnector> {
+public class DefaultInMemoryConfig implements Provider<AbstractClientConnector> {
 
     private final ClientDolphin clientDolphin;
 
@@ -67,7 +67,7 @@ public class DefaultInMemoryConfig implements Provider<ClientConnector> {
     }
 
     @Override
-    public ClientConnector get() {
+    public AbstractClientConnector get() {
         return clientConnector;
     }
 }

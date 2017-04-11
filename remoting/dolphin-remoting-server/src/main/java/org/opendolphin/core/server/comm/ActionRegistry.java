@@ -16,14 +16,15 @@
 package org.opendolphin.core.server.comm;
 
 import org.opendolphin.core.comm.Command;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ActionRegistry {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ActionRegistry.class);
+
 
     private final Map<Class<? extends Command>, List<CommandHandler>> actions = new HashMap();
 
@@ -31,8 +32,11 @@ public class ActionRegistry {
         return Collections.unmodifiableMap(actions);
     }
 
-    public void register(Class commandClass, CommandHandler serverCommand) {
-        List<CommandHandler> actions = getActionsFor(commandClass);
+    public void register(final Class commandClass, final CommandHandler serverCommand) {
+        Objects.requireNonNull("commandClass");
+        Objects.requireNonNull("serverCommand");
+        LOG.debug("Register handler for command type " + commandClass.getSimpleName());
+        final List<CommandHandler> actions = getActionsFor(commandClass);
         if (!actions.contains(serverCommand)) {
             actions.add(serverCommand);
         }

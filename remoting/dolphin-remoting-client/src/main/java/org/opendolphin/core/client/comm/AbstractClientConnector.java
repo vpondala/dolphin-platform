@@ -15,9 +15,13 @@
  */
 package org.opendolphin.core.client.comm;
 
+import com.canoo.dolphin.impl.commands.InterruptLongPollCommand;
+import com.canoo.dolphin.impl.commands.StartLongPollCommand;
 import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.comm.Command;
-import org.opendolphin.core.comm.SignalCommand;
+import org.opendolphin.util.DolphinRemotingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,69 +29,86 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public abstract class AbstractClientConnector implements ClientConnector {
+public abstract class AbstractClientConnector {
 
-    private static final Logger LOG = Logger.getLogger(AbstractClientConnector.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractClientConnector.class);
 
     private final Executor uiExecutor;
 
     private final Executor backgroundExecutor;
 
-    private ExceptionHandler onException;
+    private final RemotingExceptionHandler remotingExceptionHandler;
 
     private final ClientResponseHandler responseHandler;
 
     private final ICommandBatcher commandBatcher;
 
     /**
-     * The named command that waits for pushes on the server side
-     */
-    private Command pushListener;
-    /**
-     * The signal command that publishes a "release" event on the respective bus
-     */
-    private Command releaseCommand;
-    /**
-     * whether listening for push events should be done at all.
-     */
-    protected final AtomicBoolean pushEnabled = new AtomicBoolean(false);
-
-    /**
      * whether we currently wait for push events (internal state) and may need to release
      */
     protected final AtomicBoolean releaseNeeded = new AtomicBoolean(false);
 
-    protected AbstractClientConnector(final ClientModelStore clientModelStore, final Executor uiExecutor, final ICommandBatcher commandBatcher, ExceptionHandler onException, Executor backgroundExecutor) {
+    protected final AtomicBoolean connectedFlag = new AtomicBoolean(false);
+
+    protected final AtomicBoolean useLongPolling = new AtomicBoolean(false);
+
+    protected boolean connectionFlagForUiExecutor = false;
+
+    private StartLongPollCommand pushListener;
+
+    private InterruptLongPollCommand releaseCommand;
+
+    protected AbstractClientConnector(final ClientModelStore clientModelStore, final Executor uiExecutor, final ICommandBatcher commandBatcher, RemotingExceptionHandler remotingExceptionHandler, Executor backgroundExecutor) {
         this.uiExecutor = Objects.requireNonNull(uiExecutor);
         this.commandBatcher = Objects.requireNonNull(commandBatcher);
-        this.onException = Objects.requireNonNull(onException);
+        this.remotingExceptionHandler = Objects.requireNonNull(remotingExceptionHandler);
         this.backgroundExecutor = Objects.requireNonNull(backgroundExecutor);
         this.responseHandler = new ClientResponseHandler(clientModelStore);
-        backgroundExecutor.execute(new Runnable() {
+
+        this.pushListener = new StartLongPollCommand();
+        this.releaseCommand = new InterruptLongPollCommand();
+    }
+
+    private void handleError(final Exception exception) {
+        Objects.requireNonNull(exception);
+
+        disconnect();
+
+        uiExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                commandProcessing();
+                connectionFlagForUiExecutor = false;
+                if (exception instanceof DolphinRemotingException) {
+                    remotingExceptionHandler.handle((DolphinRemotingException) exception);
+                } else {
+                    remotingExceptionHandler.handle(new DolphinRemotingException("internal remoting error", exception));
+                }
             }
         });
     }
 
     protected void commandProcessing() {
-        while (true) {
+        boolean longPollingActivated = false;
+        while (connectedFlag.get()) {
             try {
                 final List<CommandAndHandler> toProcess = commandBatcher.getWaitingBatches().getVal();
                 List<Command> commands = new ArrayList<>();
                 for (CommandAndHandler c : toProcess) {
                     commands.add(c.getCommand());
                 }
-                if (LOG.isLoggable(Level.INFO)) {
-                    LOG.info("C: sending batch of size " + commands.size());
+
+                if (LOG.isDebugEnabled()) {
+                    StringBuffer buffer = new StringBuffer();
                     for (Command command : commands) {
-                        LOG.info("C:           -> " + command);
+                        buffer.append(command.getClass().getSimpleName());
+                        buffer.append(", ");
                     }
+                    LOG.debug("Sending {} commands to server: {}", commands.size(), buffer.substring(0, buffer.length() - 2));
+                } else {
+                    LOG.info("Sending {} commands to server", commands.size());
                 }
+
                 final List<? extends Command> answers = transmit(commands);
 
                 uiExecutor.execute(new Runnable() {
@@ -97,15 +118,32 @@ public abstract class AbstractClientConnector implements ClientConnector {
                     }
                 });
             } catch (Exception e) {
-                onException.handle(e);
+                if (connectedFlag.get()) {
+                    handleError(e);
+                } else {
+                    LOG.warn("Remoting error based on broken connection in parallel request", e);
+                }
+            }
+            if(!longPollingActivated && useLongPolling.get()) {
+                uiExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        listen();
+                    }
+                });
+                longPollingActivated = true;
             }
         }
     }
 
-    protected abstract List<Command> transmit(List<Command> commands);
+    protected abstract List<Command> transmit(List<Command> commands) throws DolphinRemotingException;
 
-    @Override
     public void send(final Command command, final OnFinishedHandler callback, final HandlerType handlerType) {
+        LOG.debug("Command of type {} should be send to server", command.getClass().getSimpleName());
+        if (!connectedFlag.get()) {
+            //TODO: Change to DolphinRemotingException
+            throw new IllegalStateException("Connection is broken");
+        }
         // we have some change so regardless of the batching we may have to release a push
         if (!command.equals(pushListener)) {
             release();
@@ -115,33 +153,40 @@ public abstract class AbstractClientConnector implements ClientConnector {
         commandBatcher.batch(handler);
     }
 
-    @Override
     public void send(final Command command, final OnFinishedHandler callback) {
         send(command, callback, HandlerType.UI);
     }
 
-    @Override
     public void send(Command command) {
         send(command, null);
     }
 
     protected void processResults(final List<? extends Command> response, List<CommandAndHandler> commandsAndHandlers) {
-        if (LOG.isLoggable(Level.INFO)) {
-            final List<String> commands = new ArrayList<>();
-            if (response != null) {
-                for (Command c : response) {
-                    commands.add(c.getId());
+
+        if (LOG.isDebugEnabled() && response.size() > 0) {
+            StringBuffer buffer = new StringBuffer();
+            for (Command command : response) {
+                buffer.append(command.getClass().getSimpleName());
+                buffer.append(", ");
                 }
-                LOG.info("C: server responded with {}" + response.size() + " command(s): {}" + commands);
-            }
+            LOG.debug("Processing {} commands from server: {}", response.size(), buffer.substring(0, buffer.length() - 2));
+        } else {
+            LOG.info("Processing {} commands from server", response.size());
         }
 
         for (Command serverCommand : response) {
             dispatchHandle(serverCommand);
         }
+
         OnFinishedHandler callback = commandsAndHandlers.get(0).getHandler();
         if (callback != null) {
+            LOG.debug("Handling registered callback");
+            try {
             callback.onFinished();
+            } catch (Exception e) {
+                LOG.error("Error in handling callback", e);
+                throw e;
+    }
         }
     }
 
@@ -153,10 +198,12 @@ public abstract class AbstractClientConnector implements ClientConnector {
      * listens for the pushListener to return. The pushListener must be set and pushEnabled must be true.
      */
     protected void listen() {
-        if (!pushEnabled.get() || releaseNeeded.get()) {
+        if (!connectedFlag.get() || releaseNeeded.get()) {
             return;
         }
+
         releaseNeeded.set(true);
+        try {
         send(pushListener, new OnFinishedHandler() {
             @Override
             public void onFinished() {
@@ -164,13 +211,16 @@ public abstract class AbstractClientConnector implements ClientConnector {
                 listen();
             }
         });
+        } catch (Exception e) {
+            LOG.error("Error in sending long poll", e);
+    }
     }
 
     /**
      * Release the current push listener, which blocks the sending queue.
      * Does nothing in case that the push listener is not active.
      */
-    private void release() {
+    protected void release() {
         if (!releaseNeeded.get()) {
             return; // there is no point in releasing if we do not wait. Avoid excessive releasing.
         }
@@ -179,31 +229,64 @@ public abstract class AbstractClientConnector implements ClientConnector {
         backgroundExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                transmit(Collections.singletonList(releaseCommand));
+                try {
+                    List<Command> releaseCommandList = new ArrayList<Command>(Collections.singletonList(releaseCommand));
+                    transmit(releaseCommandList);
+                } catch (DolphinRemotingException e) {
+                    handleError(e);
+                }
             }
-
         });
     }
 
-    @Override
-    public void startPushListening(final Command startLongPollCommand, final SignalCommand interruptLongPollCommand) {
-        pushListener = Objects.requireNonNull(startLongPollCommand);
-        releaseCommand = Objects.requireNonNull(interruptLongPollCommand);
+    public void connect(final boolean longPoll) {
+        if (connectedFlag.get()) {
+            throw new IllegalStateException("Can not call connect on a connected connection");
+            }
 
-        pushEnabled.set(true);
-        listen();
+        connectedFlag.set(true);
+        uiExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                connectionFlagForUiExecutor = true;
+            }
+        });
+
+        backgroundExecutor.execute(new Runnable() {
+    @Override
+            public void run() {
+                commandProcessing();
+            }
+        });
+        useLongPolling.set(longPoll);
     }
 
-    @Override
-    public void stopPushListening() {
-        pushEnabled.set(false);
+    public void connect() {
+        connect(true);
     }
 
-    public void setOnException(ExceptionHandler onException) {
-        this.onException = onException;
+    public void disconnect() {
+        if (!connectedFlag.get()) {
+            throw new IllegalStateException("Can not call disconnect on a disconnected connection");
+        }
+        connectedFlag.set(false);
+        uiExecutor.execute(new Runnable() {
+    @Override
+            public void run() {
+                connectionFlagForUiExecutor = false;
+            }
+        });
+    }
+
+    public void setStrictMode(boolean strictMode) {
+        this.responseHandler.setStrictMode(strictMode);
     }
 
     protected Command getReleaseCommand() {
         return releaseCommand;
+    }
+
+    public boolean isConnected() {
+        return connectedFlag.get();
     }
 }

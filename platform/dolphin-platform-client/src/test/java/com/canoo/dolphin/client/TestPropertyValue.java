@@ -16,19 +16,13 @@
 package com.canoo.dolphin.client;
 
 import com.canoo.dolphin.BeanManager;
-import com.canoo.dolphin.client.util.AbstractDolphinBasedTest;
-import com.canoo.dolphin.client.util.ChildModel;
-import com.canoo.dolphin.client.util.ComplexDataTypesModel;
-import com.canoo.dolphin.client.util.PrimitiveDataTypesModel;
-import com.canoo.dolphin.client.util.SimpleAnnotatedTestModel;
-import com.canoo.dolphin.client.util.SimpleTestModel;
-import com.canoo.dolphin.client.util.SingleReferenceModel;
+import com.canoo.dolphin.client.util.*;
 import mockit.Mocked;
 import org.opendolphin.core.Attribute;
 import org.opendolphin.core.PresentationModel;
 import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.client.ClientPresentationModel;
-import org.opendolphin.core.client.comm.ClientConnector;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.testng.annotations.Test;
 
 import java.util.Calendar;
@@ -45,7 +39,7 @@ import static org.hamcrest.Matchers.nullValue;
 public class TestPropertyValue extends AbstractDolphinBasedTest {
 
     @Test
-    public void testWithAnnotatedSimpleModel(@Mocked ClientConnector connector) {
+    public void testWithAnnotatedSimpleModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -66,7 +60,7 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithSimpleModel(@Mocked ClientConnector connector) {
+    public void testWithSimpleModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -87,7 +81,7 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithAllPrimitiveDataTypesModel(@Mocked ClientConnector connector) {
+    public void testWithAllPrimitiveDataTypesModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -134,7 +128,7 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
 
 
     @Test
-    public void testWithComplexDataTypesModel(@Mocked ClientConnector connector) {
+    public void testWithComplexDataTypesModel(@Mocked AbstractClientConnector connector) {
         final Calendar date1 = new GregorianCalendar(2016, Calendar.MARCH, 1, 0, 1, 2);
         date1.set(Calendar.MILLISECOND, 3);
         date1.setTimeZone(TimeZone.getTimeZone("GMT+2:00"));
@@ -188,7 +182,7 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
 
 
     @Test
-    public void testWithSingleReferenceModel(@Mocked ClientConnector connector) {
+    public void testWithSingleReferenceModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -217,7 +211,7 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithInheritedModel(@Mocked ClientConnector connector) {
+    public void testWithInheritedModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 

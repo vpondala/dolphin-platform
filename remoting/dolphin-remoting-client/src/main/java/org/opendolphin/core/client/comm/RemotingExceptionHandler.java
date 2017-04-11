@@ -15,7 +15,9 @@
  */
 package org.opendolphin.core.client.comm;
 
-public interface ExceptionHandler {
+import org.opendolphin.util.DolphinRemotingException;
 
-    void handle(Throwable e);
+public interface RemotingExceptionHandler {
+
+    void handle(DolphinRemotingException e);
 }

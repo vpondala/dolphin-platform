@@ -19,24 +19,20 @@ import com.canoo.dolphin.client.ClientConfiguration;
 import com.canoo.dolphin.client.DummyUiThreadHandler;
 import com.canoo.dolphin.client.HttpURLConnectionFactory;
 import com.canoo.dolphin.impl.commands.CreateContextCommand;
-import com.canoo.dolphin.util.DolphinRemotingException;
 import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.client.DefaultModelSynchronizer;
-import org.opendolphin.core.client.comm.ClientConnector;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.opendolphin.core.client.comm.SimpleExceptionHandler;
 import org.opendolphin.core.comm.Command;
 import org.opendolphin.core.comm.CreatePresentationModelCommand;
 import org.opendolphin.core.comm.JsonCodec;
+import org.opendolphin.util.DolphinRemotingException;
 import org.opendolphin.util.Provider;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -47,7 +43,7 @@ import java.util.List;
 public class TestDolphinPlatformHttpClientConnector {
 
     @Test
-    public void testSimpleCall() {
+    public void testSimpleCall() throws DolphinRemotingException {
         ClientConfiguration clientConfiguration = new ClientConfiguration(getDummyURL(), new DummyUiThreadHandler());
         clientConfiguration.setConnectionFactory(new HttpURLConnectionFactory() {
             @Override
@@ -83,13 +79,13 @@ public class TestDolphinPlatformHttpClientConnector {
         });
 
         ClientDolphin clientDolphin = new ClientDolphin();
-        clientDolphin.setClientModelStore(new ClientModelStore(new DefaultModelSynchronizer(new Provider<ClientConnector>() {
+        clientDolphin.setClientModelStore(new ClientModelStore(new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
             @Override
-            public ClientConnector get() {
+            public AbstractClientConnector get() {
                 return null;
             }
         })));
-        DolphinPlatformHttpClientConnector connector = new DolphinPlatformHttpClientConnector(clientConfiguration, clientDolphin, new JsonCodec(), new ForwardableCallback<DolphinRemotingException>(), new SimpleExceptionHandler(clientConfiguration.getUiExecutor()));
+        DolphinPlatformHttpClientConnector connector = new DolphinPlatformHttpClientConnector(clientConfiguration, clientDolphin.getModelStore(), new JsonCodec(), new SimpleExceptionHandler());
 
         CreatePresentationModelCommand command = new CreatePresentationModelCommand();
         command.setPmId("p1");
@@ -102,7 +98,7 @@ public class TestDolphinPlatformHttpClientConnector {
     }
 
     @Test(expectedExceptions = DolphinRemotingException.class)
-    public void testBadResponse() {
+    public void testBadResponse() throws DolphinRemotingException {
 
         ClientConfiguration clientConfiguration = new ClientConfiguration(getDummyURL(), new DummyUiThreadHandler());
         clientConfiguration.setConnectionFactory(new HttpURLConnectionFactory() {
@@ -134,13 +130,13 @@ public class TestDolphinPlatformHttpClientConnector {
         });
 
         ClientDolphin clientDolphin = new ClientDolphin();
-        clientDolphin.setClientModelStore(new ClientModelStore(new DefaultModelSynchronizer(new Provider<ClientConnector>() {
+        clientDolphin.setClientModelStore(new ClientModelStore(new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
             @Override
-            public ClientConnector get() {
+            public AbstractClientConnector get() {
                 return null;
             }
         })));
-        DolphinPlatformHttpClientConnector connector = new DolphinPlatformHttpClientConnector(clientConfiguration, clientDolphin, new JsonCodec(), new ForwardableCallback<DolphinRemotingException>(), new SimpleExceptionHandler(clientConfiguration.getUiExecutor()));
+        DolphinPlatformHttpClientConnector connector = new DolphinPlatformHttpClientConnector(clientConfiguration, clientDolphin.getModelStore(), new JsonCodec(), new SimpleExceptionHandler());
 
         List<Command> commands = new ArrayList<>();
         commands.add(new CreateContextCommand());

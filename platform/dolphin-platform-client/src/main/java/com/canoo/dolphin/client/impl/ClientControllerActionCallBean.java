@@ -20,21 +20,20 @@ import com.canoo.dolphin.converter.ValueConverterException;
 import com.canoo.dolphin.impl.AbstractControllerActionCallBean;
 import com.canoo.dolphin.impl.Converters;
 import com.canoo.dolphin.impl.PlatformConstants;
-import com.canoo.dolphin.internal.PresentationModelBuilder;
 import com.canoo.dolphin.mapping.MappingException;
-import org.opendolphin.core.Dolphin;
-import org.opendolphin.core.PresentationModel;
-import org.opendolphin.core.client.ClientDolphin;
+import com.canoo.dolphin.util.Assert;
+import org.opendolphin.core.client.ClientModelStore;
+import org.opendolphin.core.client.ClientPresentationModel;
 
 public class ClientControllerActionCallBean extends AbstractControllerActionCallBean {
 
-    private final Dolphin dolphin;
-    private PresentationModel pm;
+    private final ClientModelStore modelStore;
+    private ClientPresentationModel pm;
 
-    public ClientControllerActionCallBean(ClientDolphin dolphin, Converters converters, String controllerId, String actionName, Param... params) {
-        this.dolphin = dolphin;
+    public ClientControllerActionCallBean(ClientModelStore modelStore, Converters converters, String controllerId, String actionName, Param... params) {
+        this.modelStore = Assert.requireNonNull(modelStore, "modelStore");
 
-        final PresentationModelBuilder builder = new ClientPresentationModelBuilder(dolphin);
+        final ClientPresentationModelBuilder builder = new ClientPresentationModelBuilder(modelStore);
         builder.withType(PlatformConstants.CONTROLLER_ACTION_CALL_BEAN_NAME)
                 .withAttribute(CONTROLLER_ID, controllerId)
                 .withAttribute(ACTION_NAME, actionName)
@@ -65,7 +64,7 @@ public class ClientControllerActionCallBean extends AbstractControllerActionCall
     @SuppressWarnings("unchecked")
     public void unregister() {
         if (pm != null) {
-            dolphin.getModelStore().remove(pm);
+            modelStore.remove(pm);
             pm = null;
         }
     }

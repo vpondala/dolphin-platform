@@ -16,28 +16,10 @@
 package com.canoo.dolphin.client;
 
 import com.canoo.dolphin.BeanManager;
-import com.canoo.dolphin.client.util.AbstractDolphinBasedTest;
-import com.canoo.dolphin.client.util.ChildModel;
-import com.canoo.dolphin.client.util.ComplexDataTypesModel;
-import com.canoo.dolphin.client.util.ListReferenceModel;
-import com.canoo.dolphin.client.util.PrimitiveDataTypesModel;
-import com.canoo.dolphin.client.util.SimpleAnnotatedTestModel;
-import com.canoo.dolphin.client.util.SimpleTestModel;
-import com.canoo.dolphin.client.util.SingleReferenceModel;
+import com.canoo.dolphin.client.util.*;
 import com.canoo.dolphin.impl.BeanDefinitionException;
 import com.canoo.dolphin.impl.PlatformConstants;
-import com.canoo.dolphin.impl.converters.BooleanConverterFactory;
-import com.canoo.dolphin.impl.converters.ByteConverterFactory;
-import com.canoo.dolphin.impl.converters.CalendarConverterFactory;
-import com.canoo.dolphin.impl.converters.DateConverterFactory;
-import com.canoo.dolphin.impl.converters.DolphinBeanConverterFactory;
-import com.canoo.dolphin.impl.converters.DoubleConverterFactory;
-import com.canoo.dolphin.impl.converters.EnumConverterFactory;
-import com.canoo.dolphin.impl.converters.FloatConverterFactory;
-import com.canoo.dolphin.impl.converters.IntegerConverterFactory;
-import com.canoo.dolphin.impl.converters.LongConverterFactory;
-import com.canoo.dolphin.impl.converters.ShortConverterFactory;
-import com.canoo.dolphin.impl.converters.StringConverterFactory;
+import com.canoo.dolphin.impl.converters.*;
 import mockit.Mocked;
 import org.hamcrest.Matchers;
 import org.opendolphin.RemotingConstants;
@@ -45,27 +27,19 @@ import org.opendolphin.core.Attribute;
 import org.opendolphin.core.PresentationModel;
 import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.client.ClientPresentationModel;
-import org.opendolphin.core.client.comm.ClientConnector;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.fail;
 
 public class TestModelCreation extends AbstractDolphinBasedTest {
 
     @Test
-    public void testWithAnnotatedSimpleModel(@Mocked ClientConnector connector) {
+    public void testWithAnnotatedSimpleModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -119,7 +93,7 @@ public class TestModelCreation extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithSimpleModel(@Mocked ClientConnector connector) {
+    public void testWithSimpleModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -173,7 +147,7 @@ public class TestModelCreation extends AbstractDolphinBasedTest {
     }
 
     @Test(expectedExceptions = BeanDefinitionException.class)
-    public void testWithWrongModelType(@Mocked ClientConnector connector) {
+    public void testWithWrongModelType(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -181,7 +155,7 @@ public class TestModelCreation extends AbstractDolphinBasedTest {
     }
 
     @Test(expectedExceptions = NullPointerException.class)
-    public void testWithNull(@Mocked ClientConnector connector) {
+    public void testWithNull(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -189,7 +163,7 @@ public class TestModelCreation extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithAllPrimitiveDatatypes(@Mocked ClientConnector connector) {
+    public void testWithAllPrimitiveDatatypes(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -267,7 +241,7 @@ public class TestModelCreation extends AbstractDolphinBasedTest {
 
 
     @Test
-    public void testWithComplexDataTypesModel(@Mocked ClientConnector connector) {
+    public void testWithComplexDataTypesModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -346,7 +320,7 @@ public class TestModelCreation extends AbstractDolphinBasedTest {
 
 
     @Test
-    public void testWithSingleReferenceModel(@Mocked ClientConnector connector) {
+    public void testWithSingleReferenceModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -400,7 +374,7 @@ public class TestModelCreation extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithListReferenceModel(@Mocked ClientConnector connector) {
+    public void testWithListReferenceModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
@@ -453,7 +427,7 @@ public class TestModelCreation extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void testWithInheritedModel(@Mocked ClientConnector connector) {
+    public void testWithInheritedModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
 
