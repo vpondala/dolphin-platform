@@ -16,6 +16,8 @@
 package org.opendolphin.core.client.comm;
 
 import org.opendolphin.core.comm.ValueChangedCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -25,8 +27,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A command batcher that puts all commands in one packet that
@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  */
 public class BlindCommandBatcher extends CommandBatcher {
 
-    private static final Logger LOG = Logger.getLogger(BlindCommandBatcher.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(BlindCommandBatcher.class);
 
     private final int MAX_GET_PM_CMD_CACHE_SIZE = 200;
 
@@ -76,14 +76,13 @@ public class BlindCommandBatcher extends CommandBatcher {
 
     @Override
     public void batch(CommandAndHandler commandWithHandler) {
-        LOG.log(Level.FINEST, "batching " + commandWithHandler.getCommand() + " with" + (commandWithHandler.getHandler() != null ? "" : "out") + " handler");
+        LOG.trace("batching {} with {} handler",  commandWithHandler.getCommand(), (commandWithHandler.getHandler() != null ? "" : "out"));
 
         if (canBeDropped(commandWithHandler)) {
-            LOG.log(Level.FINEST, "dropping duplicate GetPresentationModelCommand");
+            LOG.trace("dropping duplicate GetPresentationModelCommand");
             return;
 
         }
-
 
         commandsAndHandlersLock.lock();
         try {
@@ -177,7 +176,7 @@ public class BlindCommandBatcher extends CommandBatcher {
             val = counter != 0 ? take(queue) : null;
         }
 
-        LOG.log(Level.FINEST, "batching " + blindCommands.size() + " blinds");
+        LOG.trace("batching {} blinds" , blindCommands.size());
         if (!blindCommands.isEmpty()) {
             getWaitingBatches().add(blindCommands);
         }
@@ -234,7 +233,7 @@ public class BlindCommandBatcher extends CommandBatcher {
 
 
         ValueChangedCommand mergeableCmd = (ValueChangedCommand) mergeable.getCommand();
-        LOG.log(Level.FINEST, "merging value changed command for attribute " + mergeableCmd.getAttributeId() + " with new values " + mergeableCmd.getNewValue() + " -> " + valCmd.getNewValue());
+        LOG.trace("merging value changed command for attribute {} with new values {}  -> {}", mergeableCmd.getAttributeId(), mergeableCmd.getNewValue(), valCmd.getNewValue());
         mergeableCmd.setNewValue(valCmd.getNewValue());
 
         return true;

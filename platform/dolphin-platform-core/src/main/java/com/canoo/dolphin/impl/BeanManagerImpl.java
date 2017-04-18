@@ -17,13 +17,11 @@ package com.canoo.dolphin.impl;
 
 import com.canoo.dolphin.BeanManager;
 import com.canoo.dolphin.event.BeanAddedListener;
-import com.canoo.dolphin.event.BeanRemovedListener;
 import com.canoo.dolphin.event.Subscription;
 import com.canoo.dolphin.internal.BeanBuilder;
 import com.canoo.dolphin.internal.BeanRepository;
 import com.canoo.dolphin.util.Assert;
 
-import java.util.Collection;
 import java.util.List;
 
 public class BeanManagerImpl implements BeanManager {
@@ -37,48 +35,9 @@ public class BeanManagerImpl implements BeanManager {
     }
 
     @Override
-    public boolean isManaged(final Object bean) {
-        DolphinUtils.assertIsDolphinBean(bean);
-        return beanRepository.isManaged(bean);
-    }
-
-    @Override
     public <T> T create(final Class<T> beanClass) {
         DolphinUtils.assertIsDolphinBean(beanClass);
         return beanBuilder.create(beanClass);
-    }
-
-    @Override
-    public void remove(final Object bean) {
-        DolphinUtils.assertIsDolphinBean(bean);
-        beanRepository.delete(bean);
-    }
-
-    @Override
-    public void removeAll(final Class<?> beanClass) {
-        DolphinUtils.assertIsDolphinBean(beanClass);
-        for (Object bean : findAll(beanClass)) {
-            DolphinUtils.assertIsDolphinBean(bean);
-            beanRepository.delete(bean);
-        }
-    }
-
-    @Override
-    public void removeAll(final Object... beans) {
-        Assert.requireNonNull(beans, "beans");
-        for (final Object bean : beans) {
-            DolphinUtils.assertIsDolphinBean(bean);
-            remove(bean);
-        }
-    }
-
-    @Override
-    public void removeAll(final Collection<?> beans) {
-        Assert.requireNonNull(beans, "beans");
-        for (final Object bean : beans) {
-            DolphinUtils.assertIsDolphinBean(bean);
-            remove(bean);
-        }
     }
 
     @Override
@@ -92,21 +51,4 @@ public class BeanManagerImpl implements BeanManager {
         DolphinUtils.assertIsDolphinBean(beanClass);
         return beanRepository.addOnAddedListener(beanClass, listener);
     }
-
-    @Override
-    public Subscription onAdded(final BeanAddedListener<Object> listener) {
-        return beanRepository.addOnAddedListener(listener);
-    }
-
-    @Override
-    public <T> Subscription onRemoved(final Class<T> beanClass, final BeanRemovedListener<? super T> listener) {
-        DolphinUtils.assertIsDolphinBean(beanClass);
-        return beanRepository.addOnRemovedListener(beanClass, listener);
-    }
-
-    @Override
-    public Subscription onRemoved(final BeanRemovedListener<Object> listener) {
-        return beanRepository.addOnRemovedListener(listener);
-    }
-
 }

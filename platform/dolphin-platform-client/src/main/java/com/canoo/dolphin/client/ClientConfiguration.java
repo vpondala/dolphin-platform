@@ -44,7 +44,7 @@ import java.util.logging.Level;
  */
 public class ClientConfiguration {
 
-    private final static long DEFAULT_CONNECTION_TIMEOUT = 1_000;
+    private final static long DEFAULT_CONNECTION_TIMEOUT = 5_000;
 
     private final URL serverEndpoint;
 

@@ -22,6 +22,7 @@ import com.canoo.dolphin.client.impl.ClientPresentationModelBuilderFactory;
 import com.canoo.dolphin.impl.*;
 import com.canoo.dolphin.impl.collections.ListMapperImpl;
 import com.canoo.dolphin.internal.BeanBuilder;
+import com.canoo.dolphin.internal.BeanRepository;
 import com.canoo.dolphin.internal.ClassRepository;
 import com.canoo.dolphin.internal.EventDispatcher;
 import com.canoo.dolphin.internal.collections.ListMapper;
@@ -84,14 +85,28 @@ public abstract class AbstractDolphinBasedTest {
         return new DolphinTestConfiguration(config.getClientDolphin(), config.getServerDolphin());
     }
 
-    protected BeanManager createBeanManager(ClientDolphin dolphin) {
+    protected EventDispatcher createEventDispatcher(final ClientDolphin dolphin) {
         final EventDispatcher dispatcher = new ClientEventDispatcher(dolphin.getModelStore());
+        return dispatcher;
+    }
+
+    protected BeanRepository createBeanRepository(final ClientDolphin dolphin, final EventDispatcher dispatcher) {
         final BeanRepositoryImpl beanRepository = new BeanRepositoryImpl(dolphin.getModelStore(), dispatcher);
+        return beanRepository;
+    }
+
+    protected BeanManager createBeanManager(final ClientDolphin dolphin, final BeanRepository beanRepository, final EventDispatcher dispatcher) {
         final Converters converters = new Converters(beanRepository);
         final PresentationModelBuilderFactory builderFactory = new ClientPresentationModelBuilderFactory(dolphin.getModelStore());
         final ClassRepository classRepository = new ClassRepositoryImpl(dolphin.getModelStore(), converters, builderFactory);
         final ListMapper listMapper = new ListMapperImpl(dolphin.getModelStore(), classRepository, beanRepository, builderFactory, dispatcher);
         final BeanBuilder beanBuilder = new ClientBeanBuilderImpl(classRepository, beanRepository, listMapper, builderFactory, dispatcher);
         return new BeanManagerImpl(beanRepository, beanBuilder);
+    }
+
+    protected BeanManager createBeanManager(ClientDolphin dolphin) {
+        final EventDispatcher dispatcher = createEventDispatcher(dolphin);
+        final BeanRepository repository = createBeanRepository(dolphin, dispatcher);
+        return createBeanManager(dolphin, repository, dispatcher);
     }
 }

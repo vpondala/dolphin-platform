@@ -15,11 +15,10 @@
  */
 package com.canoo.dolphin.client.impl;
 
+import com.canoo.dolphin.BeanManager;
 import com.canoo.dolphin.client.*;
-import com.canoo.dolphin.impl.BeanRepositoryImpl;
-import com.canoo.dolphin.impl.ClassRepositoryImpl;
-import com.canoo.dolphin.impl.Converters;
-import com.canoo.dolphin.impl.PresentationModelBuilderFactory;
+import com.canoo.dolphin.impl.*;
+import com.canoo.dolphin.impl.collections.ListMapperImpl;
 import com.canoo.dolphin.impl.commands.CreateContextCommand;
 import com.canoo.dolphin.impl.commands.DestroyContextCommand;
 import com.canoo.dolphin.internal.BeanRepository;
@@ -48,7 +47,7 @@ public class ClientContextImpl implements ClientContext {
     private ClientModelStore modelStore;
 
     @Deprecated
-    private  ClientBeanManagerImpl clientBeanManager;
+    private  BeanManager clientBeanManager;
 
     private ControllerProxyFactory controllerProxyFactory;
 
@@ -76,7 +75,7 @@ public class ClientContextImpl implements ClientContext {
     }
 
     @Override
-    public synchronized ClientBeanManager getBeanManager() {
+    public synchronized BeanManager getBeanManager() {
         return clientBeanManager;
     }
 
@@ -124,7 +123,7 @@ public class ClientContextImpl implements ClientContext {
 
         this.dolphinCommandHandler = new DolphinCommandHandler(clientConnector);
         this.controllerProxyFactory = new ControllerProxyFactoryImpl(dolphinCommandHandler, clientConnector, modelStore, beanRepository, dispatcher, converters);
-        this.clientBeanManager = new ClientBeanManagerImpl(beanRepository, classRepository, modelStore, builderFactory, dispatcher);
+        this.clientBeanManager = new BeanManagerImpl(beanRepository, new ClientBeanBuilderImpl(classRepository, beanRepository, new ListMapperImpl(modelStore, classRepository, beanRepository, builderFactory, dispatcher), builderFactory, dispatcher));
 
         final CompletableFuture<Void> result = new CompletableFuture<>();
         clientConnector.connect();

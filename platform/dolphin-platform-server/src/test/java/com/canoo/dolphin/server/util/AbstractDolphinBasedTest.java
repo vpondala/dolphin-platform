@@ -23,6 +23,7 @@ import com.canoo.dolphin.impl.Converters;
 import com.canoo.dolphin.impl.PresentationModelBuilderFactory;
 import com.canoo.dolphin.impl.collections.ListMapperImpl;
 import com.canoo.dolphin.internal.BeanBuilder;
+import com.canoo.dolphin.internal.BeanRepository;
 import com.canoo.dolphin.internal.ClassRepository;
 import com.canoo.dolphin.internal.EventDispatcher;
 import com.canoo.dolphin.internal.collections.ListMapper;
@@ -55,6 +56,31 @@ public abstract class AbstractDolphinBasedTest {
 
         return config.getServerDolphin();
     }
+
+    protected EventDispatcher createEventDispatcher(ServerDolphin dolphin) {
+        return new ServerEventDispatcher(dolphin);
+    }
+
+    protected BeanRepository createBeanRepository(ServerDolphin dolphin, EventDispatcher dispatcher) {
+        return new BeanRepositoryImpl(dolphin.getModelStore(), dispatcher);
+    }
+
+    protected BeanManager createBeanManager(ServerDolphin dolphin, BeanRepository beanRepository, EventDispatcher dispatcher) {
+        final Converters converters = new Converters(beanRepository);
+        final PresentationModelBuilderFactory builderFactory = new ServerPresentationModelBuilderFactory(dolphin);
+        final ClassRepository classRepository = new ClassRepositoryImpl(dolphin.getModelStore(), converters, builderFactory);
+        final ListMapper listMapper = new ListMapperImpl(dolphin.getModelStore(), classRepository, beanRepository, builderFactory, dispatcher);
+        final DolphinPlatformConfiguration configurationForGc = new DolphinPlatformConfiguration();
+        final GarbageCollector garbageCollector = new GarbageCollector(configurationForGc, new GarbageCollectionCallback() {
+            @Override
+            public void onReject(Set<Instance> instances) {
+
+            }
+        });
+        final BeanBuilder beanBuilder = new ServerBeanBuilderImpl(classRepository, beanRepository, listMapper, builderFactory, dispatcher, garbageCollector);
+        return new BeanManagerImpl(beanRepository, beanBuilder);
+    }
+
 
     protected BeanManager createBeanManager(ServerDolphin dolphin) {
         final EventDispatcher dispatcher = new ServerEventDispatcher(dolphin);

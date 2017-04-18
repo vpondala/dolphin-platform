@@ -17,6 +17,8 @@ package com.canoo.dolphin.client;
 
 import com.canoo.dolphin.BeanManager;
 import com.canoo.dolphin.client.util.*;
+import com.canoo.dolphin.internal.BeanRepository;
+import com.canoo.dolphin.internal.EventDispatcher;
 import mockit.Mocked;
 import org.opendolphin.core.Attribute;
 import org.opendolphin.core.PresentationModel;
@@ -41,7 +43,9 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
     @Test
     public void testWithAnnotatedSimpleModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
-        final BeanManager manager = createBeanManager(dolphin);
+        final EventDispatcher dispatcher = createEventDispatcher(dolphin);
+        final BeanRepository repository = createBeanRepository(dolphin, dispatcher);
+        final BeanManager manager = createBeanManager(dolphin, repository, dispatcher);
 
         SimpleAnnotatedTestModel model = manager.create(SimpleAnnotatedTestModel.class);
 
@@ -62,7 +66,9 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
     @Test
     public void testWithSimpleModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
-        final BeanManager manager = createBeanManager(dolphin);
+        final EventDispatcher dispatcher = createEventDispatcher(dolphin);
+        final BeanRepository repository = createBeanRepository(dolphin, dispatcher);
+        final BeanManager manager = createBeanManager(dolphin, repository, dispatcher);
 
         SimpleTestModel model = manager.create(SimpleTestModel.class);
 
@@ -83,7 +89,9 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
     @Test
     public void testWithAllPrimitiveDataTypesModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
-        final BeanManager manager = createBeanManager(dolphin);
+        final EventDispatcher dispatcher = createEventDispatcher(dolphin);
+        final BeanRepository repository = createBeanRepository(dolphin, dispatcher);
+        final BeanManager manager = createBeanManager(dolphin, repository, dispatcher);
 
         PrimitiveDataTypesModel model = manager.create(PrimitiveDataTypesModel.class);
 
@@ -137,7 +145,9 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
         date2.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         final ClientDolphin dolphin = createClientDolphin(connector);
-        final BeanManager manager = createBeanManager(dolphin);
+        final EventDispatcher dispatcher = createEventDispatcher(dolphin);
+        final BeanRepository repository = createBeanRepository(dolphin, dispatcher);
+        final BeanManager manager = createBeanManager(dolphin, repository, dispatcher);
 
         ComplexDataTypesModel model = manager.create(ComplexDataTypesModel.class);
 
@@ -184,7 +194,9 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
     @Test
     public void testWithSingleReferenceModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
-        final BeanManager manager = createBeanManager(dolphin);
+        final EventDispatcher dispatcher = createEventDispatcher(dolphin);
+        final BeanRepository repository = createBeanRepository(dolphin, dispatcher);
+        final BeanManager manager = createBeanManager(dolphin, repository, dispatcher);
 
         final SimpleTestModel ref1 = manager.create(SimpleTestModel.class);
         ref1.getTextProperty().set("ref1_text");
@@ -213,7 +225,9 @@ public class TestPropertyValue extends AbstractDolphinBasedTest {
     @Test
     public void testWithInheritedModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
-        final BeanManager manager = createBeanManager(dolphin);
+        final EventDispatcher dispatcher = createEventDispatcher(dolphin);
+        final BeanRepository repository = createBeanRepository(dolphin, dispatcher);
+        final BeanManager manager = createBeanManager(dolphin, repository, dispatcher);
 
         ChildModel model = manager.create(ChildModel.class);
 

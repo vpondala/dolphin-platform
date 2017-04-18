@@ -16,6 +16,6 @@
     "iron-icon": "PolymerElements/iron-icon#1.0.x",
     "iron-icons": "PolymerElements/iron-icons#1.0.x",
     "paper-elements": "PolymerElements/paper-elements#1.0.x",
-    "dolphin-platform-polymer": "0.11.0"
+    "dolphin-platform-polymer": "0.12.0"
   }
 }

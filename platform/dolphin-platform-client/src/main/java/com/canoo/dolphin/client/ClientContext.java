@@ -15,6 +15,8 @@
  */
 package com.canoo.dolphin.client;
 
+import com.canoo.dolphin.BeanManager;
+
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -42,7 +44,7 @@ public interface ClientContext {
      * @return the bean manager
      */
     @Deprecated
-    ClientBeanManager getBeanManager();
+    BeanManager getBeanManager();
 
     /**
      * Disconnects the client context. The method don't block. To verify that the connection has been closed

@@ -21,16 +21,17 @@ import org.opendolphin.core.client.ClientAttribute;
 import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.client.ClientPresentationModel;
 import org.opendolphin.core.comm.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 public class ClientResponseHandler {
 
-    private static final Logger LOG = Logger.getLogger(ClientResponseHandler.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ClientResponseHandler.class);
 
     private final ClientModelStore clientModelStore;
 
@@ -48,7 +49,7 @@ public class ClientResponseHandler {
         } else if (command instanceof QualifierChangedCommand) {
             handleQualifierChangedCommand((QualifierChangedCommand) command);
         } else {
-            LOG.severe("C: cannot handle unknown command '" + command + "'");
+            LOG.error("C: cannot handle unknown command '{}'", command );
         }
     }
 
@@ -97,7 +98,11 @@ public class ClientResponseHandler {
             return;
         }
 
-        LOG.info("C: updating '" + attribute.getPropertyName() + "' id '" + serverCommand.getAttributeId() + "' from '" + attribute.getValue() + "' to '" + serverCommand.getNewValue() + "'");
+            LOG.warn("C: attribute with id '{}' and value '{}' cannot be set to new value '{}' because the change was based on an outdated old value of '{}'.", serverCommand.getAttributeId(), attribute.getValue(), serverCommand.getNewValue(), serverCommand.getOldValue());
+            return;
+        }
+
+        LOG.info("C: updating '{}' id '{}' from '{}' to '{}' " + attribute.getPropertyName(), serverCommand.getAttributeId(), attribute.getValue(), serverCommand.getNewValue());
         attribute.setValue(serverCommand.getNewValue());
     }
 

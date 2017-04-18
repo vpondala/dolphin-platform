@@ -184,7 +184,7 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
 
     @Override
     public void connect() {
-        clientId = null;
+        clientId.set(null);
         disconnecting.set(false);
         super.connect();
     }
@@ -192,7 +192,7 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
     @Override
     public void disconnect() {
         super.disconnect();
-        clientId = null;
+        clientId.set(null);
         disconnecting.set(false);
     }
 }

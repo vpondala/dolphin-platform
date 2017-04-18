@@ -17,18 +17,18 @@ package org.opendolphin.core.client.comm;
 
 import org.opendolphin.util.DolphinRemotingException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SimpleExceptionHandler implements RemotingExceptionHandler {
 
-    private static final Logger LOG = Logger.getLogger(SimpleExceptionHandler.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleExceptionHandler.class);
 
     public SimpleExceptionHandler() {
     }
 
     @Override
     public void handle(final DolphinRemotingException e) {
-        LOG.log(Level.SEVERE, "Error in remoting layer", e);
+        LOG.error(" Error in remoting layer: ", e);
     }
 }

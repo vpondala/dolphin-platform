@@ -19,6 +19,8 @@ import com.canoo.dolphin.BeanManager;
 import com.canoo.dolphin.client.util.AbstractDolphinBasedTest;
 import com.canoo.dolphin.client.util.SimpleAnnotatedTestModel;
 import com.canoo.dolphin.client.util.SimpleTestModel;
+import com.canoo.dolphin.internal.BeanRepository;
+import com.canoo.dolphin.internal.EventDispatcher;
 import mockit.Mocked;
 import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.client.ClientPresentationModel;
@@ -36,7 +38,9 @@ public class TestDeleteAll extends AbstractDolphinBasedTest {
     @Test
     public void testWithSimpleModel(@Mocked AbstractClientConnector connector) {
         final ClientDolphin dolphin = createClientDolphin(connector);
-        final BeanManager manager = createBeanManager(dolphin);
+        final EventDispatcher dispatcher = createEventDispatcher(dolphin);
+        final BeanRepository repository = createBeanRepository(dolphin, dispatcher);
+        final BeanManager manager = createBeanManager(dolphin, repository, dispatcher);
 
 
         SimpleTestModel model1 = manager.create(SimpleTestModel.class);
@@ -45,11 +49,14 @@ public class TestDeleteAll extends AbstractDolphinBasedTest {
 
         SimpleAnnotatedTestModel wrongModel = manager.create(SimpleAnnotatedTestModel.class);
 
-        manager.removeAll(SimpleTestModel.class);
-        assertThat(manager.isManaged(model1), is(false));
-        assertThat(manager.isManaged(model2), is(false));
-        assertThat(manager.isManaged(model3), is(false));
-        assertThat(manager.isManaged(wrongModel), is(true));
+        for (Object bean : manager.findAll(SimpleTestModel.class)) {
+            repository.delete(bean);
+        }
+
+        assertThat(repository.isManaged(model1), is(false));
+        assertThat(repository.isManaged(model2), is(false));
+        assertThat(repository.isManaged(model3), is(false));
+        assertThat(repository.isManaged(wrongModel), is(true));
 
         List<ClientPresentationModel> testModels = dolphin.getModelStore().findAllPresentationModelsByType("com.canoo.dolphin.client.util.SimpleTestModel");
         assertThat(testModels, hasSize(0));
