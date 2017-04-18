@@ -49,7 +49,7 @@ public class ClientResponseHandler {
         } else if (command instanceof QualifierChangedCommand) {
             handleQualifierChangedCommand((QualifierChangedCommand) command);
         } else {
-            LOG.error("C: cannot handle unknown command '{}'", command );
+            LOG.error("C: cannot handle unknown command '{}'", command);
         }
     }
 
@@ -58,7 +58,7 @@ public class ClientResponseHandler {
         if (model == null) {
             throw new IllegalStateException("Can not find presentation model with id '" + serverCommand.getPmId());
         }
-        clientModelStore.delete(model, false);
+        clientModelStore.remove(model);
     }
 
     private void handleCreatePresentationModelCommand(CreatePresentationModelCommand serverCommand) {
@@ -97,12 +97,7 @@ public class ClientResponseHandler {
         if (attribute.getValue() == null && serverCommand.getNewValue() == null || (attribute.getValue() != null && serverCommand.getNewValue() != null && attribute.getValue().equals(serverCommand.getNewValue()))) {
             return;
         }
-
-            LOG.warn("C: attribute with id '{}' and value '{}' cannot be set to new value '{}' because the change was based on an outdated old value of '{}'.", serverCommand.getAttributeId(), attribute.getValue(), serverCommand.getNewValue(), serverCommand.getOldValue());
-            return;
-        }
-
-        LOG.info("C: updating '{}' id '{}' from '{}' to '{}' " + attribute.getPropertyName(), serverCommand.getAttributeId(), attribute.getValue(), serverCommand.getNewValue());
+        LOG.info("C: updating '{}' id '{}' from '{}' to '{}' ", attribute.getPropertyName(), serverCommand.getAttributeId(), attribute.getValue(), serverCommand.getNewValue());
         attribute.setValue(serverCommand.getNewValue());
     }
 

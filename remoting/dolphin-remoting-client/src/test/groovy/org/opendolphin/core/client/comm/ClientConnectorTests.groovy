@@ -154,7 +154,9 @@ class ClientConnectorTests extends GroovyTestCase {
 
 	void testAddTwoAttributesInConstructorWithSameQualifierToSamePMIsNotAllowed() {
 		shouldFail(IllegalStateException) {
-			dolphin.getModelStore().createModel("1", null, new ClientAttribute("a", "0", "QUAL"), new ClientAttribute("b", "0", "QUAL"))
+			ClientPresentationModel result = new ClientPresentationModel("1", Arrays.asList(new ClientAttribute("a", "0", "QUAL"), new ClientAttribute("b", "0", "QUAL")));
+			result.setPresentationModelType(null);
+			dolphin.getModelStore().add(result);
 		}
 	}
 
@@ -229,7 +231,9 @@ class ClientConnectorTests extends GroovyTestCase {
 	}
 
 	void testHandle_CreatePresentationModel_MergeAttributesToExistingModel() {
-		dolphin.getModelStore().createModel('p1', null)
+		ClientPresentationModel result = new ClientPresentationModel('p1', Collections.emptyList());
+		result.setPresentationModelType(null);
+		dolphin.modelStore.add(result);
 		shouldFail(IllegalStateException) {
 			clientConnector.dispatchHandle(new CreatePresentationModelCommand(pmId: 'p1', pmType: 'type', attributes: []))
 		}
@@ -253,8 +257,8 @@ class ClientConnectorTests extends GroovyTestCase {
 //		// 3: DeletedPresentationModelNotification caused by delete of p2
 //		assertCommandsTransmitted(4)
 //		assert 1 == clientConnector.transmittedCommands.findAll { it instanceof DeletedPresentationModelNotification }.size()
-            it instanceof DeletedPresentationModelNotification
-        }.size()
+     //       it instanceof DeletedPresentationModelNotification
+       // }.size()
 //	}
 
 	@Log

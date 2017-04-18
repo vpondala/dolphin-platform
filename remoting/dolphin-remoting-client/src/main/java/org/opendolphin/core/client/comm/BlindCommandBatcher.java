@@ -38,8 +38,6 @@ public class BlindCommandBatcher extends CommandBatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlindCommandBatcher.class);
 
-    private final int MAX_GET_PM_CMD_CACHE_SIZE = 200;
-
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
     private LinkedList<CommandAndHandler> commandsAndHandlers = new LinkedList<CommandAndHandler>();

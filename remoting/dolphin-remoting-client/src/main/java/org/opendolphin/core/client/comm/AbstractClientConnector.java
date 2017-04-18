@@ -124,7 +124,7 @@ public abstract class AbstractClientConnector {
                     LOG.warn("Remoting error based on broken connection in parallel request", e);
                 }
             }
-            if(!longPollingActivated && useLongPolling.get()) {
+            if (!longPollingActivated && useLongPolling.get()) {
                 uiExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -168,7 +168,7 @@ public abstract class AbstractClientConnector {
             for (Command command : response) {
                 buffer.append(command.getClass().getSimpleName());
                 buffer.append(", ");
-                }
+            }
             LOG.debug("Processing {} commands from server: {}", response.size(), buffer.substring(0, buffer.length() - 2));
         } else {
             LOG.info("Processing {} commands from server", response.size());
@@ -182,11 +182,11 @@ public abstract class AbstractClientConnector {
         if (callback != null) {
             LOG.debug("Handling registered callback");
             try {
-            callback.onFinished();
+                callback.onFinished();
             } catch (Exception e) {
                 LOG.error("Error in handling callback", e);
                 throw e;
-    }
+            }
         }
     }
 
@@ -204,16 +204,16 @@ public abstract class AbstractClientConnector {
 
         releaseNeeded.set(true);
         try {
-        send(pushListener, new OnFinishedHandler() {
-            @Override
-            public void onFinished() {
-                releaseNeeded.set(false);
-                listen();
-            }
-        });
+            send(pushListener, new OnFinishedHandler() {
+                @Override
+                public void onFinished() {
+                    releaseNeeded.set(false);
+                    listen();
+                }
+            });
         } catch (Exception e) {
             LOG.error("Error in sending long poll", e);
-    }
+        }
     }
 
     /**
@@ -242,7 +242,7 @@ public abstract class AbstractClientConnector {
     public void connect(final boolean longPoll) {
         if (connectedFlag.get()) {
             throw new IllegalStateException("Can not call connect on a connected connection");
-            }
+        }
 
         connectedFlag.set(true);
         uiExecutor.execute(new Runnable() {
@@ -253,7 +253,7 @@ public abstract class AbstractClientConnector {
         });
 
         backgroundExecutor.execute(new Runnable() {
-    @Override
+            @Override
             public void run() {
                 commandProcessing();
             }
@@ -271,15 +271,11 @@ public abstract class AbstractClientConnector {
         }
         connectedFlag.set(false);
         uiExecutor.execute(new Runnable() {
-    @Override
+            @Override
             public void run() {
                 connectionFlagForUiExecutor = false;
             }
         });
-    }
-
-    public void setStrictMode(boolean strictMode) {
-        this.responseHandler.setStrictMode(strictMode);
     }
 
     protected Command getReleaseCommand() {

@@ -18,6 +18,7 @@ package com.canoo.dolphin.client.impl;
 import com.canoo.dolphin.client.util.AbstractDolphinBasedTest;
 import org.opendolphin.core.client.ClientAttribute;
 import org.opendolphin.core.client.ClientDolphin;
+import org.opendolphin.core.client.ClientPresentationModel;
 import org.opendolphin.core.comm.Command;
 import org.opendolphin.core.server.ServerDolphin;
 import org.opendolphin.core.server.action.DolphinServerAction;
@@ -25,6 +26,7 @@ import org.opendolphin.core.server.comm.ActionRegistry;
 import org.opendolphin.core.server.comm.CommandHandler;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
@@ -41,7 +43,10 @@ public class TestDolphinCommandHandler extends AbstractDolphinBasedTest {
         final ClientDolphin clientDolphin = configuration.getClientDolphin();
         final DolphinCommandHandler dolphinCommandHandler = new DolphinCommandHandler(clientDolphin.getClientConnector());
         final String modelId = UUID.randomUUID().toString();
-        clientDolphin.getModelStore().createModel(modelId, null, new ClientAttribute("myAttribute", "UNKNOWN"));
+
+        ClientPresentationModel model = new ClientPresentationModel(modelId, Arrays.asList(new ClientAttribute("myAttribute", "UNKNOWN")));
+        clientDolphin.getModelStore().add(model);
+
         serverDolphin.getServerConnector().register(new DolphinServerAction() {
             @Override
             public void registerIn(ActionRegistry registry) {

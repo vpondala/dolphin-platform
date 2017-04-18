@@ -24,7 +24,6 @@ import org.opendolphin.core.server.ServerConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -53,10 +52,6 @@ public class InMemoryClientConnector extends AbstractClientConnector {
     @Override
     public List<Command> transmit(List<Command> commands) {
         LOGGER.trace("transmitting {} commands", commands.size());
-        if (serverConnector == null) {
-            LOGGER.warn("no server connector wired for in-memory connector");
-            return Collections.EMPTY_LIST;
-        }
         if (sleepMillis > 0) {
             try {
                 Thread.sleep(sleepMillis);
