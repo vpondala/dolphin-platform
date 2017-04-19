@@ -46,7 +46,7 @@ A developer should always start to release the *JavaScript basic API*. To do so 
 
 * The https://github.com/canoo/dolphin-platform-js[JavaScript basic API repository] must be check out on the local
 machine
-* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.0`)
+* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.x`)
 * Check out the created release branch
 * If a developer has checked out the repository for the first time he needs to call `npm install` in
 the root folder of the repository to install all the npm dependencies
@@ -66,8 +66,7 @@ As a next step the *Poylmer API* can be released. To do so several steps are nee
 
 * The https://github.com/canoo/dolphin-platform-polymer[Polymer API repository] must be check out on the local
 machine
-* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.0`)
-* Check out the created release branch
+* Check out the master branch
 * The dependency of the Dolphin Platform JS client must be set to the new version in the `bower.json` file
 * If a developer has checked out the repository for the first time he needs to call `npm install` in
 the root folder of the repository to install all the npm dependencies
@@ -79,6 +78,9 @@ the root folder of the repository to install all the bower dependencies
 files: `bower.json`, `package.json` and `sonar-project.properties`
 * As a next step the project must be build by using gulp. To do so call `gulp clean verify build` in the root
 folder of the project.
+* If the build is running commit all changes to master
+* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.x`)
+* Check out the created release branch
 * Once this is done the current state must be tagged in git. The name of the tag must match the version of the new
 release like `0.10.0`
 * Once the tag is uploaded to the global repository at GitHub the Polymer basic API has been released
@@ -87,8 +89,7 @@ As a next step the *AngularJS API* can be released. To do so several steps are n
 
 * The https://github.com/canoo/dolphin-platform-angularjs[AngularJS API repository] must be check out on the local
 machine
-* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.0`)
-* Check out the created release branch
+* Check out the master branch
 * The dependency of the Dolphin Platform JS client must be set to the new version in the `bower.json` file
 * If a developer has checked out the repository for the first time he needs to call `npm install` in
 the root folder of the repository to install all the npm dependencies
@@ -100,6 +101,9 @@ the root folder of the repository to install all the bower dependencies
 files: `bower.json`, `package.json` and `sonar-project.properties`
 * As a next step the project must be build by using gulp. To do so call `gulp clean verify build` in the root
 folder of the project.
+* If the build is running commit all changes to master
+* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.x`)
+* Check out the created release branch
 * Once this is done the current state must be tagged in git. The name of the tag must match the version of the new
 release like `0.10.0`
 * Once the tag is uploaded to the global repository at GitHub the AngularJS basic API has been released
@@ -110,7 +114,7 @@ release like `0.10.0`
 * Try all examples
 * check the changelog for current release in the documentation if all changes are mentioned
 * Commit the changes to master
-* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.0`)
+* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.x`)
 * Check out the created release branch
 * Call `./gradlew clean build` from the project folder to check that the build is working
 * update the version number in the `gradle.properties` file
@@ -123,7 +127,7 @@ release like `0.10.0`
 * Login to Bintray and publish all artifacts to JCenter and Maven Central
 
 ==== Releasing the Android repository
-* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.0`)
+* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.x`)
 * update the version number of Dolphin Platform in the `gradle.properties` file
 * Call `./gradlew clean build` from the project folder to check that the build is working
 * Call `./gradlew clean bintrayUpload` from the project folder. For step the bintray user name and api token
@@ -140,7 +144,7 @@ release like `0.10.0`
 * Do `mvn clean install`
 * Create sample project by calling `mvn archetype:generate -Dfilter=com.canoo.dolphin-platform:` in separate folder
 * Check everything in the sample project
-* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.0`)
+* Create a new branch `release/VERSION` where `VERSION` defines the version that should be released (like `release/0.10.x`)
 * Update version number in main `pom.xml`
 *  Call `mvn clean deploy` from the project folder. For step the bintray user name and api token
   must be configured in the `.m2/setting.xml` Maven setting file.
@@ -174,7 +178,7 @@ A developer should always start to release the *JavaScript basic API*. To do so 
 
 * The https://github.com/canoo/dolphin-platform-js[JavaScript basic API repository] must be check out on the local
 machine
-* Check out the last release branch (like `release/0.10.0`)
+* Check out the last release branch (like `release/0.10.x`)
 * If a developer has checked out the repository for the first time he needs to call `npm install` in
 the root folder of the repository to install all the npm dependencies
 * If a developer has checked out the repository for the first time he needs to call `bower install` in
@@ -193,7 +197,7 @@ As a next step the *Poylmer API* can be released. To do so several steps are nee
 
 * The https://github.com/canoo/dolphin-platform-polymer[Polymer API repository] must be check out on the local
 machine
-* Check out the last release branch (like `release/0.10.0`)
+* Check out the last release branch (like `release/0.10.x`)
 * The dependency of the Dolphin Platform JS client must be set to the new version in the `bower.json` file
 * If a developer has checked out the repository for the first time he needs to call `npm install` in
 the root folder of the repository to install all the npm dependencies
@@ -213,7 +217,7 @@ As a next step the *AngularJS API* can be released. To do so several steps are n
 
 * The https://github.com/canoo/dolphin-platform-angularjs[AngularJS API repository] must be check out on the local
 machine
-* Check out the last release branch (like `release/0.10.0`)
+* Check out the last release branch (like `release/0.10.x`)
 * The dependency of the Dolphin Platform JS client must be set to the new version in the `bower.json` file
 * If a developer has checked out the repository for the first time he needs to call `npm install` in
 the root folder of the repository to install all the npm dependencies
@@ -231,7 +235,7 @@ release like `0.10.1`
 
 
 ==== Releasing the Java repository
-* Check out the last release branch (like `release/0.10.0`)
+* Check out the last release branch (like `release/0.10.x`)
 * Change the version of the project in the `pom.xml` to a `SNAPSHOT` version (like `0.10.1-SNAPSHOT`)
 * update the dependecies of all JavaScript modules in the `platform-examples` folder to the new version
 * Try all examples
@@ -248,7 +252,7 @@ release like `0.10.1`
 * Login to Bintray and publish all artifacts to JCenter and Maven Central
 
 ==== Releasing the Android repository
-* Check out the last release branch (like `release/0.10.0`)
+* Check out the last release branch (like `release/0.10.x`)
 * Change the version of the project in the `pom.xml` to a `SNAPSHOT` version (like `0.10.1-SNAPSHOT`)
 * update the version number of Dolphin Platform in the `gradle.properties` file
 * Call `./gradlew clean build` from the project folder to check that the build is working
@@ -262,10 +266,11 @@ release like `0.10.1`
 
 ==== Releasing the jumpstart repository
 
-* Check out the last release branch (like `release/0.10.0`)
+* Check out the last release branch (like `release/0.10.x`)
 * Change the version of the project in the `pom.xml` to a `SNAPSHOT` version (like `0.10.1-SNAPSHOT`)
 * Change the version number of Dolphin Platform in `src/main/resources/archetype-resources/pom.xml`
 * Change the version number of Dolphin Platform in `src/main/resources/archetype-resources/polymer-client/bower.json`
+* Change the version number of Dolphin Platform in `src/main/resources/archetype-resources/angular-client/bower.json`
 * Do `mvn clean install`
 * Create sample project by calling `mvn archetype:generate -Dfilter=com.canoo.dolphin-platform:` in separate folder
 * Check everything in the sample project

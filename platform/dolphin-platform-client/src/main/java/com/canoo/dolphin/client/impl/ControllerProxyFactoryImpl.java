@@ -16,10 +16,14 @@
 package com.canoo.dolphin.client.impl;
 
 import com.canoo.dolphin.client.ControllerProxy;
+import com.canoo.dolphin.impl.Converters;
 import com.canoo.dolphin.impl.InternalAttributesBean;
 import com.canoo.dolphin.impl.commands.CreateControllerCommand;
+import com.canoo.dolphin.internal.BeanRepository;
+import com.canoo.dolphin.internal.EventDispatcher;
 import com.canoo.dolphin.util.Assert;
-import org.opendolphin.core.client.ClientDolphin;
+import org.opendolphin.core.client.ClientModelStore;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
@@ -30,15 +34,13 @@ public class ControllerProxyFactoryImpl implements ControllerProxyFactory {
 
     private final DolphinCommandHandler dolphinCommandHandler;
 
-    private final ClientDolphin clientDolphin;
+    private final AbstractClientConnector clientConnector;
 
-    public ControllerProxyFactoryImpl(ClientPlatformBeanRepository platformBeanRepository, DolphinCommandHandler dolphinCommandHandler, ClientDolphin clientDolphin) {
-        Assert.requireNonNull(platformBeanRepository, "platformBeanRepository");
-        Assert.requireNonNull(dolphinCommandHandler, "dolphinCommandHandler");
-        Assert.requireNonNull(clientDolphin, "clientDolphin");
-        this.platformBeanRepository = platformBeanRepository;
-        this.dolphinCommandHandler = dolphinCommandHandler;
-        this.clientDolphin = clientDolphin;
+    public ControllerProxyFactoryImpl(final DolphinCommandHandler dolphinCommandHandler, final AbstractClientConnector clientConnector, final ClientModelStore modelStore, final BeanRepository beanRepository, final EventDispatcher dispatcher, final Converters converters) {
+        this.platformBeanRepository = new ClientPlatformBeanRepository(modelStore, beanRepository, dispatcher, converters);
+        this.dolphinCommandHandler = Assert.requireNonNull(dolphinCommandHandler, "dolphinCommandHandler");
+        this.clientConnector = Assert.requireNonNull(clientConnector, "clientConnector");
+
     }
 
     @Override
@@ -50,7 +52,7 @@ public class ControllerProxyFactoryImpl implements ControllerProxyFactory {
         return dolphinCommandHandler.invokeDolphinCommand(new CreateControllerCommand()).thenApply(new Function<Void, ControllerProxy<T>>() {
             @Override
             public ControllerProxy<T> apply(Void aVoid) {
-                return new ControllerProxyImpl<T>(bean.getControllerId(), (T) bean.getModel(), clientDolphin, platformBeanRepository, ControllerProxyFactoryImpl.this);
+                return new ControllerProxyImpl<T>(bean.getControllerId(), (T) bean.getModel(), clientConnector, platformBeanRepository, ControllerProxyFactoryImpl.this);
             }
         });
     }

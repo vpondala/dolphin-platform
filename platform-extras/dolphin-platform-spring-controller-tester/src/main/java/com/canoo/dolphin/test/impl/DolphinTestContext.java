@@ -22,21 +22,15 @@ import com.canoo.dolphin.server.context.DolphinContextUtils;
 import com.canoo.dolphin.server.context.DolphinSessionProvider;
 import com.canoo.dolphin.server.context.OpenDolphinFactory;
 import com.canoo.dolphin.server.controller.ControllerRepository;
-import com.canoo.dolphin.util.Assert;
 import com.canoo.dolphin.util.Callback;
-import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.comm.Command;
-import org.opendolphin.core.server.DefaultServerDolphin;
 
 import java.util.List;
 
 public class DolphinTestContext extends DolphinContext {
 
-    private final TestInMemoryConfiguration config;
-
-    public DolphinTestContext(DolphinPlatformConfiguration configuration, DolphinSessionProvider dolphinSessionProvider, ContainerManager containerManager, ControllerRepository controllerRepository, TestInMemoryConfiguration config) {
-        super(configuration, dolphinSessionProvider, containerManager, controllerRepository, createServerDolphinFactory(config), createEmptyCallback(), createEmptyCallback());
-        this.config = Assert.requireNonNull(config, "config");
+    public DolphinTestContext(DolphinPlatformConfiguration configuration, DolphinSessionProvider dolphinSessionProvider, ContainerManager containerManager, ControllerRepository controllerRepository, OpenDolphinFactory openDolphinFactory) {
+        super(configuration, dolphinSessionProvider, containerManager, controllerRepository,openDolphinFactory, createEmptyCallback(), createEmptyCallback());
         DolphinContextUtils.setContextForCurrentThread(this);
     }
 
@@ -49,25 +43,9 @@ public class DolphinTestContext extends DolphinContext {
         };
     }
 
-    private static OpenDolphinFactory createServerDolphinFactory(final TestInMemoryConfiguration config) {
-        Assert.requireNonNull(config, "config");
-        return new OpenDolphinFactory(){
-
-            @Override
-            public DefaultServerDolphin create() {
-                DefaultServerDolphin defaultServerDolphin =  config.getServerDolphin();
-                return defaultServerDolphin;
-            }
-        };
-    }
-
     @Override
     public List<Command> handle(List<Command> commands) {
         DolphinContextUtils.setContextForCurrentThread(this);
         return super.handle(commands);
-    }
-
-    public ClientDolphin getClientDolphin() {
-        return config.getClientDolphin();
     }
 }

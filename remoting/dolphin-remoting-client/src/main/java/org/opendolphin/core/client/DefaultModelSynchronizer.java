@@ -1,7 +1,7 @@
 package org.opendolphin.core.client;
 
 import org.opendolphin.core.Attribute;
-import org.opendolphin.core.client.comm.ClientConnector;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.opendolphin.core.comm.*;
 import org.opendolphin.util.Provider;
 
@@ -9,9 +9,9 @@ import java.beans.PropertyChangeEvent;
 
 public class DefaultModelSynchronizer implements ModelSynchronizer {
 
-    private final Provider<ClientConnector> connectionProvider;
+    private final Provider<AbstractClientConnector> connectionProvider;
 
-    public DefaultModelSynchronizer(Provider<ClientConnector> connectionProvider) {
+    public DefaultModelSynchronizer(Provider<AbstractClientConnector> connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
 
@@ -40,7 +40,7 @@ public class DefaultModelSynchronizer implements ModelSynchronizer {
     }
 
     private void send(Command command) {
-        ClientConnector clientConnector = connectionProvider.get();
+        AbstractClientConnector clientConnector = connectionProvider.get();
         if(clientConnector == null) {
             throw new IllegalStateException("No connection defined!");
         }

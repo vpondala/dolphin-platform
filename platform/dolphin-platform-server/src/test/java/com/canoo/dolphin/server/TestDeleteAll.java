@@ -16,6 +16,8 @@
 package com.canoo.dolphin.server;
 
 import com.canoo.dolphin.BeanManager;
+import com.canoo.dolphin.internal.BeanRepository;
+import com.canoo.dolphin.internal.EventDispatcher;
 import com.canoo.dolphin.server.util.AbstractDolphinBasedTest;
 import com.canoo.dolphin.server.util.SimpleAnnotatedTestModel;
 import com.canoo.dolphin.server.util.SimpleTestModel;
@@ -34,7 +36,9 @@ public class TestDeleteAll extends AbstractDolphinBasedTest {
     @Test
     public void testWithSimpleModel() {
         final ServerDolphin dolphin = createServerDolphin();
-        final BeanManager manager = createBeanManager(dolphin);
+        final EventDispatcher dispatcher = createEventDispatcher(dolphin);
+        final BeanRepository beanRepository = createBeanRepository(dolphin, dispatcher);
+        final BeanManager manager = createBeanManager(dolphin, beanRepository, dispatcher);
 
         SimpleTestModel model1 = manager.create(SimpleTestModel.class);
         SimpleTestModel model2 = manager.create(SimpleTestModel.class);
@@ -42,11 +46,14 @@ public class TestDeleteAll extends AbstractDolphinBasedTest {
 
         SimpleAnnotatedTestModel wrongModel = manager.create(SimpleAnnotatedTestModel.class);
 
-        manager.removeAll(SimpleTestModel.class);
-        assertThat(manager.isManaged(model1), is(false));
-        assertThat(manager.isManaged(model2), is(false));
-        assertThat(manager.isManaged(model3), is(false));
-        assertThat(manager.isManaged(wrongModel), is(true));
+        for (final Object bean : manager.findAll(SimpleTestModel.class)) {
+            beanRepository.delete(bean);
+        }
+
+        assertThat(beanRepository.isManaged(model1), is(false));
+        assertThat(beanRepository.isManaged(model2), is(false));
+        assertThat(beanRepository.isManaged(model3), is(false));
+        assertThat(beanRepository.isManaged(wrongModel), is(true));
 
         List<ServerPresentationModel> testModels = dolphin.getModelStore().findAllPresentationModelsByType("com.canoo.dolphin.server.util.SimpleTestModel");
         assertThat(testModels, hasSize(0));

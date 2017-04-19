@@ -16,4 +16,5 @@
 
 dependencies {
     compile project(':dolphin-remoting-shared')
+    testCompile "org.slf4j:slf4j-simple:$slf4jVersion"
 }

@@ -25,7 +25,7 @@ import com.canoo.dolphin.internal.info.PropertyInfo;
 import com.canoo.dolphin.mapping.MappingException;
 import com.canoo.dolphin.mapping.Property;
 import com.canoo.dolphin.util.Assert;
-import org.opendolphin.core.Dolphin;
+import org.opendolphin.core.ModelStore;
 import org.opendolphin.core.ModelStoreEvent;
 import org.opendolphin.core.ModelStoreListener;
 import org.slf4j.Logger;
@@ -51,12 +51,11 @@ public class ClassRepositoryImpl implements ClassRepository {
     private final Map<Class<?>, ClassInfo> classToClassInfoMap = new HashMap<>();
     private final Map<String, ClassInfo> modelTypeToClassInfoMap = new HashMap<>();
 
-    public ClassRepositoryImpl(final Dolphin dolphin, final Converters converters, final PresentationModelBuilderFactory builderFactory) {
-        Assert.requireNonNull(dolphin, "dolphin");
+    public ClassRepositoryImpl(final ModelStore modelStore, final Converters converters, final PresentationModelBuilderFactory builderFactory) {
         this.converters = Assert.requireNonNull(converters, "converters");
         this.builderFactory = Assert.requireNonNull(builderFactory, "builderFactory");
 
-        dolphin.getModelStore().addModelStoreListener(PlatformConstants.DOLPHIN_BEAN, new ModelStoreListener() {
+        Assert.requireNonNull(modelStore, "modelStore").addModelStoreListener(PlatformConstants.DOLPHIN_BEAN, new ModelStoreListener() {
             @Override
             public void modelStoreChanged(final ModelStoreEvent event) {
                 Assert.requireNonNull(event, "event");

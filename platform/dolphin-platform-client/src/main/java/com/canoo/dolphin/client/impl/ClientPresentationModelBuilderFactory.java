@@ -17,19 +17,19 @@ package com.canoo.dolphin.client.impl;
 
 import com.canoo.dolphin.impl.PresentationModelBuilderFactory;
 import com.canoo.dolphin.internal.PresentationModelBuilder;
-import org.opendolphin.core.client.ClientDolphin;
+import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.client.ClientPresentationModel;
 
 public class ClientPresentationModelBuilderFactory implements PresentationModelBuilderFactory<ClientPresentationModel> {
 
-    private final ClientDolphin dolphin;
+    private final ClientModelStore clientModelStore;
 
-    public ClientPresentationModelBuilderFactory(ClientDolphin dolphin) {
-        this.dolphin = dolphin;
+    public ClientPresentationModelBuilderFactory(final ClientModelStore clientModelStore) {
+        this.clientModelStore = clientModelStore;
     }
 
     @Override
     public PresentationModelBuilder createBuilder() {
-        return new ClientPresentationModelBuilder(dolphin);
+        return new ClientPresentationModelBuilder(clientModelStore);
     }
 }

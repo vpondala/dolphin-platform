@@ -40,8 +40,13 @@ public class InMemoryClientConnector extends AbstractClientConnector {
     private long sleepMillis = 0;
 
     public InMemoryClientConnector(final ClientModelStore clientModelStore, final ServerConnector serverConnector, final ICommandBatcher commandBatcher, final Executor uiExecutor) {
-        super(clientModelStore, uiExecutor, commandBatcher, new SimpleExceptionHandler(uiExecutor), Executors.newCachedThreadPool());
+        super(clientModelStore, uiExecutor, commandBatcher, new SimpleExceptionHandler(), Executors.newCachedThreadPool());
         this.serverConnector = Objects.requireNonNull(serverConnector);
+        connect(false);
+    }
+
+    @Override
+    protected void release() {
     }
 
     @Override

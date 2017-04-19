@@ -21,17 +21,17 @@ import org.opendolphin.core.comm.SignalCommand;
 import org.opendolphin.core.server.action.*;
 import org.opendolphin.core.server.comm.ActionRegistry;
 import org.opendolphin.core.server.comm.CommandHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ServerConnector {
 
-    private static final Logger LOG = Logger.getLogger(ServerConnector.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ServerConnector.class);
 
     private final ActionRegistry registry = new ActionRegistry();
 
@@ -47,7 +47,7 @@ public class ServerConnector {
      * doesn't fail on missing commands
      **/
     public List<Command> receive(Command command) {
-        LOG.info("S:     received " + command);
+        LOG.info("Received command of type {}", command.getClass().getSimpleName());
         List<Command> response = new LinkedList();// collecting parameter pattern
 
         if (!(command instanceof SignalCommand)) {// signal commands must not update thread-confined state
@@ -61,21 +61,20 @@ public class ServerConnector {
 
         List<CommandHandler> actions = registry.getActionsFor(command.getClass());
         if (actions.isEmpty()) {
-            LOG.warning("S: there is no server action registered for received command: " + String.valueOf(command) + ", known commands are " + String.valueOf(registry.getActions().keySet()));
+            LOG.warn("There is no server action registered for received command type {}, known commands types are {}", command.getClass().getSimpleName(), registry.getActions().keySet());
             return response;
         }
 
         // copying the list of actions allows an Action to unregister itself
         // avoiding ConcurrentModificationException to be thrown by the loop
         List<CommandHandler> actionsCopy = new ArrayList<CommandHandler>();
-        ((ArrayList<CommandHandler>) actionsCopy).addAll(actions);
+        actionsCopy.addAll(actions);
         try {
             for (CommandHandler action : actionsCopy) {
                 action.handleCommand(command, response);
             }
 
         } catch (Exception exception) {
-            LOG.log(Level.SEVERE, "S: an error ocurred while processing " + command, exception);
             throw exception;
         }
 
@@ -90,7 +89,7 @@ public class ServerConnector {
 
     public void registerDefaultActions() {
         if (initialized.getAndSet(true)) {
-            LOG.warning("attempt to initialize default actions more than once!");
+            LOG.warn("Attempt to initialize default actions more than once!");
             return;
         }
         register(new StoreValueChangeAction());

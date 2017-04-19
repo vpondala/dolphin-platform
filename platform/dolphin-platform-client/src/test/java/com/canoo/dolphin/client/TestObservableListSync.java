@@ -27,7 +27,7 @@ import org.opendolphin.core.PresentationModel;
 import org.opendolphin.core.client.ClientAttribute;
 import org.opendolphin.core.client.ClientDolphin;
 import org.opendolphin.core.client.ClientPresentationModel;
-import org.opendolphin.core.client.comm.ClientConnector;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.testng.annotations.Test;
 
 import java.util.*;
@@ -64,7 +64,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     // Adding, removing, and replacing all element types as user
     //////////////////////////////////////////////////////////////
     @Test
-    public void addingObjectElementAsUser_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingObjectElementAsUser_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -91,7 +91,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingObjectNullAsUser_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingObjectNullAsUser_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -116,7 +116,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingPrimitiveElementAsUser_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingPrimitiveElementAsUser_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -142,7 +142,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingPrimitiveNullAsUser_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingPrimitiveNullAsUser_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -167,7 +167,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingObjectElementAsUser_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingObjectElementAsUser_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -195,7 +195,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingObjectNullAsUser_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingObjectNullAsUser_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -222,7 +222,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingPrimitiveElementAsUser_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingPrimitiveElementAsUser_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -249,7 +249,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingPrimitiveNullAsUser_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingPrimitiveNullAsUser_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -276,7 +276,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replaceObjectElementAsUser_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replaceObjectElementAsUser_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -307,7 +307,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replaceObjectElementWithNullAsUser_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replaceObjectElementWithNullAsUser_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -336,7 +336,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replaceObjectNullWithElementAsUser_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replaceObjectNullWithElementAsUser_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -366,7 +366,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacePrimitiveElementAsUser_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacePrimitiveElementAsUser_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -395,7 +395,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacePrimitiveElementWithNullAsUser_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacePrimitiveElementWithNullAsUser_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -423,7 +423,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacePrimitiveNullWithElementAsUser_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacePrimitiveNullWithElementAsUser_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -456,7 +456,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     // Adding elements at different positions as user
     //////////////////////////////////////////////////////////////
     @Test
-    public void addingMultipleElementsInEmptyListAsUser_shouldAddElements(@Mocked ClientConnector connector) {
+    public void addingMultipleElementsInEmptyListAsUser_shouldAddElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -484,7 +484,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingSingleElementInBeginningAsUser_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingSingleElementInBeginningAsUser_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -513,7 +513,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingMultipleElementsInBeginningAsUser_shouldAddElements(@Mocked ClientConnector connector) {
+    public void addingMultipleElementsInBeginningAsUser_shouldAddElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -544,7 +544,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingSingleElementInMiddleAsUser_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingSingleElementInMiddleAsUser_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -573,7 +573,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingMultipleElementsInMiddleAsUser_shouldAddElements(@Mocked ClientConnector connector) {
+    public void addingMultipleElementsInMiddleAsUser_shouldAddElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -604,7 +604,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingSingleElementAtEndAsUser_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingSingleElementAtEndAsUser_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -633,7 +633,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingMultipleElementsAtEndAsUser_shouldAddElements(@Mocked ClientConnector connector) {
+    public void addingMultipleElementsAtEndAsUser_shouldAddElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -668,7 +668,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     // Removing elements from different positions as user
     //////////////////////////////////////////////////////////////
     @Test
-    public void deletingSingleElementInBeginningAsUser_shouldRemoveElement(@Mocked ClientConnector connector) {
+    public void deletingSingleElementInBeginningAsUser_shouldRemoveElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -696,7 +696,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
 
     // TODO: Enable once ObservableArrayList.sublist() was implemented completely
     @Test(enabled = false)
-    public void deletingMultipleElementInBeginningAsUser_shouldRemoveElements(@Mocked ClientConnector connector) {
+    public void deletingMultipleElementInBeginningAsUser_shouldRemoveElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -723,7 +723,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingSingleElementInMiddleAsUser_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingSingleElementInMiddleAsUser_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -751,7 +751,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
 
     // TODO: Enable once ObservableArrayList.sublist() was implemented completely
     @Test(enabled = false)
-    public void deletingMultipleElementInMiddleAsUser_shouldDeleteElements(@Mocked ClientConnector connector) {
+    public void deletingMultipleElementInMiddleAsUser_shouldDeleteElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -778,7 +778,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingSingleElementAtEndAsUser_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingSingleElementAtEndAsUser_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -806,7 +806,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
 
     // TODO: Enable once ObservableArrayList.sublist() was implemented completely
     @Test(enabled = false)
-    public void deletingMultipleElementAtEndAsUser_shouldAddElements(@Mocked ClientConnector connector) {
+    public void deletingMultipleElementAtEndAsUser_shouldAddElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -837,7 +837,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     // Replacing elements from different positions as user
     //////////////////////////////////////////////////////////////
     @Test
-    public void replacingSingleElementAtBeginningAsUser_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingSingleElementAtBeginningAsUser_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -866,7 +866,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingSingleElementInMiddleAsUser_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingSingleElementInMiddleAsUser_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -895,7 +895,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingSingleElementAtEndAsUser_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingSingleElementAtEndAsUser_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -928,7 +928,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     // Adding, removing, and replacing all element types from dolphin
     ///////////////////////////////////////////////////////////////////
     @Test
-    public void addingObjectElementFromDolphin_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingObjectElementFromDolphin_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -956,7 +956,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingObjectNullFromDolphin_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingObjectNullFromDolphin_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -977,12 +977,12 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
                 .create();
 
         // then :
-        assertThat(model.getObjectList(), is(Collections.singletonList((SimpleTestModel)null)));
+        assertThat(model.getObjectList(), is(Collections.singletonList((SimpleTestModel) null)));
         assertThat(dolphin.getModelStore().findAllPresentationModelsByType(PlatformConstants.LIST_SPLICE), empty());
     }
 
     @Test
-    public void addingPrimitiveElementFromDolphin_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingPrimitiveElementFromDolphin_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1007,7 +1007,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingPrimitiveNullFromDolphin_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingPrimitiveNullFromDolphin_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1026,12 +1026,12 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
                 .create();
 
         // then :
-        assertThat(model.getPrimitiveList(), is(Collections.singletonList((String)null)));
+        assertThat(model.getPrimitiveList(), is(Collections.singletonList((String) null)));
         assertThat(dolphin.getModelStore().findAllPresentationModelsByType(PlatformConstants.LIST_SPLICE), empty());
     }
 
     @Test
-    public void deletingObjectElementFromDolphin_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingObjectElementFromDolphin_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1066,7 +1066,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingObjectNullFromDolphin_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingObjectNullFromDolphin_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1099,7 +1099,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingPrimitiveElementFromDolphin_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingPrimitiveElementFromDolphin_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1133,7 +1133,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingPrimitiveNullFromDolphin_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingPrimitiveNullFromDolphin_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1166,7 +1166,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingObjectElementFromDolphin_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingObjectElementFromDolphin_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1208,7 +1208,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingObjectElementWithNullFromDolphin_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingObjectElementWithNullFromDolphin_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1241,12 +1241,12 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
                 .create();
 
         // then :
-        assertThat(model.getObjectList(), is(Collections.singletonList((SimpleTestModel)null)));
+        assertThat(model.getObjectList(), is(Collections.singletonList((SimpleTestModel) null)));
         assertThat(dolphin.getModelStore().findAllPresentationModelsByType(PlatformConstants.LIST_SPLICE), empty());
     }
 
     @Test
-    public void replacingObjectNullWithElementFromDolphin_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingObjectNullWithElementFromDolphin_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1266,7 +1266,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
                 .withAttribute("count", 1)
                 .withAttribute("0", null)
                 .create();
-        assertThat(model.getObjectList(), is(Collections.singletonList((SimpleTestModel)null)));
+        assertThat(model.getObjectList(), is(Collections.singletonList((SimpleTestModel) null)));
 
         // when :
         new PresentationModelBuilder(dolphin, PlatformConstants.LIST_SPLICE)
@@ -1284,7 +1284,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingPrimitiveElementFromDolphin_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingPrimitiveElementFromDolphin_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1320,7 +1320,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingPrimitiveElementWithNullFromDolphin_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingPrimitiveElementWithNullFromDolphin_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1350,12 +1350,12 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
                 .create();
 
         // then :
-        assertThat(model.getPrimitiveList(), is(Collections.singletonList((String)null)));
+        assertThat(model.getPrimitiveList(), is(Collections.singletonList((String) null)));
         assertThat(dolphin.getModelStore().findAllPresentationModelsByType(PlatformConstants.LIST_SPLICE), empty());
     }
 
     @Test
-    public void replacingPrimitiveNullWithElementFromDolphin_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingPrimitiveNullWithElementFromDolphin_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1372,7 +1372,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
                 .withAttribute("count", 1)
                 .withAttribute("0", null)
                 .create();
-        assertThat(model.getPrimitiveList(), is(Collections.singletonList((String)null)));
+        assertThat(model.getPrimitiveList(), is(Collections.singletonList((String) null)));
 
         // when :
         new PresentationModelBuilder(dolphin, PlatformConstants.LIST_SPLICE)
@@ -1394,7 +1394,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     // Adding elements at different positions from dolphin
     //////////////////////////////////////////////////////////////
     @Test
-    public void addingMultipleElementsInEmptyListFromDolphin_shouldAddElements(@Mocked ClientConnector connector) {
+    public void addingMultipleElementsInEmptyListFromDolphin_shouldAddElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1420,7 +1420,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingSingleElementInBeginningFromDolphin_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingSingleElementInBeginningFromDolphin_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1448,7 +1448,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingMultipleElementsInBeginningFromDolphin_shouldAddElements(@Mocked ClientConnector connector) {
+    public void addingMultipleElementsInBeginningFromDolphin_shouldAddElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1477,7 +1477,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingSingleElementInMiddleFromDolphin_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingSingleElementInMiddleFromDolphin_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1505,7 +1505,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingMultipleElementsInMiddleFromDolphin_shouldAddElements(@Mocked ClientConnector connector) {
+    public void addingMultipleElementsInMiddleFromDolphin_shouldAddElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1534,7 +1534,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingSingleElementAtEndFromDolphin_shouldAddElement(@Mocked ClientConnector connector) {
+    public void addingSingleElementAtEndFromDolphin_shouldAddElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1560,7 +1560,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void addingMultipleElementsAtEndFromDolphin_shouldAddElements(@Mocked ClientConnector connector) {
+    public void addingMultipleElementsAtEndFromDolphin_shouldAddElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1593,7 +1593,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     // Removing elements from different positions from dolphin
     //////////////////////////////////////////////////////////////
     @Test
-    public void deletingSingleElementInBeginningFromDolphin_shouldRemoveElement(@Mocked ClientConnector connector) {
+    public void deletingSingleElementInBeginningFromDolphin_shouldRemoveElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1619,7 +1619,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingMultipleElementInBeginningFromDolphin_shouldRemoveElements(@Mocked ClientConnector connector) {
+    public void deletingMultipleElementInBeginningFromDolphin_shouldRemoveElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1645,7 +1645,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingSingleElementInMiddleFromDolphin_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingSingleElementInMiddleFromDolphin_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1671,7 +1671,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingMultipleElementInMiddleFromDolphin_shouldRemoveElements(@Mocked ClientConnector connector) {
+    public void deletingMultipleElementInMiddleFromDolphin_shouldRemoveElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1697,7 +1697,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingSingleElementAtEndFromDolphin_shouldDeleteElement(@Mocked ClientConnector connector) {
+    public void deletingSingleElementAtEndFromDolphin_shouldDeleteElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1723,7 +1723,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void deletingMultipleElementAtEndFromDolphin_shouldRemoveElements(@Mocked ClientConnector connector) {
+    public void deletingMultipleElementAtEndFromDolphin_shouldRemoveElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1750,7 +1750,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
 
     private void deleteAllPresentationModelsOfType(ClientDolphin dolphin, String listSplice) {
         List<ClientPresentationModel> toDelete = new ArrayList<>(dolphin.getModelStore().findAllPresentationModelsByType(listSplice));
-        for(ClientPresentationModel model : toDelete) {
+        for (ClientPresentationModel model : toDelete) {
             dolphin.getModelStore().delete(model);
         }
     }
@@ -1760,7 +1760,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     // Replacing elements from different positions from dolphin
     //////////////////////////////////////////////////////////////
     @Test
-    public void replacingSingleElementInBeginningFromDolphin_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingSingleElementInBeginningFromDolphin_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1787,7 +1787,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingMultipleElementsInBeginningFromDolphin_shouldReplaceElements(@Mocked ClientConnector connector) {
+    public void replacingMultipleElementsInBeginningFromDolphin_shouldReplaceElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1815,7 +1815,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingSingleElementInMiddleFromDolphin_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingSingleElementInMiddleFromDolphin_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1843,7 +1843,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingMultipleElementsInMiddleFromDolphin_shouldReplaceElements(@Mocked ClientConnector connector) {
+    public void replacingMultipleElementsInMiddleFromDolphin_shouldReplaceElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1871,7 +1871,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
     }
 
     @Test
-    public void replacingSingleElementAtEndFromDolphin_shouldReplaceElement(@Mocked ClientConnector connector) {
+    public void replacingSingleElementAtEndFromDolphin_shouldReplaceElement(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);
@@ -1900,7 +1900,7 @@ public class TestObservableListSync extends AbstractDolphinBasedTest {
 
 
     @Test
-    public void replacingMultipleElementsAtEndFromDolphin_shouldReplaceElements(@Mocked ClientConnector connector) {
+    public void replacingMultipleElementsAtEndFromDolphin_shouldReplaceElements(@Mocked AbstractClientConnector connector) {
         // given :
         final ClientDolphin dolphin = createClientDolphin(connector);
         final BeanManager manager = createBeanManager(dolphin);

@@ -39,14 +39,11 @@ public class ClientModelStore extends ModelStore<ClientAttribute, ClientPresenta
      * @see ModelStoreConfig
      */
     public ClientModelStore(final ModelSynchronizer modelSynchronizer) {
-        this(modelSynchronizer, new ModelStoreConfig());
-    }
-
-    public ClientModelStore(final ModelSynchronizer modelSynchronizer, final ModelStoreConfig config) {
-        super(config);
+        super(new ModelStoreConfig());
         this.modelSynchronizer = modelSynchronizer;
         attributeChangeListener = new AttributeChangeListener(this, modelSynchronizer);
     }
+
 
     @Override
     public boolean add(ClientPresentationModel model) {

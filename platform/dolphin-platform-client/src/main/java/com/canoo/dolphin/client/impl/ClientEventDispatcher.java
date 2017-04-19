@@ -17,12 +17,12 @@ package com.canoo.dolphin.client.impl;
 
 import com.canoo.dolphin.impl.EventDispatcherImpl;
 import org.opendolphin.RemotingConstants;
-import org.opendolphin.core.Dolphin;
+import org.opendolphin.core.ModelStore;
 
 public class ClientEventDispatcher extends EventDispatcherImpl {
 
-    public ClientEventDispatcher(Dolphin dolphin) {
-        super(dolphin);
+    public ClientEventDispatcher(final ModelStore modelStore) {
+        super(modelStore);
     }
 
     @Override

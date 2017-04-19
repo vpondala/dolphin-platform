@@ -8,7 +8,17 @@ be true most of the public API of the Dolphin Platform is stable since 0.8.5 and
 package structure or adding additional methods to public interfaces. In addition it will be best practice to not use any
 method of the API is annotated by `@Deprecated` since we plan to remove all this methods and classes for the final 1.0.0 release.
 
-== Version 0.10.0
+== Version 0.12.0
+_Release date: Apr 18, 2017_
+
+* Removed deprecated methods in BeanManager (https://github.com/canoo/dolphin-platform/issues/453[issue])
+* Changed Logging in remoting modules to SLF4J (https://github.com/canoo/dolphin-platform/issues/441[issue])
+* Bugfix for spring wiring missing for DolphinSessionListener (https://github.com/canoo/dolphin-platform/issues/456[issue])
+* Bugfix for JFX connection (https://github.com/canoo/dolphin-platform/pull/457[issue])
+* Added feature to Better Connect/ Disconnect for JavaFX client API (https://github.com/canoo/dolphin-platform/issues/241[issue])
+* Implementation of a easy reconnect functionality for JavaFX (https://github.com/canoo/dolphin-platform/issues/221[issue])
+
+== Version 0.11.0
 _Release date: Apr 04, 2017_
 
 * Java 8 date&time support for JavaScript (https://github.com/canoo/dolphin-platform/issues/411[issue])

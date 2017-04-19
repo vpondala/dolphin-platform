@@ -23,7 +23,7 @@ import com.canoo.dolphin.impl.InternalAttributesBean;
 import com.canoo.dolphin.impl.commands.CallActionCommand;
 import com.canoo.dolphin.impl.commands.DestroyControllerCommand;
 import com.canoo.dolphin.util.Assert;
-import org.opendolphin.core.client.ClientDolphin;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.opendolphin.core.client.comm.OnFinishedHandler;
 
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +33,7 @@ public class ControllerProxyImpl<T> implements ControllerProxy<T> {
 
     private final String controllerId;
 
-    private final ClientDolphin dolphin;
+    private final AbstractClientConnector clientConnector;
 
     private final ClientPlatformBeanRepository platformBeanRepository;
 
@@ -43,8 +43,8 @@ public class ControllerProxyImpl<T> implements ControllerProxy<T> {
 
     private volatile boolean destroyed = false;
 
-    public ControllerProxyImpl(String controllerId, T model, ClientDolphin dolphin, ClientPlatformBeanRepository platformBeanRepository, ControllerProxyFactory controllerProxyFactory) {
-        this.dolphin = Assert.requireNonNull(dolphin, "dolphin");
+    public ControllerProxyImpl(final String controllerId, final T model, final AbstractClientConnector clientConnector, final ClientPlatformBeanRepository platformBeanRepository, final ControllerProxyFactory controllerProxyFactory) {
+        this.clientConnector = Assert.requireNonNull(clientConnector, "clientConnector");
         this.controllerId = Assert.requireNonBlank(controllerId, "controllerId");
         this.controllerProxyFactory = Assert.requireNonNull(controllerProxyFactory, "controllerProxyFactory");
         this.model = Assert.requireNonNull(model, "model");
@@ -66,11 +66,11 @@ public class ControllerProxyImpl<T> implements ControllerProxy<T> {
 
 
         final CompletableFuture<Void> result = new CompletableFuture<>();
-        dolphin.getClientConnector().send(new CallActionCommand(), new OnFinishedHandler(){
+        clientConnector.send(new CallActionCommand(), new OnFinishedHandler(){
             @Override
             public void onFinished() {
                 if (bean.isError()) {
-                    result.completeExceptionally(new ControllerActionException());
+                    result.completeExceptionally(new ControllerActionException("Error on calling action on the server. Please check the server log."));
                 } else {
                     result.complete(null);
                 }
@@ -92,7 +92,7 @@ public class ControllerProxyImpl<T> implements ControllerProxy<T> {
 
         final CompletableFuture<Void> ret = new CompletableFuture<>();
 
-        dolphin.getClientConnector().send(new DestroyControllerCommand(), new OnFinishedHandler() {
+        clientConnector.send(new DestroyControllerCommand(), new OnFinishedHandler() {
             @Override
             public void onFinished() {
                 model = null;

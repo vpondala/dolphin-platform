@@ -13,7 +13,6 @@
   ],
   "dependencies": {
     "paper-elements": "PolymerElements/paper-elements#1.0.x",
-    "polymer": "Polymer/polymer#1.4.x",
-    "dolphin-platform-polymer": "0.10.0"
+    "dolphin-platform-polymer": "0.12.0"
   }
 }

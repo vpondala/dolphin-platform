@@ -19,7 +19,7 @@ import com.canoo.dolphin.internal.DolphinEventHandler;
 import com.canoo.dolphin.internal.EventDispatcher;
 import com.canoo.dolphin.util.Assert;
 import org.opendolphin.RemotingConstants;
-import org.opendolphin.core.Dolphin;
+import org.opendolphin.core.ModelStore;
 import org.opendolphin.core.ModelStoreEvent;
 import org.opendolphin.core.PresentationModel;
 
@@ -35,8 +35,8 @@ public abstract class EventDispatcherImpl implements EventDispatcher {
     private final List<DolphinEventHandler> controllerActionCallBeanRemovedHandlers = new ArrayList<>(1);
     private final List<DolphinEventHandler> internalAttributesBeanAddedHandlers = new ArrayList<>(1);
 
-    public EventDispatcherImpl(Dolphin dolphin) {
-        dolphin.getModelStore().addModelStoreListener(this);
+    public EventDispatcherImpl(final ModelStore modelStore) {
+        Assert.requireNonNull(modelStore, "modelStore").addModelStoreListener(this);
     }
 
     @Override

@@ -17,7 +17,6 @@ package com.canoo.dolphin.server.context;
 
 import com.canoo.dolphin.server.config.DolphinPlatformConfiguration;
 import com.canoo.dolphin.util.Assert;
-import com.canoo.dolphin.util.DolphinRemotingException;
 import org.opendolphin.core.comm.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,58 +42,54 @@ public class DolphinContextCommunicationHandler {
         Assert.requireNonNull(response, "response");
         final HttpSession httpSession = Assert.requireNonNull(request.getSession(), "request.getSession()");
 
+        DolphinContext currentContext = DolphinContextUtils.getContextForCurrentThread();
+        if (currentContext == null) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            LOG.warn("Can not find or create matching dolphin context in session " + httpSession.getId());
+            return;
+        }
+
+        String userAgent = request.getHeader("user-agent");
+        LOG.trace("receiving Request for DolphinContext {} in http session {} from client with user-agent {}", currentContext.getId(), httpSession.getId(), userAgent);
+
+        final List<Command> commands = new ArrayList<>();
         try {
-            DolphinContext currentContext = DolphinContextUtils.getContextForCurrentThread();
-            if (currentContext == null) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                LOG.warn("Can not find or create matching dolphin context in session " + httpSession.getId());
-                return;
+            StringBuilder requestJson = new StringBuilder();
+            String line;
+            while ((line = request.getReader().readLine()) != null) {
+                requestJson.append(line).append("\n");
             }
-
-            String userAgent = request.getHeader("user-agent");
-            LOG.trace("receiving Request for DolphinContext {} in http session {} from client with user-agent {}", currentContext.getId(), httpSession.getId(), userAgent);
-
-            final List<Command> commands = new ArrayList<>();
-            try {
-                StringBuilder requestJson = new StringBuilder();
-                String line;
-                while ((line = request.getReader().readLine()) != null) {
-                    requestJson.append(line).append("\n");
-                }
-                commands.addAll(currentContext.getDolphin().getServerConnector().getCodec().decode(requestJson.toString()));
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                LOG.error("Can not parse request! (DolphinContext " + currentContext.getId() + ")", e);
-                return;
-            }
-            LOG.trace("Request for DolphinContext {} in http session {} contains {} commands", currentContext.getId(), httpSession.getId(), commands.size());
-
-
-            final List<Command> results = new ArrayList<>();
-            try {
-                results.addAll(currentContext.handle(commands));
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                LOG.error("Can not handle the commands (DolphinContext " + currentContext.getId() + ")", e);
-                return;
-            }
-
-            response.setHeader("Content-Type", "application/json");
-            response.setCharacterEncoding("UTF-8");
-
-            LOG.trace("Sending response for DolphinContext {} in http session {} from client with user-agent {}", currentContext.getId(), httpSession.getId(), userAgent);
-            LOG.trace("Response for DolphinContext {} in http session {} contains {} commands", currentContext.getId(), httpSession.getId(), results.size());
-
-            try {
-                final String jsonResponse = currentContext.getDolphin().getServerConnector().getCodec().encode(results);
-                response.getWriter().print(jsonResponse);
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                LOG.error("Can not write response!", e);
-                return;
-            }
+            commands.addAll(currentContext.getDolphin().getServerConnector().getCodec().decode(requestJson.toString()));
         } catch (Exception e) {
-            throw new DolphinRemotingException("Unexpected Dolphin Platform error", e);
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            LOG.error("Can not parse request! (DolphinContext " + currentContext.getId() + ")", e);
+            return;
+        }
+        LOG.trace("Request for DolphinContext {} in http session {} contains {} commands", currentContext.getId(), httpSession.getId(), commands.size());
+
+
+        final List<Command> results = new ArrayList<>();
+        try {
+            results.addAll(currentContext.handle(commands));
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            LOG.error("Can not handle the commands (DolphinContext " + currentContext.getId() + ")", e);
+            return;
+        }
+
+        response.setHeader("Content-Type", "application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        LOG.trace("Sending response for DolphinContext {} in http session {} from client with user-agent {}", currentContext.getId(), httpSession.getId(), userAgent);
+        LOG.trace("Response for DolphinContext {} in http session {} contains {} commands", currentContext.getId(), httpSession.getId(), results.size());
+
+        try {
+            final String jsonResponse = currentContext.getDolphin().getServerConnector().getCodec().encode(results);
+            response.getWriter().print(jsonResponse);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            LOG.error("Can not write response!", e);
+            return;
         }
     }
 }

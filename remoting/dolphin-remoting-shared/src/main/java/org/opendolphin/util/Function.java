@@ -1,0 +1,6 @@
+package org.opendolphin.util;
+
+public interface Function<T, R> {
+
+    R call(T t);
+}

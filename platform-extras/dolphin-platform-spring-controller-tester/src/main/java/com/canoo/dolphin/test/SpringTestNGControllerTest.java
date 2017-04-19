@@ -25,6 +25,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 /**
  * Base class for TestNG based controller tests in Spring. This class can be extended to write custom controller tests.
@@ -36,6 +37,15 @@ public abstract class SpringTestNGControllerTest extends AbstractTestNGSpringCon
 
     @Autowired
     private ClientContext clientContext;
+
+    @BeforeMethod(alwaysRun = true)
+    protected void connectClientContext() {
+        try {
+            clientContext.connect().get();
+        } catch (Exception e) {
+            throw new ControllerTestException("Can not connect client context!", e);
+        }
+    }
 
     @AfterMethod(alwaysRun = true)
     protected void disconnectClientContext() {

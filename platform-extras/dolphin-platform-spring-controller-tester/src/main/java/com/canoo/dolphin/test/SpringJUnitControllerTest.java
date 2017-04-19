@@ -43,6 +43,7 @@ public abstract class SpringJUnitControllerTest extends AbstractJUnit4SpringCont
         @Override
         protected void before() throws Throwable {
             super.before();
+            clientContext.connect().get();
         }
 
         @Override

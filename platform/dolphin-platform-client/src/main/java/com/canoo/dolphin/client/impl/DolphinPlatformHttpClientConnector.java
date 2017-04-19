@@ -20,50 +20,38 @@ import com.canoo.dolphin.client.DolphinSessionException;
 import com.canoo.dolphin.client.HttpURLConnectionFactory;
 import com.canoo.dolphin.client.HttpURLConnectionResponseHandler;
 import com.canoo.dolphin.impl.PlatformConstants;
+import com.canoo.dolphin.impl.commands.DestroyContextCommand;
 import com.canoo.dolphin.util.Assert;
-import com.canoo.dolphin.util.DolphinRemotingException;
-import org.opendolphin.core.client.ClientDolphin;
+import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.opendolphin.core.client.comm.BlindCommandBatcher;
-import org.opendolphin.core.client.comm.ExceptionHandler;
+import org.opendolphin.core.client.comm.RemotingExceptionHandler;
 import org.opendolphin.core.comm.Codec;
 import org.opendolphin.core.comm.Command;
+import org.opendolphin.util.DolphinRemotingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.CookieStore;
-import java.net.HttpCookie;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This class is used to sync the unique client scope id of the current dolphin
  */
 public class DolphinPlatformHttpClientConnector extends AbstractClientConnector {
 
-    private static final String CHARSET = "UTF-8";
-
-    private static final String CONTENT_TYPE_HEADER = "Content-Type";
-
-    private static final String ACCEPT_HEADER = "Accept";
-
-    private static final String COOKIE_HEADER = "Cookie";
-
-    private static final String SET_COOKIE_HEADER = "Set-Cookie";
-
-    private static final String POST_METHOD = "POST";
-
-    private static final String JSON_MIME_TYPE = "application/json";
+    private static final Logger LOG = LoggerFactory.getLogger(DolphinPlatformHttpClientConnector.class);
 
     private final URL servletUrl;
-
-    private final ForwardableCallback<DolphinRemotingException> remotingErrorHandler;
 
     private final Codec codec;
 
@@ -73,39 +61,55 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
 
     private final HttpURLConnectionResponseHandler responseHandler;
 
-    private String clientId;
+    private AtomicReference<String> clientId = new AtomicReference<>();
 
-    public DolphinPlatformHttpClientConnector(ClientConfiguration configuration, ClientDolphin clientDolphin, Codec codec, ForwardableCallback<DolphinRemotingException> remotingErrorHandler, ExceptionHandler onException) {
-        super(clientDolphin.getModelStore(), Assert.requireNonNull(configuration, "configuration").getUiExecutor(), new BlindCommandBatcher(), onException, configuration.getBackgroundExecutor());
-        setStrictMode(false);
-
+    public DolphinPlatformHttpClientConnector(ClientConfiguration configuration, ClientModelStore clientModelStore, Codec codec, RemotingExceptionHandler onException) {
+        super(clientModelStore, Assert.requireNonNull(configuration, "configuration").getUiExecutor(), new BlindCommandBatcher(), onException, configuration.getBackgroundExecutor());
         this.servletUrl = configuration.getServerEndpoint();
-
         this.connectionFactory = configuration.getConnectionFactory();
         this.cookieStore = configuration.getCookieStore();
         this.responseHandler = configuration.getResponseHandler();
-
         this.codec = Assert.requireNonNull(codec, "codec");
-        this.remotingErrorHandler = Assert.requireNonNull(remotingErrorHandler, "remotingErrorHandler");
+
+        //TODO: Strict mode is always false in DP. This flag should be removed in AbstractClientConnector
+        setStrictMode(false);
     }
 
-    public List<Command> transmit(List<Command> commands) {
+    private final AtomicBoolean disconnecting = new AtomicBoolean(false);
+
+    public List<Command> transmit(List<Command> commands) throws DolphinRemotingException {
         Assert.requireNonNull(commands, "commands");
+
+        if(disconnecting.get()) {
+            LOG.warn("Canceled communication based on disconnect");
+            return Collections.emptyList();
+        }
+
+        //block if diconnect is called in other thread (poll / release)
+        for (Command command : commands) {
+            if(command instanceof DestroyContextCommand) {
+                disconnecting.set(true);
+            }
+        }
+
+
         try {
             //REQUEST
-            HttpURLConnection conn = connectionFactory.create(servletUrl);
+            final HttpURLConnection conn = connectionFactory.create(servletUrl);
             conn.setDoOutput(true);
             conn.setDoInput(true);
-            conn.setRequestProperty(CONTENT_TYPE_HEADER, JSON_MIME_TYPE);
-            conn.setRequestProperty(ACCEPT_HEADER, JSON_MIME_TYPE);
-            conn.setRequestMethod(POST_METHOD);
-            if(clientId != null) {
-                conn.setRequestProperty(PlatformConstants.CLIENT_ID_HTTP_HEADER_NAME, clientId);
+            conn.setRequestProperty(PlatformConstants.CONTENT_TYPE_HEADER, PlatformConstants.JSON_MIME_TYPE);
+            conn.setRequestProperty(PlatformConstants.ACCEPT_HEADER, PlatformConstants.JSON_MIME_TYPE);
+            conn.setRequestMethod(PlatformConstants.POST_METHOD);
+            if(clientId.get() != null) {
+                conn.setRequestProperty(PlatformConstants.CLIENT_ID_HTTP_HEADER_NAME, clientId.get());
+            } else {
+                LOG.debug("Sending first request to server. Dolphin client id not defined.");
             }
             setRequestCookies(conn);
             String content = codec.encode(commands);
             OutputStream w = conn.getOutputStream();
-            w.write(content.getBytes(CHARSET));
+            w.write(content.getBytes(PlatformConstants.CHARSET));
             w.close();
 
             //RESPONSE
@@ -116,24 +120,25 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
             if (responseCode >= HttpStatus.SC_MULTIPLE_CHOICES) {
                 throw new DolphinHttpResponseException(responseCode, conn.getResponseMessage());
             }
+
+            responseHandler.handle(conn);
+
             updateCookiesFromResponse(conn);
             updateClientId(conn);
             if (commands.size() == 1 && commands.get(0) == getReleaseCommand()) {
                 return new ArrayList<>();
             } else {
-                String receivedContent = new String(inputStreamToByte(conn.getInputStream()), CHARSET);
+                String receivedContent = new String(inputStreamToByte(conn.getInputStream()), PlatformConstants.CHARSET);
                 return codec.decode(receivedContent);
             }
         } catch (Exception e) {
-            DolphinRemotingException dolphinRemotingException = new DolphinRemotingException("Error in remoting layer", e);
-            remotingErrorHandler.call(dolphinRemotingException);
-            throw dolphinRemotingException;
+            throw new DolphinRemotingException("Error in remoting layer", e);
         }
     }
 
-    private void updateCookiesFromResponse(HttpURLConnection conn) throws URISyntaxException {
+    private void updateCookiesFromResponse(final HttpURLConnection conn) throws URISyntaxException {
         Map<String, List<String>> headerFields = conn.getHeaderFields();
-        List<String> cookiesHeader = headerFields.get(SET_COOKIE_HEADER);
+        List<String> cookiesHeader = headerFields.get(PlatformConstants.SET_COOKIE_HEADER);
 
         if (cookiesHeader != null) {
             for (String cookie : cookiesHeader) {
@@ -145,7 +150,7 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
         }
     }
 
-    private void setRequestCookies(HttpURLConnection conn) throws URISyntaxException {
+    private void setRequestCookies(final HttpURLConnection conn) throws URISyntaxException {
         if (cookieStore.getCookies().size() > 0) {
 
             String cookieValue = "";
@@ -154,17 +159,17 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
             }
             if(!cookieValue.isEmpty()) {
                 cookieValue = cookieValue.substring(0, cookieValue.length());
-                conn.setRequestProperty(COOKIE_HEADER, cookieValue);
+                conn.setRequestProperty(PlatformConstants.COOKIE_HEADER, cookieValue);
             }
         }
     }
 
     private void updateClientId(HttpURLConnection conn) {
         String clientIdInHeader = conn.getHeaderField(PlatformConstants.CLIENT_ID_HTTP_HEADER_NAME);
-        if (this.clientId != null && !this.clientId.equals(clientIdInHeader)) {
-            throw new DolphinRemotingException("Error: client id conflict!");
+        if (this.clientId.get() != null && !this.clientId.get().equals(clientIdInHeader)) {
+            throw new IllegalStateException("Error: client id conflict!");
         }
-        this.clientId = clientIdInHeader;
+        this.clientId.set(clientIdInHeader);
     }
 
     private byte[] inputStreamToByte(InputStream is) throws IOException {
@@ -177,7 +182,19 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
         return byteArrayOutputStream.toByteArray();
     }
 
+    @Override
+    public void connect() {
+        clientId.set(null);
+        disconnecting.set(false);
+        super.connect();
+    }
 
+    @Override
+    public void disconnect() {
+        super.disconnect();
+        clientId.set(null);
+        disconnecting.set(false);
+    }
 }
 
 

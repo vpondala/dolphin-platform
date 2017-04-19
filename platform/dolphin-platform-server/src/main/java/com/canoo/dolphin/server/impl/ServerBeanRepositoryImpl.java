@@ -26,7 +26,7 @@ public class ServerBeanRepositoryImpl extends BeanRepositoryImpl implements Serv
     final GarbageCollector garbageCollector;
 
     public ServerBeanRepositoryImpl(final Dolphin dolphin, final EventDispatcher dispatcher, final GarbageCollector garbageCollector) {
-        super(dolphin, dispatcher);
+        super(dolphin.getModelStore(), dispatcher);
         this.garbageCollector = Assert.requireNonNull(garbageCollector, "garbageCollector");
     }
 

@@ -40,7 +40,7 @@ public class TestDolphinCommandHandler extends AbstractDolphinBasedTest {
         final DolphinTestConfiguration configuration = createDolphinTestConfiguration();
         final ServerDolphin serverDolphin = configuration.getServerDolphin();
         final ClientDolphin clientDolphin = configuration.getClientDolphin();
-        final DolphinCommandHandler dolphinCommandHandler = new DolphinCommandHandler(clientDolphin);
+        final DolphinCommandHandler dolphinCommandHandler = new DolphinCommandHandler(clientDolphin.getClientConnector());
         final String modelId = UUID.randomUUID().toString();
         clientDolphin.getModelStore().createModel(modelId, null, new ClientAttribute("myAttribute", "UNKNOWN"));
         serverDolphin.getServerConnector().register(new DolphinServerAction() {

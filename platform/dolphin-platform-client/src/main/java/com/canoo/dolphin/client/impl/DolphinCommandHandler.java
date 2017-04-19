@@ -16,24 +16,24 @@
 package com.canoo.dolphin.client.impl;
 
 import com.canoo.dolphin.util.Assert;
-import org.opendolphin.core.client.ClientDolphin;
+import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.opendolphin.core.client.comm.OnFinishedHandler;
 import org.opendolphin.core.comm.Command;
 
 import java.util.concurrent.CompletableFuture;
 
 public class DolphinCommandHandler {
-    private final ClientDolphin clientDolphin;
 
-    public DolphinCommandHandler(ClientDolphin clientDolphin) {
-        Assert.requireNonNull(clientDolphin, "clientDolphin");
-        this.clientDolphin = clientDolphin;
+    private final AbstractClientConnector clientConnector;
+
+    public DolphinCommandHandler(AbstractClientConnector clientConnector) {
+        this.clientConnector = Assert.requireNonNull(clientConnector, "clientDolphin");
     }
 
     public CompletableFuture<Void> invokeDolphinCommand(Command command) {
         Assert.requireNonNull(command, "command");
         final CompletableFuture<Void> result = new CompletableFuture<>();
-        clientDolphin.getClientConnector().send(command, new OnFinishedHandler() {
+        clientConnector.send(command, new OnFinishedHandler() {
             @Override
             public void onFinished() {
                 result.complete(null);

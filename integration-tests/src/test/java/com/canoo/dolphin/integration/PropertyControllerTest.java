@@ -13,7 +13,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Test if controller and model can be created")
     public void testCreateController(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<PropertyTestBean> controller = createController(context, PROPERTY_CONTROLLER_NAME);
 
             Assert.assertNotNull(controller);
@@ -21,6 +21,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
             Assert.assertEquals(controller.getModel().getClass(), PropertyTestBean.class);
 
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -29,7 +30,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Test if all property instances are created by default")
     public void testPropertyCreating(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<PropertyTestBean> controller = createController(context, PROPERTY_CONTROLLER_NAME);
 
             Assert.assertNotNull(controller.getModel().uuidValueProperty());
@@ -48,6 +49,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
             Assert.assertNotNull(controller.getModel().floatValueProperty());
 
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -56,7 +58,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Test if all property have an null value by default")
     public void testPropertyNullValueCreating(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<PropertyTestBean> controller = createController(context, PROPERTY_CONTROLLER_NAME);
 
             Assert.assertNull(controller.getModel().getUuidValue());
@@ -75,6 +77,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
             Assert.assertNull(controller.getModel().getFloatValue());
 
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -83,7 +86,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Test if all property values are snychronized")
     public void testPropertyValueSet(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<PropertyTestBean> controller = createController(context, PROPERTY_CONTROLLER_NAME);
             invoke(controller, SET_TO_DEFAULTS_ACTION, containerType);
 
@@ -103,6 +106,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
             Assert.assertEquals(controller.getModel().getUuidValue(), UUID_VALUE);
 
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -111,7 +115,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Test if all no property changed are fired at same side")
     public void testNoPropertyChangeOnSameSide(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<PropertyTestBean> controller = createController(context, PROPERTY_CONTROLLER_NAME);
             invoke(controller, SET_TO_DEFAULTS_ACTION, containerType);
             invoke(controller, ADD_CHANGE_LISTENER, containerType);
@@ -133,6 +137,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
             Assert.assertFalse(controller.getModel().getUuidValueChanged());
 
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -141,7 +146,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Test if all property changed are fired")
     public void testPropertyChange(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<PropertyTestBean> controller = createController(context, PROPERTY_CONTROLLER_NAME);
             invoke(controller, SET_TO_DEFAULTS_ACTION, containerType);
             invoke(controller, ADD_CHANGE_LISTENER, containerType);
@@ -179,6 +184,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
             Assert.assertTrue(controller.getModel().getUuidValueChanged());
 
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -187,7 +193,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Test if all unsubscribe for changes is working")
     public void testPropertyChangeUnsubscribe(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<PropertyTestBean> controller = createController(context, PROPERTY_CONTROLLER_NAME);
             invoke(controller, ADD_CHANGE_LISTENER, containerType);
             invoke(controller, SET_TO_DEFAULTS_ACTION, containerType);
@@ -226,6 +232,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
             Assert.assertFalse(controller.getModel().getUuidValueChanged());
 
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }
@@ -234,7 +241,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
     @Test(dataProvider = ENDPOINTS_DATAPROVIDER, description = "Test if all unsubscribe for changes is working")
     public void testNoChangeForSameValue(String containerType, String endpoint) {
         try {
-            ClientContext context = createClientContext(endpoint);
+            ClientContext context = connect(endpoint);
             ControllerProxy<PropertyTestBean> controller = createController(context, PROPERTY_CONTROLLER_NAME);
             invoke(controller, SET_TO_DEFAULTS_ACTION, containerType);
             invoke(controller, ADD_CHANGE_LISTENER, containerType);
@@ -272,6 +279,7 @@ public class PropertyControllerTest extends AbstractIntegrationTest {
             Assert.assertFalse(controller.getModel().getUuidValueChanged());
 
             destroy(controller, endpoint);
+            disconnect(context, endpoint);
         } catch (Exception e) {
             Assert.fail("Can not create controller for " + containerType, e);
         }

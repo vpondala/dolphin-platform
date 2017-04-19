@@ -17,41 +17,5 @@
 dependencies {
     compile project(':dolphin-remoting-client')
     compile project(':dolphin-remoting-server')
+    testCompile "org.slf4j:slf4j-simple:$slf4jVersion"
 }
-
-ext.dependentProjects = [
-    ':dolphin-remoting-client',
-    ':dolphin-remoting-server',
-    ':dolphin-remoting-shared',
-]
-
-dependentProjects.each { evaluationDependsOn it }
-
-apply plugin: 'jacoco'
-
-jacoco {
-    toolVersion = jacocoVersion
-}
-
-jacocoTestReport {
-    group = "Reporting"
-    description = "Generate Jacoco coverage reports after running tests."
-
-    List _classDirectories = []
-    Set _sourceDirectories = [] as Set
-    project.dependentProjects.each { String projectName ->
-        _classDirectories << project(projectName).sourceSets.main.output.classesDir.path
-        _sourceDirectories << project(projectName).sourceSets.main.allSource.srcDirs
-    }
-
-    additionalSourceDirs = project.files(_sourceDirectories)
-    sourceDirectories = project.files(_sourceDirectories)
-    classDirectories = project.files(_classDirectories)
-
-    reports {
-        xml.enabled = true
-        csv.enabled = false
-        html.enabled = true
-    }
-}
-

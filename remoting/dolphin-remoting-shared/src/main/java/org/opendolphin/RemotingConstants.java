@@ -2,6 +2,8 @@ package org.opendolphin;
 
 public interface RemotingConstants {
 
+    String DOLPHIN_PLATFORM_PREFIX = "dolphin_platform_intern_";
+
     String CLIENT_ORIGIN = "C";
 
     String SERVER_ORIGIN = "S";
@@ -15,4 +17,8 @@ public interface RemotingConstants {
     String SOURCE_SYSTEM_CLIENT = "client";
 
     String SOURCE_SYSTEM_SERVER = "server";
+
+    String START_LONG_POLL_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + "longPoll";
+
+    String INTERRUPT_LONG_POLL_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + "release";
 }

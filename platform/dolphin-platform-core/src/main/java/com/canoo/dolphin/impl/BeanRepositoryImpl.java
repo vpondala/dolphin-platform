@@ -22,16 +22,13 @@ import com.canoo.dolphin.internal.BeanRepository;
 import com.canoo.dolphin.internal.DolphinEventHandler;
 import com.canoo.dolphin.internal.EventDispatcher;
 import com.canoo.dolphin.internal.UpdateSource;
+import com.canoo.dolphin.util.Assert;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import org.opendolphin.core.Dolphin;
+import org.opendolphin.core.ModelStore;
 import org.opendolphin.core.PresentationModel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A {@code BeanRepository} keeps a list of all registered Dolphin Beans and the mapping between OpenDolphin IDs and
@@ -45,14 +42,14 @@ public class BeanRepositoryImpl implements BeanRepository{
 
     private final Map<Object, PresentationModel> objectPmToDolphinPm = new IdentityHashMap<>();
     private final Map<String, Object> dolphinIdToObjectPm = new HashMap<>();
-    private final Dolphin dolphin;
+    private final ModelStore modelStore;
     private final Multimap<Class<?>, BeanAddedListener<?>> beanAddedListenerMap = ArrayListMultimap.create();
     private List<BeanAddedListener<Object>> anyBeanAddedListeners = new ArrayList<>();
     private final Multimap<Class<?>, BeanRemovedListener<?>> beanRemovedListenerMap = ArrayListMultimap.create();
     private List<BeanRemovedListener<Object>> anyBeanRemovedListeners = new ArrayList<>();
 
-    public BeanRepositoryImpl(Dolphin dolphin, EventDispatcher dispatcher) {
-        this.dolphin = dolphin;
+    public BeanRepositoryImpl(final ModelStore modelStore, final EventDispatcher dispatcher) {
+        this.modelStore = Assert.requireNonNull(modelStore, "modelStore");
 
         dispatcher.addRemovedHandler(new DolphinEventHandler() {
             @SuppressWarnings("unchecked")
@@ -130,7 +127,7 @@ public class BeanRepositoryImpl implements BeanRepository{
         final PresentationModel model = objectPmToDolphinPm.remove(bean);
         if (model != null) {
             dolphinIdToObjectPm.remove(model.getId());
-            dolphin.getModelStore().remove(model);
+            modelStore.remove(model);
         }
     }
 
@@ -139,7 +136,7 @@ public class BeanRepositoryImpl implements BeanRepository{
     public <T> List<T> findAll(Class<T> beanClass) {
         DolphinUtils.assertIsDolphinBean(beanClass);
         final List<T> result = new ArrayList<>();
-        final List<PresentationModel> presentationModels = dolphin.getModelStore().findAllPresentationModelsByType(DolphinUtils.getDolphinPresentationModelTypeForClass(beanClass));
+        final List<PresentationModel> presentationModels = modelStore.findAllPresentationModelsByType(DolphinUtils.getDolphinPresentationModelTypeForClass(beanClass));
         for (PresentationModel model : presentationModels) {
             result.add((T) dolphinIdToObjectPm.get(model.getId()));
         }
@@ -186,4 +183,6 @@ public class BeanRepositoryImpl implements BeanRepository{
             }
         }
     }
+
+
 }

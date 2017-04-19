@@ -16,50 +16,15 @@
 package com.canoo.dolphin.test.impl;
 
 import com.canoo.dolphin.BeanManager;
-import com.canoo.dolphin.client.ClientConfiguration;
 import com.canoo.dolphin.client.ClientContext;
-import com.canoo.dolphin.client.impl.ClientBeanBuilderImpl;
-import com.canoo.dolphin.client.impl.ClientBeanManagerImpl;
-import com.canoo.dolphin.client.impl.ClientContextImpl;
-import com.canoo.dolphin.client.impl.ClientEventDispatcher;
-import com.canoo.dolphin.client.impl.ClientPlatformBeanRepository;
-import com.canoo.dolphin.client.impl.ClientPresentationModelBuilderFactory;
-import com.canoo.dolphin.client.impl.ControllerProxyFactory;
-import com.canoo.dolphin.client.impl.ControllerProxyFactoryImpl;
-import com.canoo.dolphin.client.impl.DolphinCommandHandler;
-import com.canoo.dolphin.client.impl.ForwardableCallback;
-import com.canoo.dolphin.impl.BeanRepositoryImpl;
-import com.canoo.dolphin.impl.ClassRepositoryImpl;
-import com.canoo.dolphin.impl.Converters;
-import com.canoo.dolphin.impl.PresentationModelBuilderFactory;
-import com.canoo.dolphin.impl.ReflectionHelper;
-import com.canoo.dolphin.impl.collections.ListMapperImpl;
-import com.canoo.dolphin.impl.commands.InterruptLongPollCommand;
-import com.canoo.dolphin.impl.commands.StartLongPollCommand;
-import com.canoo.dolphin.internal.BeanBuilder;
-import com.canoo.dolphin.internal.BeanRepository;
-import com.canoo.dolphin.internal.ClassRepository;
-import com.canoo.dolphin.internal.EventDispatcher;
-import com.canoo.dolphin.internal.collections.ListMapper;
 import com.canoo.dolphin.server.DolphinSession;
 import com.canoo.dolphin.server.binding.PropertyBinder;
 import com.canoo.dolphin.server.binding.impl.PropertyBinderImpl;
-import com.canoo.dolphin.server.config.ConfigurationFileLoader;
-import com.canoo.dolphin.server.context.DolphinContext;
-import com.canoo.dolphin.server.context.DolphinContextUtils;
 import com.canoo.dolphin.server.context.DolphinSessionProvider;
-import com.canoo.dolphin.server.controller.ControllerRepository;
-import com.canoo.dolphin.server.controller.ControllerValidationException;
 import com.canoo.dolphin.server.event.DolphinEventBus;
 import com.canoo.dolphin.server.event.impl.DefaultDolphinEventBus;
-import com.canoo.dolphin.server.impl.ClasspathScanner;
 import com.canoo.dolphin.server.spring.ClientScope;
-import com.canoo.dolphin.test.ControllerTestException;
 import com.canoo.dolphin.util.Assert;
-import org.opendolphin.core.client.ClientDolphin;
-import org.opendolphin.core.server.ServerModelStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -67,92 +32,32 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-
 @Configuration
 public class DolphinPlatformSpringTestBootstrap {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DolphinPlatformSpringTestBootstrap.class);
-
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public ClientContext createClientContext(final DolphinTestContext dolphinContext, final TestInMemoryConfiguration config) throws ExecutionException, InterruptedException, MalformedURLException {
-        Assert.requireNonNull(dolphinContext, "dolphinContext");
-        final ClientDolphin clientDolphin = dolphinContext.getClientDolphin();
-
-        final URL dummyURL = new URL("http://dummyURL");
-        final ClientConfiguration clientConfiguration = new ClientConfiguration(dummyURL, new Executor() {
-            @Override
-            public void execute(Runnable command) {
-                config.getClientExecutor().execute(command);
-            }
-        });
-        clientConfiguration.setConnectionTimeout(Long.MAX_VALUE);
-        final DolphinCommandHandler dolphinCommandHandler = new DolphinCommandHandler(clientDolphin);
-        final EventDispatcher dispatcher = new ClientEventDispatcher(clientDolphin);
-        final BeanRepository beanRepository = new BeanRepositoryImpl(clientDolphin, dispatcher);
-        final Converters converters = new Converters(beanRepository);
-        final PresentationModelBuilderFactory builderFactory = new ClientPresentationModelBuilderFactory(clientDolphin);
-        final ClassRepository classRepository = new ClassRepositoryImpl(clientDolphin, converters, builderFactory);
-        final ListMapper listMapper = new ListMapperImpl(clientDolphin, classRepository, beanRepository, builderFactory, dispatcher);
-        final BeanBuilder beanBuilder = new ClientBeanBuilderImpl(classRepository, beanRepository, listMapper, builderFactory, dispatcher);
-        final ClientPlatformBeanRepository platformBeanRepository = new ClientPlatformBeanRepository(clientDolphin, beanRepository, dispatcher, converters);
-        final ClientBeanManagerImpl clientBeanManager = new ClientBeanManagerImpl(beanRepository, beanBuilder, clientDolphin);
-        final ControllerProxyFactory controllerProxyFactory = new ControllerProxyFactoryImpl(platformBeanRepository, dolphinCommandHandler, clientDolphin);
-        final ClientContext clientContext = new ClientContextImpl(clientConfiguration, clientDolphin, controllerProxyFactory, dolphinCommandHandler, platformBeanRepository, clientBeanManager, new ForwardableCallback());
-
-        //Currently the event bus can not used in tests. See https://github.com/canoo/dolphin-platform/issues/196
-        config.getClientExecutor().submit(new Callable<Void>() {
-            @Override
-            public Void call() {
-                DolphinContextUtils.setContextForCurrentThread(dolphinContext);
-                clientDolphin.getClientConnector().startPushListening(new StartLongPollCommand(), new InterruptLongPollCommand());
-                return null;
-            }
-
-        }).get();
-        return clientContext;
-    }
-
-    @Bean
-    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public DolphinTestContext createServerContext(final TestInMemoryConfiguration config,
-                                                  final WebApplicationContext context) throws ExecutionException, ControllerValidationException, InterruptedException {
-        Assert.requireNonNull(config, "config");
+    protected TestConfiguration createTestConfiguration(final WebApplicationContext context) {
         Assert.requireNonNull(context, "context");
-        ControllerRepository controllerRepository = new ControllerRepository(new ClasspathScanner());
-        TestSpringContainerManager containerManager = new TestSpringContainerManager(context);
-        containerManager.init(context.getServletContext());
-        DolphinContextProviderMock dolphinContextProviderMock = new DolphinContextProviderMock();
-
-        DolphinTestContext dolphinContext = new DolphinTestContext(ConfigurationFileLoader.loadConfiguration(), dolphinContextProviderMock, containerManager, controllerRepository, config);
-        dolphinContextProviderMock.setCurrentContext(dolphinContext);
-
-        DolphinTestClientConnector inMemoryClientConnector = new DolphinTestClientConnector(config.getClientDolphin().getModelStore(), config.getClientExecutor(), dolphinContext);
-
-        inMemoryClientConnector.setStrictMode(false);
-        config.getClientDolphin().setClientConnector(inMemoryClientConnector);
-
-        return dolphinContext;
+        try {
+            return new TestConfiguration(context);
+        } catch (Exception e) {
+            throw new RuntimeException("Can not create test configuration", e);
+        }
     }
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    public TestInMemoryConfiguration createInMemoryConfig() throws ExecutionException, InterruptedException {
-        TestInMemoryConfiguration config = new TestInMemoryConfiguration();
-        config.getServerDolphin().getServerConnector().registerDefaultActions();
-        ServerModelStore store = config.getServerDolphin().getModelStore();
-        try {
-            ReflectionHelper.setPrivileged(ServerModelStore.class.getDeclaredField("currentResponse"), store, new ArrayList<>());
-        } catch (NoSuchFieldException e) {
-            throw new ControllerTestException(e);
-        }
-        return config;
+    protected ClientContext createClientContext(final TestConfiguration testConfiguration) {
+        Assert.requireNonNull(testConfiguration, "testConfiguration");
+        return testConfiguration.getClientContext();
+    }
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+    protected DolphinTestContext createServerContext(final TestConfiguration testConfiguration) {
+        Assert.requireNonNull(testConfiguration, "testConfiguration");
+        return testConfiguration.getDolphinTestContext();
     }
 
     /**
@@ -162,19 +67,17 @@ public class DolphinPlatformSpringTestBootstrap {
      */
     @Bean(name = "beanManager")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    protected BeanManager createManager(final DolphinTestContext context) {
-        Assert.requireNonNull(context, "context");
-        return context.getBeanManager();
+    protected BeanManager createManager(final TestConfiguration testConfiguration) {
+        Assert.requireNonNull(testConfiguration, "testConfiguration");
+        return testConfiguration.getDolphinTestContext().getBeanManager();
     }
-
 
     @Bean(name = "dolphinSession")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    protected DolphinSession createDolphinSession(final DolphinTestContext context) {
-        Assert.requireNonNull(context, "context");
-        return context.getDolphinSession();
+    protected DolphinSession createDolphinSession(final TestConfiguration testConfiguration) {
+        Assert.requireNonNull(testConfiguration, "testConfiguration");
+        return testConfiguration.getDolphinTestContext().getDolphinSession();
     }
-
 
     /**
      * Method to create a spring managed {@link DolphinEventBus} instance in singleton scope.
@@ -183,11 +86,12 @@ public class DolphinPlatformSpringTestBootstrap {
      */
     @Bean(name = "dolphinEventBus")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    protected DolphinEventBus createEventBus(final DolphinTestContext context) {
+    protected DolphinEventBus createEventBus(final DolphinSession dolphinSession) {
+        Assert.requireNonNull(dolphinSession, "dolphinSession");
         return new DefaultDolphinEventBus(new DolphinSessionProvider() {
             @Override
             public DolphinSession getCurrentDolphinSession() {
-                return context.getDolphinSession();
+                return dolphinSession;
             }
         });
     }
@@ -199,30 +103,15 @@ public class DolphinPlatformSpringTestBootstrap {
     }
 
     @Bean(name = "customScopeConfigurer")
-    public static CustomScopeConfigurer createClientScope(final DolphinTestContext context) {
-        Assert.requireNonNull(context, "context");
+    public static CustomScopeConfigurer createClientScope(final DolphinSession dolphinSession) {
+        Assert.requireNonNull(dolphinSession, "dolphinSession");
         CustomScopeConfigurer configurer = new CustomScopeConfigurer();
         configurer.addScope(ClientScope.CLIENT_SCOPE, new ClientScope(new DolphinSessionProvider() {
             @Override
             public DolphinSession getCurrentDolphinSession() {
-                return context.getDolphinSession();
+                return dolphinSession;
             }
         }));
         return configurer;
     }
-
-    private class DolphinContextProviderMock implements DolphinSessionProvider {
-
-        DolphinContext currentContext;
-
-        public void setCurrentContext(DolphinContext currentContext) {
-            this.currentContext = currentContext;
-        }
-
-        @Override
-        public DolphinSession getCurrentDolphinSession() {
-            return currentContext.getDolphinSession();
-        }
-    }
-
 }

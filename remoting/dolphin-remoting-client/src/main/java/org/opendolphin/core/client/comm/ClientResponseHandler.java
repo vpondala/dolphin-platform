@@ -20,16 +20,17 @@ import org.opendolphin.core.client.ClientAttribute;
 import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.client.ClientPresentationModel;
 import org.opendolphin.core.comm.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 public class ClientResponseHandler {
 
-    private static final Logger LOG = Logger.getLogger(ClientResponseHandler.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ClientResponseHandler.class);
 
     private final ClientModelStore clientModelStore;
 
@@ -49,7 +50,7 @@ public class ClientResponseHandler {
         } else if (command instanceof AttributeMetadataChangedCommand) {
             handleAttributeMetadataChangedCommand((AttributeMetadataChangedCommand) command);
         } else {
-            LOG.severe("C: cannot handle unknown command '" + command + "'");
+            LOG.error("C: cannot handle unknown command '{}'", command );
         }
 
     }
@@ -96,7 +97,7 @@ public class ClientResponseHandler {
     private void handleValueChangedCommand(ValueChangedCommand serverCommand) {
         Attribute attribute = clientModelStore.findAttributeById(serverCommand.getAttributeId());
         if (attribute == null) {
-            LOG.warning("C: attribute with id '" + serverCommand.getAttributeId() + "' not found, cannot update old value '" + serverCommand.getOldValue() + "' to new value '" + serverCommand.getNewValue() + "'");
+            LOG.warn("C: attribute with id '{}' not found, cannot update old value '{}' to new value '{}'", serverCommand.getAttributeId() ,serverCommand.getOldValue(), serverCommand.getNewValue() );
             return;
         }
 
@@ -107,11 +108,11 @@ public class ClientResponseHandler {
 
         if (strictMode && ((attribute.getValue() == null && serverCommand.getOldValue() != null) || (attribute.getValue() != null && serverCommand.getOldValue() == null) || (attribute.getValue() != null && !attribute.getValue().equals(serverCommand.getOldValue())))) {
             // todo dk: think about sending a RejectCommand here to tell the server about a possible lost update
-            LOG.warning("C: attribute with id '" + serverCommand.getAttributeId() + "' and value '" + attribute.getValue() + "' cannot be set to new value '" + serverCommand.getNewValue() + "' because the change was based on an outdated old value of '" + serverCommand.getOldValue() + "'.");
+            LOG.warn("C: attribute with id '{}' and value '{}' cannot be set to new value '{}' because the change was based on an outdated old value of '{}'.", serverCommand.getAttributeId(), attribute.getValue(), serverCommand.getNewValue(), serverCommand.getOldValue());
             return;
         }
 
-        LOG.info("C: updating '" + attribute.getPropertyName() + "' id '" + serverCommand.getAttributeId() + "' from '" + attribute.getValue() + "' to '" + serverCommand.getNewValue() + "'");
+        LOG.info("C: updating '{}' id '{}' from '{}' to '{}' " + attribute.getPropertyName(), serverCommand.getAttributeId(), attribute.getValue(), serverCommand.getNewValue());
         attribute.setValue(serverCommand.getNewValue());
         return;
     }

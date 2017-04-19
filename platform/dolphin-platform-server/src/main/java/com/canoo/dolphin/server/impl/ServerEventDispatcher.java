@@ -22,7 +22,7 @@ import org.opendolphin.core.Dolphin;
 public class ServerEventDispatcher extends EventDispatcherImpl {
 
     public ServerEventDispatcher(Dolphin dolphin) {
-        super(dolphin);
+        super(dolphin.getModelStore());
     }
 
     @Override

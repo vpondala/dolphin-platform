@@ -18,8 +18,6 @@ package org.opendolphin.core.comm
 import org.opendolphin.LogConfig
 import org.opendolphin.RemotingConstants
 import org.opendolphin.core.ModelStoreConfig
-import org.opendolphin.core.ModelStoreEvent
-import org.opendolphin.core.ModelStoreListener
 import org.opendolphin.core.client.ClientAttribute
 import org.opendolphin.core.client.ClientDolphin
 import org.opendolphin.core.client.comm.OnFinishedHandler
@@ -60,7 +58,7 @@ class ServerPresentationModelTests extends GroovyTestCase {
         context = new TestInMemoryConfig()
         serverDolphin = context.serverDolphin
         clientDolphin = context.clientDolphin
-        LogConfig.logOnLevel(Level.OFF);
+        LogConfig.logOnLevel(Level.ALL);
     }
 
     @Override
@@ -150,6 +148,10 @@ class ServerPresentationModelTests extends GroovyTestCase {
             assert serverDolphin.getModelStore().findPresentationModelById("PM1").getAttribute("att2").baseValue == 'changedBase'
         }
 
+        clientDolphin.sync {
+            //...
+        }
+
         clientDolphin.getClientConnector().send(new AttachListenerCommand(), null)
 
         clientDolphin.sync {
@@ -219,60 +221,6 @@ class ServerPresentationModelTests extends GroovyTestCase {
             }
         }
 
-    }
-
-    void testServerSideModelStoreListener() {
-
-        List<CreatePresentationModelCommand> receivedCommands = new ArrayList<>();
-        List<ModelStoreEvent> receivedEvents = new ArrayList<>();
-
-        registerAction serverDolphin, RegisterMSLCommand.class, { cmd, response ->
-            serverDolphin.getModelStore().addModelStoreListener(new ModelStoreListener() {
-                @Override void modelStoreChanged(ModelStoreEvent event) {
-                    receivedEvents << event
-                }
-            })
-        }
-
-        serverDolphin.getServerConnector().register(new DolphinServerAction() {
-            @Override
-            void registerIn(ActionRegistry registry) {
-                registry.register(CreatePresentationModelCommand.class, new CommandHandler<CreatePresentationModelCommand>() {
-
-                    @Override
-                    void handleCommand(CreatePresentationModelCommand command, List<Command> response) {
-                        receivedCommands << command
-                    }
-                });
-            }
-        })
-
-        registerAction serverDolphin, CreateCommand.class, { cmd, response ->
-            def dto = new DTO(new Slot("att1", 1))
-            serverDolphin.getModelStore().presentationModel("server-side-with-id", null, dto)
-            // will lead to log: [INFO] There already is a PM with id server-side-with-id. Create PM ignored.
-            serverDolphin.getModelStore().presentationModel(null, "server-side-without-id", dto)
-            // will lead to log: [INFO] Cannot create PM '0-AUTO-SRV' with forbidden suffix. Create PM ignored.
-            // at this point, the MSL has been triggered
-        }
-
-        clientDolphin.getClientConnector().send(new RegisterMSLCommand(), null)
-
-        clientDolphin.getModelStore().createModel("client-side-with-id", null, new ClientAttribute("attr1", 1))
-
-        clientDolphin.getClientConnector().send new CreateCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                assert receivedCommands.get(0).pmId == "client-side-with-id"
-                assert receivedCommands.get(1).pmId == "server-side-with-id"
-                assert receivedCommands.get(2).pmId == "0-AUTO-SRV"
-                assert receivedEvents.get(0).presentationModel.id == "client-side-with-id"
-                assert receivedEvents.get(1).presentationModel.id == "server-side-with-id"
-                assert receivedEvents.get(2).presentationModel.id == "0-AUTO-SRV"
-                context.assertionsDone()
-            }
-        }
     }
 
     void testServerSidePmRemoval() {

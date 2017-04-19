@@ -15,28 +15,20 @@
  */
 package org.opendolphin.core.client.comm;
 
-import java.util.concurrent.Executor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.opendolphin.util.DolphinRemotingException;
 
-public class SimpleExceptionHandler implements ExceptionHandler {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private static final Logger LOG = Logger.getLogger(SimpleExceptionHandler.class.getName());
+public class SimpleExceptionHandler implements RemotingExceptionHandler {
 
-    private final Executor uiExecutor;
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleExceptionHandler.class);
 
-    public SimpleExceptionHandler(Executor uiExecutor) {
-        this.uiExecutor = uiExecutor;
+    public SimpleExceptionHandler() {
     }
 
     @Override
-    public void handle(final Throwable e) {
-        LOG.log(Level.SEVERE, "onException reached, rethrowing in UI Thread, consider setting AbstractClientConnector.onException", e);
-        uiExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                throw new RuntimeException(e);
-            }
-        });
+    public void handle(final DolphinRemotingException e) {
+        LOG.error(" Error in remoting layer: ", e);
     }
 }

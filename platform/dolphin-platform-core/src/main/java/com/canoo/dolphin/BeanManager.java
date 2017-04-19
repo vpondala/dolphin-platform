@@ -70,14 +70,6 @@ import java.util.List;
 public interface BeanManager {
 
     /**
-     * Checks if the given object is a dolphin bean that is synced with the client
-     *
-     * @param bean the object
-     * @return true if the given object is a dolphin bean
-     */
-    boolean isManaged(Object bean);
-
-    /**
      * Creates a new instance of the given dolphin bean class that will automatically be synced with the client.
      * The given class must be defined as a dolphin bean
      *
@@ -86,47 +78,6 @@ public interface BeanManager {
      * @return the new bean instance
      */
     <T> T create(Class<T> beanClass);
-
-    /**
-     * Remove the given managed dolphin bean. by calling this method the given bean will become unmanaged and won't be
-     * synced with the client.
-     *
-     * @param bean the bean
-     * @deprecated with the new garbage collection support you should never removePresentationModel a bean by hand. Just set the property
-     * value to null and the gc will removePresentationModel the bean.
-     */
-    @Deprecated
-    void remove(Object bean);
-
-    /**
-     * Remove all beans of the given type.
-     *
-     * @param beanClass the class that defines the bean type.
-     * @deprecated with the new garbage collection support you should never removePresentationModel a bean by hand. Just set the property
-     * value to null and the gc will removePresentationModel the bean.
-     */
-    @Deprecated
-    void removeAll(Class<?> beanClass);
-
-    /**
-     * Remove all given beans.
-     *
-     * @param beans the beans that should be removed.
-     * @deprecated with the new garbage collection support you should never removePresentationModel a bean by hand. Just set the property
-     * value to null and the gc will removePresentationModel the bean.
-     */
-    @Deprecated
-    void removeAll(Object... beans);
-
-    /**
-     * Remove all beans of the given type.
-     *
-     * @param beans the beans that should be removed.
-     * @deprecated with the new garbage collection support you should never removePresentationModel a bean by hand. Just set the property
-     * value to null and the gc will removePresentationModel the bean.
-     */
-    @Deprecated
-    void removeAll(Collection<?> beans);
 
     /**
      * Returns a list of all dolphin managed beans of the given type / class
@@ -148,37 +99,8 @@ public interface BeanManager {
      * @param <T> the bean type
      * @return the (@link com.canoo.dolphin.event.Subscription} that can be used to unsubscribe the listener
      */
+    @Deprecated
     <T> Subscription onAdded(Class<T> beanClass, BeanAddedListener<? super T> listener);
 
-    /**
-     * Subscribe a listener to all bean creation events. A listener that is added to a client side
-     * {@link BeanManager} will only fire events for beans that where created on the server side and vice versa. This means that the listener
-     * isn't fired for a bean that was created by the same {@link BeanManager}.
-     *
-     * @param listener the listener which receives the creation events
-     * @return the (@link com.canoo.dolphin.event.Subscription} that can be used to unsubscribe the listener
-     */
-    Subscription onAdded(BeanAddedListener<Object> listener);
-
-    /**
-     * Subscribe a listener to all bean destruction events for a specific class. A listener that is added to a client side
-     * {@link BeanManager} will only fire events for beans that where removed on the server side and vice versa. This means that the listener
-     * isn't fired for a bean that was removed by the same {@link BeanManager}.
-     *
-     * @param beanClass the class for which destruction events should be received
-     * @param listener the listener which receives the destruction events
-     * @return the (@link com.canoo.dolphin.event.Subscription} that can be used to unsubscribe the listener
-     */
-    <T> Subscription onRemoved(Class<T> beanClass, BeanRemovedListener<? super T> listener);
-
-    /**
-     * Subscribe a listener to all bean destruction events. A listener that is added to a client side
-     * {@link BeanManager} will only fire events for beans that where removed on the server side and vice versa. This means that the listener
-     * isn't fired for a bean that was removed by the same {@link BeanManager}.
-     *
-     * @param listener the listener which receives the destruction events
-     * @return the (@link com.canoo.dolphin.event.Subscription} that can be used to unsubscribe the listener
-     */
-    Subscription onRemoved(BeanRemovedListener<Object> listener);
 
 }

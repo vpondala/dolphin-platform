@@ -16,9 +16,10 @@
 package com.canoo.dolphin.client.impl;
 
 import com.canoo.dolphin.impl.AbstractPresentationModelBuilder;
+import com.canoo.dolphin.util.Assert;
 import org.opendolphin.RemotingConstants;
 import org.opendolphin.core.client.ClientAttribute;
-import org.opendolphin.core.client.ClientDolphin;
+import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.client.ClientPresentationModel;
 
 import java.util.ArrayList;
@@ -27,10 +28,10 @@ import java.util.List;
 public class ClientPresentationModelBuilder extends AbstractPresentationModelBuilder<ClientPresentationModel> {
 
     private final List<ClientAttribute> attributes = new ArrayList<>();
-    private final ClientDolphin dolphin;
+    private final ClientModelStore modelStore;
 
-    public ClientPresentationModelBuilder(ClientDolphin dolphin) {
-        this.dolphin = dolphin;
+    public ClientPresentationModelBuilder(final ClientModelStore modelStore) {
+        this.modelStore = Assert.requireNonNull(modelStore, "modelStore");
         attributes.add(new ClientAttribute(RemotingConstants.SOURCE_SYSTEM, RemotingConstants.SOURCE_SYSTEM_CLIENT));
     }
 
@@ -54,7 +55,7 @@ public class ClientPresentationModelBuilder extends AbstractPresentationModelBui
 
     @Override
     public ClientPresentationModel create() {
-        return dolphin.getModelStore().createModel(id, type, attributes.toArray(new ClientAttribute[attributes.size()]));
+        return modelStore.createModel(id, type, attributes.toArray(new ClientAttribute[attributes.size()]));
     }
 
 }
