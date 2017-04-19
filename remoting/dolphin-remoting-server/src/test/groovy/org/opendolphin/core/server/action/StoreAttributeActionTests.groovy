@@ -37,7 +37,7 @@ class StoreAttributeActionTests extends GroovyTestCase {
         new QualifierChangeAction(serverModelStore: dolphin.modelStore).registerIn registry
         ServerAttribute attribute = new ServerAttribute('newAttribute', '')
         dolphin.getModelStore().add(new ServerPresentationModel('model', [attribute], dolphin.getModelStore()))
-        registry.getActionsFor(QualifierChangedCommand.class).first().handleCommand(new QualifierChangedCommand(attribute.id, 'newValue'), [])
+        registry.getActionsFor(QualifierChangedCommand.class).first().handleCommand(new QualifierChangedCommand(attribute.id, 'newValue'))
         assert 'newValue' == attribute.qualifier
     }
 }

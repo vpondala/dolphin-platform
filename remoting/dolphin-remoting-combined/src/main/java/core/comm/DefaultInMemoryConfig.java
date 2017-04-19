@@ -49,6 +49,7 @@ public class DefaultInMemoryConfig implements Provider<AbstractClientConnector> 
         ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(this);
         ClientModelStore modelStore = new ClientModelStore(defaultModelSynchronizer);
         clientConnector = new InMemoryClientConnector(modelStore, serverDolphin.getServerConnector(), new CommandBatcher(), uiExecutor);
+        clientConnector.connect(false);
         clientDolphin.setClientModelStore(modelStore);
         clientDolphin.setClientConnector(clientConnector);
         clientConnector.setSleepMillis(100);

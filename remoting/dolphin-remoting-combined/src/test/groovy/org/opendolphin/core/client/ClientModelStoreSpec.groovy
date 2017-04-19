@@ -39,7 +39,7 @@ class ClientModelStoreSpec extends Specification {
 		});
 		modelStore = new ClientModelStore(defaultModelSynchronizer)
 		AbstractClientConnector clientConnector = new InMemoryClientConnector(modelStore, new ServerConnector(), new CommandBatcher(), DirectExecutor.getInstance());
-
+		clientConnector.connect(false);
         clientDolphin.clientConnector = clientConnector;
 		clientDolphin.clientModelStore = modelStore
 

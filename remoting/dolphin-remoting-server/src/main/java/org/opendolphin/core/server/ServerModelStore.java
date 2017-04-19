@@ -151,17 +151,8 @@ public class ServerModelStore extends ModelStore<ServerAttribute, ServerPresenta
             LOG.severe("Cannot change value on a null attribute to '" + value);
             return;
         }
-        forceChangeValue(value, response, attribute);
-    }
-
-    /**
-     * @deprecated use forceChangeValueCommand(Object, List, ServerAttribute). You can use the "inline method refactoring". Will be removed in version 1.0!
-     */
-    @Deprecated
-    public static void forceChangeValue(Object value, List<Command> response, ServerAttribute attribute) {
         response.add(new ValueChangedCommand(attribute.getId(), attribute.getValue(), value));
     }
-
 
     /**
      * Convenience method to let the client (!) dolphin create a presentation model as specified by the DTO.

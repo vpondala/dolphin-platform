@@ -95,7 +95,6 @@ public class ServerConnector {
         register(new ValueChangeAction());
         register(new QualifierChangeAction());
         register(new CreatePresentationModelAction());
-        register(new DeletePresentationModelAction());
     }
 
     public Codec getCodec() {

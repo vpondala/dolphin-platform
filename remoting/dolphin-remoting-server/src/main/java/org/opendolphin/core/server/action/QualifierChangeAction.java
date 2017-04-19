@@ -20,12 +20,8 @@ import org.opendolphin.core.server.ServerAttribute;
 import org.opendolphin.core.server.comm.ActionRegistry;
 import org.opendolphin.core.server.comm.CommandHandler;
 
-import java.util.logging.Logger;
-
 @Deprecated
 public class QualifierChangeAction extends DolphinServerAction {
-
-    private static final Logger LOG = Logger.getLogger(QualifierChangeAction.class.getName());
 
     public void registerIn(ActionRegistry registry) {
         registry.register(QualifierChangedCommand.class, new CommandHandler<QualifierChangedCommand>() {
@@ -36,7 +32,7 @@ public class QualifierChangeAction extends DolphinServerAction {
                     throw new IllegalStateException("Can not find attribute with id '" + command.getAttributeId());
                 }
 
-                ((ServerAttribute) attribute).silently(new Runnable() {
+                attribute.silently(new Runnable() {
                     @Override
                     public void run() {
                         attribute.setQualifier(command.getQualifier());

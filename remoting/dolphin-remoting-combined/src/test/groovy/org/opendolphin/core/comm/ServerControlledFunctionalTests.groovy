@@ -76,19 +76,31 @@ class ServerControlledFunctionalTests extends GroovyTestCase {
         ClientPresentationModel model = new ClientPresentationModel("pm1", Arrays.asList(new ClientAttribute("a", 0)));
         clientDolphin.getModelStore().add(model);
 
-        // register a server-side action that sees the second PM
-        registerAction (serverDolphin, CheckPmIsThereCommand.class, { cmd ->
-            assert serverDolphin.getModelStore().findPresentationModelById("pm1").getAttribute("a").value == 1
-            assert clientDolphin.getModelStore().findPresentationModelById("pm1").getAttribute("a").value == 1
-            context.assertionsDone()
+        registerAction (serverDolphin, RemoveCommand.class, { cmd ->
+            assert serverDolphin.getModelStore().findPresentationModelById("pm1").getAttribute("a").value == 0
+            assert clientDolphin.getModelStore().findPresentationModelById("pm1").getAttribute("a").value == 0
+
+            serverDolphin.getModelStore().remove(serverDolphin.getModelStore().findPresentationModelById("pm1"));
         });
 
-        assert clientDolphin.getModelStore().findPresentationModelById("pm1").getAttribute("a").value == 0
-        clientDolphin.getModelStore().remove(clientDolphin.getModelStore().findPresentationModelById("pm1"))
-        ClientPresentationModel model2 = new ClientPresentationModel("pm1", Arrays.asList(new ClientAttribute("a", 1)));
-        clientDolphin.getModelStore().add(model2);
+        clientDolphin.getClientConnector().send(new RemoveCommand());
 
-        clientDolphin.getClientConnector().send(new CheckPmIsThereCommand(), null)
+
+        clientDolphin.sync(new Runnable() {
+            @Override
+            void run() {
+                ClientPresentationModel model2 = new ClientPresentationModel("pm1", Arrays.asList(new ClientAttribute("a", 1)));
+                clientDolphin.getModelStore().add(model2);
+
+                registerAction (serverDolphin, CheckPmIsThereCommand.class, { cmd ->
+                    assert serverDolphin.getModelStore().findPresentationModelById("pm1").getAttribute("a").value == 1
+                    assert clientDolphin.getModelStore().findPresentationModelById("pm1").getAttribute("a").value == 1
+                    context.assertionsDone()
+                });
+
+                clientDolphin.getClientConnector().send(new CheckPmIsThereCommand(), null);
+            }
+        });
     }
 
 

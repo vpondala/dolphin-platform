@@ -44,7 +44,6 @@ public class ValueChangeAction extends DolphinServerAction {
                     public void run() {
                         attribute.setValue(command.getNewValue());
                     }
-
                 });
             }
         });

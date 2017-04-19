@@ -42,7 +42,6 @@ public class InMemoryClientConnector extends AbstractClientConnector {
     public InMemoryClientConnector(final ClientModelStore clientModelStore, final ServerConnector serverConnector, final ICommandBatcher commandBatcher, final Executor uiExecutor) {
         super(clientModelStore, uiExecutor, commandBatcher, new SimpleExceptionHandler(), Executors.newCachedThreadPool());
         this.serverConnector = Objects.requireNonNull(serverConnector);
-        connect(false);
     }
 
     @Override
