@@ -36,11 +36,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -55,11 +55,11 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
 
     private final Codec codec;
 
-    private final CookieStore cookieStore;
-
     private final HttpURLConnectionFactory connectionFactory;
 
     private final HttpURLConnectionResponseHandler responseHandler;
+
+    private final HttpClientCookieHandler httpClientCookieHandler;
 
     private AtomicReference<String> clientId = new AtomicReference<>();
 
@@ -67,7 +67,7 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
         super(clientModelStore, Assert.requireNonNull(configuration, "configuration").getUiExecutor(), new BlindCommandBatcher(), onException, configuration.getBackgroundExecutor());
         this.servletUrl = configuration.getServerEndpoint();
         this.connectionFactory = configuration.getConnectionFactory();
-        this.cookieStore = configuration.getCookieStore();
+        this.httpClientCookieHandler = new HttpClientCookieHandler(configuration.getCookieStore());
         this.responseHandler = configuration.getResponseHandler();
         this.codec = Assert.requireNonNull(codec, "codec");
 
@@ -80,14 +80,14 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
     public List<Command> transmit(List<Command> commands) throws DolphinRemotingException {
         Assert.requireNonNull(commands, "commands");
 
-        if(disconnecting.get()) {
+        if (disconnecting.get()) {
             LOG.warn("Canceled communication based on disconnect");
             return Collections.emptyList();
         }
 
         //block if diconnect is called in other thread (poll / release)
         for (Command command : commands) {
-            if(command instanceof DestroyContextCommand) {
+            if (command instanceof DestroyContextCommand) {
                 disconnecting.set(true);
             }
         }
@@ -101,12 +101,12 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
             conn.setRequestProperty(PlatformConstants.CONTENT_TYPE_HEADER, PlatformConstants.JSON_MIME_TYPE);
             conn.setRequestProperty(PlatformConstants.ACCEPT_HEADER, PlatformConstants.JSON_MIME_TYPE);
             conn.setRequestMethod(PlatformConstants.POST_METHOD);
-            if(clientId.get() != null) {
+            if (clientId.get() != null) {
                 conn.setRequestProperty(PlatformConstants.CLIENT_ID_HTTP_HEADER_NAME, clientId.get());
             } else {
                 LOG.debug("Sending first request to server. Dolphin client id not defined.");
             }
-            setRequestCookies(conn);
+            httpClientCookieHandler.setRequestCookies(conn);
             String content = codec.encode(commands);
             OutputStream w = conn.getOutputStream();
             w.write(content.getBytes(PlatformConstants.CHARSET));
@@ -123,7 +123,7 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
 
             responseHandler.handle(conn);
 
-            updateCookiesFromResponse(conn);
+            httpClientCookieHandler.updateCookiesFromResponse(conn);
             updateClientId(conn);
             if (commands.size() == 1 && commands.get(0) == getReleaseCommand()) {
                 return new ArrayList<>();
@@ -133,34 +133,6 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
             }
         } catch (Exception e) {
             throw new DolphinRemotingException("Error in remoting layer", e);
-        }
-    }
-
-    private void updateCookiesFromResponse(final HttpURLConnection conn) throws URISyntaxException {
-        Map<String, List<String>> headerFields = conn.getHeaderFields();
-        List<String> cookiesHeader = headerFields.get(PlatformConstants.SET_COOKIE_HEADER);
-
-        if (cookiesHeader != null) {
-            for (String cookie : cookiesHeader) {
-                List<HttpCookie> cookies = HttpCookie.parse(cookie);
-                for(HttpCookie httpCookie : cookies) {
-                    cookieStore.add(servletUrl.toURI(), httpCookie);
-                }
-            }
-        }
-    }
-
-    private void setRequestCookies(final HttpURLConnection conn) throws URISyntaxException {
-        if (cookieStore.getCookies().size() > 0) {
-
-            String cookieValue = "";
-            for(HttpCookie cookie : cookieStore.get(servletUrl.toURI())) {
-                cookieValue = cookieValue + cookie + ";";
-            }
-            if(!cookieValue.isEmpty()) {
-                cookieValue = cookieValue.substring(0, cookieValue.length());
-                conn.setRequestProperty(PlatformConstants.COOKIE_HEADER, cookieValue);
-            }
         }
     }
 
