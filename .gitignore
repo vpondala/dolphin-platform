@@ -12,3 +12,4 @@ local.properties
 **/.nb-gradle
 **/integration-tests.war
 platform-examples/web-deployment-example/polymer-client/bower_components
+classes/
