@@ -1,0 +1,2 @@
+com.canoo.dolphin.server.config.AdditionalTestConfigurationProvider
+com.canoo.dolphin.server.config.TestConfigurationProvider

@@ -114,4 +114,9 @@ public class ServerConnector {
         return registry;
     }
 
+    @Deprecated
+    public int getRegistrationCount() {
+        return dolphinServerActions.size();
+    }
+
 }

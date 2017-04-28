@@ -17,7 +17,7 @@ package org.opendolphin.core.client.comm
 
 import com.canoo.dolphin.impl.commands.InterruptLongPollCommand
 import com.canoo.dolphin.impl.commands.StartLongPollCommand
-import groovy.util.logging.Log
+import org.junit.Assert
 import org.opendolphin.core.Attribute
 import org.opendolphin.core.client.*
 import org.opendolphin.core.comm.*
@@ -30,11 +30,11 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-class ClientConnectorTests extends GroovyTestCase {
+public class ClientConnectorTests extends GroovyTestCase {
 
-    TestClientConnector clientConnector
-    ClientDolphin dolphin
-    AttributeChangeListener attributeChangeListener
+    private TestClientConnector clientConnector;
+    private ClientDolphin dolphin;
+    private AttributeChangeListener attributeChangeListener;
 
     /**
      * Since command transmission is done in parallel to test execution thread the test method might finish
@@ -45,15 +45,15 @@ class ClientConnectorTests extends GroovyTestCase {
      *
      * Therefore the following approach for the test methods has been taken to:
      * - initialize the CountDownLatch in {@code testBaseValueChange # setup ( )}
-     * - after the 'act' section of a test method: call {@code syncAndWaitUntilDone ( )} which releases the latch inside a dolphin.sync handler and then (in the main thread) waits for the latch
+     * - after the "act" section of a test method: call {@code syncAndWaitUntilDone ( )} which releases the latch inside a dolphin.sync handler and then (in the main thread) waits for the latch
      * - performs all assertions
      */
-    CountDownLatch syncDone
+    private CountDownLatch syncDone;
 
 
     @Override
     protected void setUp() {
-        dolphin = new ClientDolphin()
+        dolphin = new ClientDolphin();
         ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
             @Override
             AbstractClientConnector get() {
@@ -61,243 +61,299 @@ class ClientConnectorTests extends GroovyTestCase {
             }
         });
         ClientModelStore clientModelStore = new ClientModelStore(defaultModelSynchronizer);
-        dolphin.clientModelStore = clientModelStore;
+        dolphin.setClientModelStore(clientModelStore);
         clientConnector = new TestClientConnector(clientModelStore, DirectExecutor.getInstance());
-        dolphin.clientConnector = clientConnector;
+        dolphin.setClientConnector(clientConnector);
 
         attributeChangeListener = dolphin.getModelStore().@attributeChangeListener
 
         clientConnector.connect(false);
 
-        initLatch()
+        initLatch();
     }
 
     private void initLatch() {
-        syncDone = new CountDownLatch(1)
+        syncDone = new CountDownLatch(1);
     }
 
     private boolean waitForLatch() {
-        return syncDone.await(2, TimeUnit.SECONDS)
+        return syncDone.await(2, TimeUnit.SECONDS);
     }
 
-    void syncAndWaitUntilDone() {
+    private void syncAndWaitUntilDone() {
         dolphin.sync {
-            syncDone.countDown()
+            syncDone.countDown();
         }
-        assert waitForLatch()
+        Assert.assertTrue(waitForLatch());
     }
 
-    void assertCommandsTransmitted(int count) {
-        assert clientConnector.getTransmitCount() == count
+    private void assertCommandsTransmitted(final int count) {
+        Assert.assertEquals(count, clientConnector.getTransmitCount());
     }
 
-    void assertOnlySyncCommandWasTransmitted() {
+    private void assertOnlySyncCommandWasTransmitted() {
         assertCommandsTransmitted(1)
         // 1 command was sent because of the sent sync (resulting in a EMPTY command):
-        assert clientConnector.transmittedCommands[0] instanceof EmptyNotification
+        Assert.assertFalse(clientConnector.getTransmittedCommands().isEmpty());
+        Assert.assertEquals(EmptyNotification.class, clientConnector.getTransmittedCommands().get(0).class);
     }
 
-    void testSevereLogWhenCommandNotFound() {
-        clientConnector.dispatchHandle(new EmptyNotification())
-        syncAndWaitUntilDone()
-        assertOnlySyncCommandWasTransmitted()
+    public void testSevereLogWhenCommandNotFound() {
+        clientConnector.dispatchHandle(new EmptyNotification());
+        syncAndWaitUntilDone();
+        assertOnlySyncCommandWasTransmitted();
     }
 
-    void testHandleSimpleCreatePresentationModelCommand() {
-        final myPmId = "myPmId"
-        assert null == dolphin.getModelStore().findPresentationModelById(myPmId)
-        CreatePresentationModelCommand command = new CreatePresentationModelCommand()
-        command.pmId = myPmId
-        clientConnector.dispatchHandle(command)
-        assert dolphin.getModelStore().findPresentationModelById(myPmId)
-        syncAndWaitUntilDone()
-        assertCommandsTransmitted(2)
+    public void testHandleSimpleCreatePresentationModelCommand() {
+        final String myPmId = "myPmId";
+        Assert.assertEquals(null, dolphin.getModelStore().findPresentationModelById(myPmId));
+        CreatePresentationModelCommand command = new CreatePresentationModelCommand();
+        command.setPmId(myPmId);
+        clientConnector.dispatchHandle(command);
+        Assert.assertNotNull(dolphin.getModelStore().findPresentationModelById(myPmId));
+        syncAndWaitUntilDone();
+        assertCommandsTransmitted(2);
     }
 
     //void testDefaultOnExceptionHandler() {
     //	clientConnector.uiThreadHandler = { it() } as UiThreadHandler
-    //	String exceptionMessage = 'TestException thrown on purpose'
+    //	String exceptionMessage = "TestException thrown on purpose"
     //	def msg = shouldFail(RuntimeException) {
     //		clientConnector.getOnException().handle(new RuntimeException(exceptionMessage))
     //	}
     //	assert msg == exceptionMessage
     //}
 
-    void testValueChange_OldAndNewValueSame() {
-        attributeChangeListener.propertyChange(new PropertyChangeEvent("dummy", Attribute.VALUE_NAME, 'sameValue', 'sameValue'))
-        syncAndWaitUntilDone()
-        assertOnlySyncCommandWasTransmitted()
+    public void testValueChange_OldAndNewValueSame() {
+        attributeChangeListener.propertyChange(new PropertyChangeEvent("dummy", Attribute.VALUE_NAME, "sameValue", "sameValue"));
+        syncAndWaitUntilDone();
+        assertOnlySyncCommandWasTransmitted();
     }
 
     void testValueChange_noQualifier() {
-        ClientAttribute attribute = new ClientAttribute('attr', 'initialValue')
-        dolphin.getModelStore().registerAttribute(attribute)
-        attributeChangeListener.propertyChange(new PropertyChangeEvent(attribute, Attribute.VALUE_NAME, attribute.value, 'newValue'))
-        syncAndWaitUntilDone()
-        assertCommandsTransmitted(2)
-        assert attribute.value == 'initialValue'
-        assert clientConnector.transmittedCommands.any { it instanceof ValueChangedCommand }
+        ClientAttribute attribute = new ClientAttribute("attr", "initialValue");
+        dolphin.getModelStore().registerAttribute(attribute);
+        attributeChangeListener.propertyChange(new PropertyChangeEvent(attribute, Attribute.VALUE_NAME, attribute.value, "newValue"));
+        syncAndWaitUntilDone();
+        assertCommandsTransmitted(2);
+        Assert.assertEquals("initialValue", attribute.getValue());
+
+        boolean valueChangedCommandFound = false;
+        for (Command c : clientConnector.getTransmittedCommands()) {
+            if (c instanceof ValueChangedCommand) {
+            }
+            valueChangedCommandFound = true;
+        }
+        Assert.assertTrue(valueChangedCommandFound);
     }
 
     void testValueChange_withQualifier() {
-        syncDone = new CountDownLatch(1)
+        syncDone = new CountDownLatch(1);
+        ClientAttribute attribute = new ClientAttribute("attr", "initialValue", "qualifier");
+        dolphin.getModelStore().registerAttribute(attribute);
+        attributeChangeListener.propertyChange(new PropertyChangeEvent(attribute, Attribute.VALUE_NAME, attribute.value, "newValue"));
+        syncAndWaitUntilDone();
+        assertCommandsTransmitted(3);
+        Assert.assertEquals("newValue", attribute.getValue());
 
-        ClientAttribute attribute = new ClientAttribute('attr', 'initialValue', 'qualifier')
-        dolphin.getModelStore().registerAttribute(attribute)
-        attributeChangeListener.propertyChange(new PropertyChangeEvent(attribute, Attribute.VALUE_NAME, attribute.value, 'newValue'))
-        syncAndWaitUntilDone()
-
-        assertCommandsTransmitted(3)
-        assert attribute.value == 'newValue'
-        assert clientConnector.transmittedCommands.any { it instanceof ValueChangedCommand }
+        boolean valueChangedCommandFound = false;
+        for (Command c : clientConnector.getTransmittedCommands()) {
+            if (c instanceof ValueChangedCommand) {
+            }
+            valueChangedCommandFound = true;
+        }
+        Assert.assertTrue(valueChangedCommandFound);
     }
 
     void testAddTwoAttributesInConstructorWithSameQualifierToSamePMIsNotAllowed() {
-        shouldFail(IllegalStateException) {
-            dolphin.getModelStore().createModel("1", null, new ClientAttribute("a", "0", "QUAL"), new ClientAttribute("b", "0", "QUAL"))
-        }
+        shouldFail(IllegalStateException.class, {
+            dolphin.getModelStore().createModel("1", null, new ClientAttribute("a", "0", "QUAL"), new ClientAttribute("b", "0", "QUAL"));
+        });
     }
 
     void testMetaDataChange_UnregisteredAttribute() {
-        ClientAttribute attribute = new ExtendedAttribute('attr', 'initialValue', 'qualifier')
-        attribute.additionalParam = 'oldValue'
-        attributeChangeListener.propertyChange(new PropertyChangeEvent(attribute, 'additionalParam', null, 'newTag'))
-        syncAndWaitUntilDone()
-        assertCommandsTransmitted(2)
-        assert ChangeAttributeMetadataCommand == clientConnector.transmittedCommands[0].class
-        assert 'oldValue' == attribute.additionalParam
+        ClientAttribute attribute = new ExtendedAttribute("attr", "initialValue", "qualifier");
+        attribute.setAdditionalParam("oldValue");
+        attributeChangeListener.propertyChange(new PropertyChangeEvent(attribute, "additionalParam", null, "newTag"));
+        syncAndWaitUntilDone();
+        assertCommandsTransmitted(2);
+        Assert.assertFalse(clientConnector.getTransmittedCommands().isEmpty());
+        Assert.assertEquals(ChangeAttributeMetadataCommand.class, clientConnector.getTransmittedCommands().get(0).getClass());
+        Assert.assertEquals("oldValue", attribute.getAdditionalParam());
     }
 
     void testHandle_ValueChanged_AttrNotExists() {
-        assert !clientConnector.dispatchHandle(new ValueChangedCommand(attributeId: 0, oldValue: 'oldValue', newValue: 'newValue'))
+        //TODO: How to convert this to Java?
+        assert !clientConnector.dispatchHandle(new ValueChangedCommand("0", "oldValue", "newValue"));
     }
 
     void testHandle_ValueChangedWithBadBaseValueIsIgnored() {
-        def attribute = new ClientAttribute('attr', 'initialValue')
-        dolphin.getModelStore().registerAttribute(attribute)
-        clientConnector.dispatchHandle(new ValueChangedCommand(attributeId: attribute.id, oldValue: 'no-such-base-value', newValue: 'newValue'))
-        assert 'initialValue' == attribute.value
+        ClientAttribute attribute = new ClientAttribute("attr", "initialValue");
+        dolphin.getModelStore().registerAttribute(attribute);
+        clientConnector.dispatchHandle(new ValueChangedCommand(attribute.getId(), "no-such-base-value", "newValue"));
+        Assert.assertEquals("initialValue", attribute.getValue());
     }
 
     void testHandle_ValueChangedWithBadBaseValueIgnoredInNonStrictMode() {
-        clientConnector.strictMode = false
-        def attribute = new ClientAttribute('attr', 'initialValue')
-        dolphin.getModelStore().registerAttribute(attribute)
-        clientConnector.dispatchHandle(new ValueChangedCommand(attributeId: attribute.id, oldValue: 'no-such-base-value', newValue: 'newValue'))
-        assert 'newValue' == attribute.value
-        clientConnector.strictMode = true // re-setting for later tests
+        clientConnector.setStrictMode(false);
+        ClientAttribute attribute = new ClientAttribute("attr", "initialValue");
+        dolphin.getModelStore().registerAttribute(attribute);
+        clientConnector.dispatchHandle(new ValueChangedCommand(attribute.getId(), "no-such-base-value", "newValue"));
+        Assert.assertEquals("newValue", attribute.getValue());
+        clientConnector.setStrictMode(true);
     }
 
     void testHandle_ValueChanged() {
-        def attribute = new ClientAttribute('attr', 'initialValue')
-        dolphin.getModelStore().registerAttribute(attribute)
-        assert !clientConnector.dispatchHandle(new ValueChangedCommand(attributeId: attribute.id, oldValue: 'initialValue', newValue: 'newValue'))
-        assert 'newValue' == attribute.value
+        ClientAttribute attribute = new ClientAttribute("attr", "initialValue");
+        dolphin.getModelStore().registerAttribute(attribute);
+
+        clientConnector.dispatchHandle(new ValueChangedCommand(attribute.id, "initialValue", "newValue"));
+        Assert.assertEquals("newValue", attribute.getValue());
     }
 
     void testHandle_CreatePresentationModelTwiceFails() {
-        clientConnector.dispatchHandle(new CreatePresentationModelCommand(pmId: 'p1', pmType: 'type', attributes: [[propertyName: 'attr', value: 'initialValue', qualifier: 'qualifier']]))
-        def msg = shouldFail {
-            clientConnector.dispatchHandle(new CreatePresentationModelCommand(pmId: 'p1', pmType: 'type', attributes: [[propertyName: 'attr', value: 'initialValue', qualifier: 'qualifier']]))
+        List<Map<String, Object>> attributes = new ArrayList<>();
+        Map<String, Objects> map = new HashMap<String, Objects>();
+        map.put("propertyName", "attr");
+        map.put("value", "initialValue");
+        map.put("qualifier", "qualifier");
+        attributes.add(map);
+        clientConnector.dispatchHandle(new CreatePresentationModelCommand("p1", "type", attributes));
+
+        String msg = shouldFail {
+            clientConnector.dispatchHandle(new CreatePresentationModelCommand("p1", "type", attributes));
         }
-        assert "There already is a presentation model with id 'p1' known to the client." == msg
+        Assert.assertEquals("There already is a presentation model with id 'p1' known to the client.", msg);
     }
 
     void testHandle_CreatePresentationModel() {
-        clientConnector.dispatchHandle(new CreatePresentationModelCommand(pmId: 'p1', pmType: 'type', attributes: [[propertyName: 'attr', value: 'initialValue', qualifier: 'qualifier']]))
-        assert dolphin.getModelStore().findPresentationModelById('p1')
-        assert dolphin.getModelStore().findPresentationModelById('p1').getAttribute('attr')
-        assert 'initialValue' == dolphin.getModelStore().findPresentationModelById('p1').getAttribute('attr').value
-        assert 'qualifier' == dolphin.getModelStore().findPresentationModelById('p1').getAttribute('attr').qualifier
-        syncAndWaitUntilDone()
-        assertCommandsTransmitted(2)
-        assert CreatePresentationModelCommand == clientConnector.transmittedCommands[0].class
+        List<Map<String, Object>> attributes = new ArrayList<>();
+        Map<String, Objects> map = new HashMap<String, Objects>();
+        map.put("propertyName", "attr");
+        map.put("value", "initialValue");
+        map.put("qualifier", "qualifier");
+        attributes.add(map);
+
+        clientConnector.dispatchHandle(new CreatePresentationModelCommand("p1", "type", attributes));
+        Assert.assertNotNull(dolphin.getModelStore().findPresentationModelById("p1"));
+        Assert.assertNotNull(dolphin.getModelStore().findPresentationModelById("p1").getAttribute("attr"));
+        Assert.assertEquals("initialValue", dolphin.getModelStore().findPresentationModelById("p1").getAttribute("attr").getValue());
+        Assert.assertEquals("qualifier", dolphin.getModelStore().findPresentationModelById("p1").getAttribute("attr").getQualifier());
+        syncAndWaitUntilDone();
+        assertCommandsTransmitted(2);
+        Assert.assertFalse(clientConnector.getTransmittedCommands().isEmpty());
+        Assert.assertEquals(CreatePresentationModelCommand.class, clientConnector.getTransmittedCommands().get(0).getClass());
     }
 
     void testHandle_CreatePresentationModel_ClientSideOnly() {
-        clientConnector.dispatchHandle(new CreatePresentationModelCommand(pmId: 'p1', pmType: 'type', clientSideOnly: true, attributes: [[propertyName: 'attr', value: 'initialValue', qualifier: 'qualifier']]))
-        assert dolphin.getModelStore().findPresentationModelById('p1')
-        assert dolphin.getModelStore().findPresentationModelById('p1').getAttribute('attr')
-        assert 'initialValue' == dolphin.getModelStore().findPresentationModelById('p1').getAttribute('attr').value
-        assert 'qualifier' == dolphin.getModelStore().findPresentationModelById('p1').getAttribute('attr').qualifier
-        syncAndWaitUntilDone()
-        assertOnlySyncCommandWasTransmitted()
+        List<Map<String, Object>> attributes = new ArrayList<>();
+        Map map = new HashMap();
+        map.put("propertyName", "attr");
+        map.put("value", "initialValue");
+        map.put("qualifier", "qualifier");
+        attributes.add(map);
+        clientConnector.dispatchHandle(new CreatePresentationModelCommand("p1", "type", attributes, true));
+        Assert.assertNotNull(dolphin.getModelStore().findPresentationModelById("p1"));
+        Assert.assertNotNull(dolphin.getModelStore().findPresentationModelById("p1").getAttribute("attr"));
+        Assert.assertEquals("initialValue", dolphin.getModelStore().findPresentationModelById("p1").getAttribute("attr").getValue());
+        Assert.assertEquals("qualifier", dolphin.getModelStore().findPresentationModelById("p1").getAttribute("attr").getQualifier());
+        syncAndWaitUntilDone();
+        assertOnlySyncCommandWasTransmitted();
     }
 
     void testHandle_CreatePresentationModel_MergeAttributesToExistingModel() {
-        dolphin.getModelStore().createModel('p1', null)
+        dolphin.getModelStore().createModel("p1", null);
         shouldFail(IllegalStateException) {
-            clientConnector.dispatchHandle(new CreatePresentationModelCommand(pmId: 'p1', pmType: 'type', attributes: []))
+            clientConnector.dispatchHandle(new CreatePresentationModelCommand("p1", "type", Collections.emptyList()));
         }
     }
 
     void testHandle_DeletePresentationModel() {
-        ClientPresentationModel p1 = dolphin.getModelStore().createModel('p1', null)
-        p1.clientSideOnly = true
-        ClientPresentationModel p2 = dolphin.getModelStore().createModel('p2', null)
-        clientConnector.dispatchHandle(new DeletePresentationModelCommand(pmId: null))
-        def model = new ClientPresentationModel('p3', [])
-        clientConnector.dispatchHandle(new DeletePresentationModelCommand(pmId: model.id))
-        clientConnector.dispatchHandle(new DeletePresentationModelCommand(pmId: p1.id))
-        clientConnector.dispatchHandle(new DeletePresentationModelCommand(pmId: p2.id))
-        assert !dolphin.getModelStore().findPresentationModelById(p1.id)
-        assert !dolphin.getModelStore().findPresentationModelById(p2.id)
-        syncAndWaitUntilDone()
+        ClientPresentationModel p1 = dolphin.getModelStore().createModel("p1", null);
+        p1.setClientSideOnly(true);
+        ClientPresentationModel p2 = dolphin.getModelStore().createModel("p2", null);
+        clientConnector.dispatchHandle(new DeletePresentationModelCommand(null));
+        ClientPresentationModel model = new ClientPresentationModel("p3", Collections.emptyList());
+        clientConnector.dispatchHandle(new DeletePresentationModelCommand(model.id));
+        clientConnector.dispatchHandle(new DeletePresentationModelCommand(p1.id));
+        clientConnector.dispatchHandle(new DeletePresentationModelCommand(p2.id));
+        Assert.assertNull(dolphin.getModelStore().findPresentationModelById(p1.id));
+        Assert.assertNull(dolphin.getModelStore().findPresentationModelById(p2.id));
+        syncAndWaitUntilDone();
         // 3 commands will have been transferred:
         // 1: delete of p1 (causes no DeletedPresentationModelNotification since client side only)
         // 2: delete of p2
         // 3: DeletedPresentationModelNotification caused by delete of p2
-        assertCommandsTransmitted(4)
-        assert 1 == clientConnector.transmittedCommands.findAll {
-            it instanceof DeletedPresentationModelNotification
-        }.size()
+        assertCommandsTransmitted(4);
+
+        int deletedPresentationModelNotificationCount = 0;
+        for(Command c : clientConnector.getTransmittedCommands()) {
+            if(c instanceof DeletedPresentationModelNotification) {
+                deletedPresentationModelNotificationCount = deletedPresentationModelNotificationCount + 1;
+            }
+        }
+
+        assertEquals(1, deletedPresentationModelNotificationCount);
     }
 
-    @Log
     class TestClientConnector extends AbstractClientConnector {
 
-        List<Command> transmittedCommands = []
+        private List<Command> transmittedCommands = new ArrayList<>();
 
-        TestClientConnector(ClientModelStore modelStore, Executor uiExecutor) {
+        public TestClientConnector(ClientModelStore modelStore, Executor uiExecutor) {
             super(modelStore, uiExecutor, new CommandBatcher(), new SimpleExceptionHandler(), Executors.newCachedThreadPool());
         }
 
-        int getTransmitCount() {
-            transmittedCommands.size()
+        public int getTransmitCount() {
+            return transmittedCommands.size();
         }
 
-        List<Command> transmit(List<Command> commands) {
-            println "transmit: ${commands.size()}"
-            def result = new LinkedList<Command>()
-            commands.each() { Command cmd ->
-                result.addAll(transmitCommand(cmd))
+        public List<Command> transmit(List<Command> commands) {
+            System.out.print("transmit: " + commands.size());
+            LinkedList result = new LinkedList<Command>();
+            for(Command cmd : commands) {
+                result.addAll(transmitCommand(cmd));
             }
-            result
+            return result;
         }
 
-        List<Command> transmitCommand(Command command) {
-            println "transmitCommand: $command"
+        public List<Command> transmitCommand(Command command) {
+            System.out.print("transmitCommand: " + command);
+
             if (command != null && !(command instanceof StartLongPollCommand) && !(command instanceof InterruptLongPollCommand)) {
                 transmittedCommands << command
             }
             return construct(command)
         }
 
-        List construct(ChangeAttributeMetadataCommand command) {
-            [new AttributeMetadataChangedCommand(command.attributeId, command.metadataName, command.value)]
+        public List<Command> getTransmittedCommands() {
+            return transmittedCommands
         }
 
-        List construct(Command command) {
-            []
+        public List<AttributeMetadataChangedCommand> construct(ChangeAttributeMetadataCommand command) {
+            return Collections.singletonList(new AttributeMetadataChangedCommand(command.getAttributeId(), command.getMetadataName(), command.getValue()));
+        }
+
+        public List construct(Command command) {
+            return Collections.emptyList();
         }
 
     }
 
     class ExtendedAttribute extends ClientAttribute {
-        String additionalParam
+
+        private String additionalParam;
 
         ExtendedAttribute(String propertyName, Object initialValue, String qualifier) {
-            super(propertyName, initialValue, qualifier)
+            super(propertyName, initialValue, qualifier);
+        }
+
+        String getAdditionalParam() {
+            return additionalParam;
+        }
+
+        void setAdditionalParam(String additionalParam) {
+            this.additionalParam = additionalParam;
         }
     }
 

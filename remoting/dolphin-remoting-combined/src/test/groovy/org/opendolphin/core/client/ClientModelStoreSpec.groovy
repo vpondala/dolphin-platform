@@ -27,34 +27,40 @@ import spock.lang.Specification
  * @author Dieter Holz
  */
 class ClientModelStoreSpec extends Specification {
-	def modelStore, pmType, pm, listener
+	private ClientModelStore modelStore;
+
+	private String pmType;
+
+	private ClientPresentationModel pm;
+
+	private ModelStoreListener listener;
 
 	def setup(){
-        def clientDolphin = new ClientDolphin()
+        def clientDolphin = new ClientDolphin();
 		ModelSynchronizer defaultModelSynchronizer = new DefaultModelSynchronizer(new Provider<AbstractClientConnector>() {
 			@Override
 			AbstractClientConnector get() {
 				return clientDolphin.getClientConnector();
 			}
 		});
-		modelStore = new ClientModelStore(defaultModelSynchronizer)
-		AbstractClientConnector clientConnector = new InMemoryClientConnector(modelStore, [:] as ServerConnector, new CommandBatcher(), DirectExecutor.getInstance());
+		modelStore = new ClientModelStore(defaultModelSynchronizer);
+		AbstractClientConnector clientConnector = new InMemoryClientConnector(modelStore, new ServerConnector(), new CommandBatcher(), DirectExecutor.getInstance());
 
-        clientDolphin.clientConnector = clientConnector;
-		clientDolphin.clientModelStore = modelStore
+        clientDolphin.setClientConnector(clientConnector);
+		clientDolphin.setClientModelStore(modelStore);
 
 
-		pmType = 'myType'
-		pm = new ClientPresentationModel('myId', [])
-		pm.setPresentationModelType(pmType)
+		pmType = 'myType';
+		pm = new ClientPresentationModel('myId', Collections.emptyList());
+		pm.setPresentationModelType(pmType);
 
-		listener = Mock(ModelStoreListener)
-		modelStore.addModelStoreListener(pmType, listener)
+		listener = Mock(ModelStoreListener.class);
+		modelStore.addModelStoreListener(pmType, listener);
 	}
 
 	void "listeners are notified if PM is added to the clientModelStore"() {
 		when:
-		modelStore.add(pm)
+		modelStore.add(pm);
 
 		then:
 		1 * listener.modelStoreChanged(new ModelStoreEvent(ModelStoreEvent.Type.ADDED, pm))
@@ -63,10 +69,10 @@ class ClientModelStoreSpec extends Specification {
 
 	void "listeners are notified if PM is removed from clientModelStore"() {
 		given:
-		modelStore.add(pm)
+		modelStore.add(pm);
 
 		when:
-		modelStore.remove(pm)
+		modelStore.remove(pm);
 
 		then:
         0 * listener.modelStoreChanged(new ModelStoreEvent(ModelStoreEvent.Type.ADDED, pm))
@@ -75,12 +81,12 @@ class ClientModelStoreSpec extends Specification {
 
 	void "listeners are not notified for different pmTypes"() {
 		given:
-		def otherPm = new ClientPresentationModel('otherId', [])
-		otherPm.setPresentationModelType('otherType')
+		def otherPm = new ClientPresentationModel('otherId', Collections.emptyList());
+		otherPm.setPresentationModelType('otherType');
 
 		when:
-		modelStore.add(otherPm)
-		modelStore.remove(otherPm)
+		modelStore.add(otherPm);
+		modelStore.remove(otherPm);
 
 		then:
         0 * listener.modelStoreChanged(new ModelStoreEvent(ModelStoreEvent.Type.ADDED, pm))
@@ -89,8 +95,8 @@ class ClientModelStoreSpec extends Specification {
 
     void "trying to delete a pm that is not known to the store is silently ignored"() {
         when:
-        modelStore.delete(null)
-        modelStore.delete(pm) // has not been added!
+        modelStore.delete(null);
+        modelStore.delete(pm); // has not been added!
         then:
         0 * listener.modelStoreChanged(new ModelStoreEvent(ModelStoreEvent.Type.REMOVED, pm))
     }

@@ -1,82 +1,81 @@
-/*
- * Copyright 2015-2017 Canoo Engineering AG.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.opendolphin.core.server.comm
+package org.opendolphin.core.server.comm;
 
-import org.opendolphin.core.comm.Command
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.opendolphin.core.comm.Command;
 
-class ActionRegistryTests extends GroovyTestCase {
-    ActionRegistry registry
+import java.util.List;
 
-    private class TestDataCommand extends Command {}
+public class ActionRegistryTests {
 
+    private final class TestDataCommand extends Command {}
 
-    @Override
-    protected void setUp() throws Exception {
-        registry = new ActionRegistry()
+    private ActionRegistry registry;
+
+    @Before
+    public void setUp() throws Exception {
+        registry = new ActionRegistry();
     }
 
-    void testRegisterCommand() {
-        assert 0 == registry.actions.size()
-        CommandHandler firstAction = new CommandHandler<Command>() {
+    private <T extends Command> CommandHandler createDummyHandler() {
+        return new CommandHandler<T>() {
+
             @Override
-            void handleCommand(Command command, List response) {
+            public void handleCommand(T command, List<Command> response) {
 
             }
         };
-        registry.register(TestDataCommand.class, firstAction)
-        assert 1 == registry.getActionsFor(TestDataCommand.class).size()
-        assert registry.getActionsFor(TestDataCommand.class).contains(firstAction)
-
-        CommandHandler otherAction = new CommandHandler<Command>() {
-            @Override
-            void handleCommand(Command command, List<Command> response) {
-
-            }
-        }
-        assert 1 == registry.actions.size()
-        assert 1 == registry.getActionsFor(TestDataCommand.class).size()
     }
 
-    void testRegisterCommandHandler(){
-        CommandHandler<TestDataCommand> commandHandler = new CommandHandler<TestDataCommand>() {
+    @Test
+    public void testRegisterCommand() {
+        //given:
+        Assert.assertEquals(0, registry.getActions().size());
+        CommandHandler firstAction = createDummyHandler();
 
-            @Override
-            void handleCommand(TestDataCommand command, List response) {
+        //when:
+        registry.register(TestDataCommand.class, firstAction);
 
-            }
-        }
-        registry.register(TestDataCommand.class, commandHandler)
-        assert registry.getActionsFor(TestDataCommand.class).contains(commandHandler)
-        assert 1 == registry.actions.size()
-        assert 1 == registry.getActionsFor(TestDataCommand.class).size()
+        //then:
+        Assert.assertEquals(1, registry.getActionsFor(TestDataCommand.class).size());
+        Assert.assertTrue(registry.getActionsFor(TestDataCommand.class).contains(firstAction));
+        Assert.assertEquals(1, registry.getActions().size());
     }
 
-    void testRegisterCommand_MultipleCalls() {
-        assert 0 == registry.actions.size()
-        def action = new CommandHandler<Command>() {
-            @Override
-            void handleCommand(Command command, List<Command> response) {
+    @Test
+    public void testRegisterCommandHandler() {
 
-            }
-        }
-        registry.register(TestDataCommand.class, action)
-        assert 1 == registry.getActionsFor(TestDataCommand.class).size()
+        //given:
+        CommandHandler<TestDataCommand> commandHandler = createDummyHandler();
 
-        registry.register(TestDataCommand.class, action)
-        assert 1 == registry.getActionsFor(TestDataCommand.class).size()
+        //when:
+        registry.register(TestDataCommand.class, commandHandler);
+
+        //then:
+        Assert.assertTrue(registry.getActionsFor(TestDataCommand.class).contains(commandHandler));
+        Assert.assertEquals(1, registry.getActions().size());
+        Assert.assertEquals(1, registry.getActionsFor(TestDataCommand.class).size());
     }
 
+    @Test
+    public void testRegisterCommand_MultipleCalls() {
+
+        //given:
+        Assert.assertEquals(0, registry.getActions().size());
+        CommandHandler action = createDummyHandler();
+
+        //when:
+        registry.register(TestDataCommand.class, action);
+
+        //then:
+        Assert.assertEquals(1, registry.getActions().size());
+        Assert.assertEquals(1, registry.getActionsFor(TestDataCommand.class).size());
+
+        //when:
+        registry.register(TestDataCommand.class, action);
+
+        //then:
+        Assert.assertEquals(1, registry.getActionsFor(TestDataCommand.class).size());
+    }
 }

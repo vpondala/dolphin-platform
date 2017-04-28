@@ -1,126 +1,139 @@
-/*
- * Copyright 2015-2017 Canoo Engineering AG.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.opendolphin.core.server
+package org.opendolphin.core.server;
 
-import org.opendolphin.core.ModelStoreEvent
-import org.opendolphin.core.ModelStoreListener
+import groovy.util.GroovyTestCase;
+import org.junit.Assert;
+import org.opendolphin.core.ModelStoreEvent;
+import org.opendolphin.core.ModelStoreListener;
+import org.opendolphin.core.PresentationModel;
+import org.opendolphin.core.comm.Command;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerDolphinTest extends GroovyTestCase {
-    DefaultServerDolphin dolphin
-
     @Override
     protected void setUp() throws Exception {
-        dolphin = ServerDolphinFactory.create()
-        dolphin.getModelStore().currentResponse = []
+        dolphin = ((DefaultServerDolphin) (ServerDolphinFactory.create()));
+        dolphin.getModelStore().setCurrentResponse(new ArrayList<Command>());
     }
 
-    void testListPresentationModels() {
-        assert dolphin.getModelStore().listPresentationModelIds().empty
-        assert dolphin.getModelStore().listPresentationModels().empty
-        assert dolphin.getModelStore().findAllAttributesByQualifier("no-such-qualifier").empty
-        assert dolphin.getModelStore().findAllPresentationModelsByType("no-such-type").empty
+    public void testListPresentationModels() {
+        Assert.assertTrue(dolphin.getModelStore().listPresentationModelIds().isEmpty());
+        Assert.assertTrue(dolphin.getModelStore().listPresentationModels().isEmpty());
+        Assert.assertTrue(dolphin.getModelStore().findAllAttributesByQualifier("no-such-qualifier").isEmpty());
+        Assert.assertTrue(dolphin.getModelStore().findAllPresentationModelsByType("no-such-type").isEmpty());
 
-        def pm1 = new ServerPresentationModel("first", [], dolphin.getModelStore())
-        dolphin.getModelStore().add pm1
+        ServerPresentationModel pm1 = new ServerPresentationModel("first", new ArrayList<>(), dolphin.getModelStore());
+        dolphin.getModelStore().add(pm1);
 
-        assert ['first'].toSet() == dolphin.getModelStore().listPresentationModelIds()
-        assert [pm1] == dolphin.getModelStore().listPresentationModels().toList()
+        Assert.assertEquals(Collections.singleton("first"), dolphin.getModelStore().listPresentationModelIds());
+        Assert.assertEquals(1, dolphin.getModelStore().listPresentationModelIds().size());
+        Assert.assertEquals(pm1, dolphin.getModelStore().listPresentationModels().iterator().next());
 
-        def pm2 = new ServerPresentationModel("second", [], dolphin.getModelStore())
-        dolphin.getModelStore().add pm2
+        ServerPresentationModel pm2 = new ServerPresentationModel("second", new ArrayList<>(), dolphin.getModelStore());
+        dolphin.getModelStore().add(pm2);
 
-        assert 2 == dolphin.getModelStore().listPresentationModelIds().size()
-        assert 2 == dolphin.getModelStore().listPresentationModels().size()
+        Assert.assertEquals(2, dolphin.getModelStore().listPresentationModelIds().size());
+        Assert.assertEquals(2, dolphin.getModelStore().listPresentationModels().size());
 
-        for (id in dolphin.getModelStore().listPresentationModelIds()) {
-            assert dolphin.getModelStore().findPresentationModelById(id) in dolphin.getModelStore().listPresentationModels()
+
+        for (String id : dolphin.getModelStore().listPresentationModelIds()) {
+            PresentationModel model = dolphin.getModelStore().findPresentationModelById(id);
+            Assert.assertNotNull(model);
+            Assert.assertTrue(dolphin.getModelStore().listPresentationModels().contains(model));
         }
+
     }
 
-    void testAddRemoveModelStoreListener() {
-        int typedListenerCallCount = 0
-        int listenerCallCount = 0
+    public void testAddRemoveModelStoreListener() {
+        final AtomicInteger typedListenerCallCount = new AtomicInteger(0);
+        final AtomicInteger listenerCallCount = new AtomicInteger(0);
         ModelStoreListener listener = new ModelStoreListener() {
             @Override
-            void modelStoreChanged(ModelStoreEvent event) {
-                listenerCallCount++
+            public void modelStoreChanged(ModelStoreEvent event) {
+                listenerCallCount.incrementAndGet();
             }
-        }
+
+        };
         ModelStoreListener typedListener = new ModelStoreListener() {
             @Override
-            void modelStoreChanged(ModelStoreEvent event) {
-                typedListenerCallCount++
+            public void modelStoreChanged(ModelStoreEvent event) {
+                typedListenerCallCount.incrementAndGet();
             }
-        }
-        dolphin.getModelStore().addModelStoreListener 'person', typedListener
-        dolphin.getModelStore().addModelStoreListener listener
-        dolphin.getModelStore().add(new ServerPresentationModel('p1', [], dolphin.getModelStore()))
-        ServerPresentationModel modelWithType = new ServerPresentationModel('person1', [], dolphin.getModelStore())
-        modelWithType.setPresentationModelType('person')
-        dolphin.getModelStore().add(modelWithType)
-        dolphin.getModelStore().add(new ServerPresentationModel('p2', [], dolphin.getModelStore()))
-        dolphin.getModelStore().removeModelStoreListener 'person', typedListener
-        dolphin.getModelStore().removeModelStoreListener listener
-        assert 3 == listenerCallCount
-        assert 1 == typedListenerCallCount
 
-
+        };
+        dolphin.getModelStore().addModelStoreListener("person", typedListener);
+        dolphin.getModelStore().addModelStoreListener(listener);
+        dolphin.getModelStore().add(new ServerPresentationModel("p1", Collections.emptyList(), dolphin.getModelStore()));
+        ServerPresentationModel modelWithType = new ServerPresentationModel("person1", Collections.emptyList(), dolphin.getModelStore());
+        modelWithType.setPresentationModelType("person");
+        dolphin.getModelStore().add(modelWithType);
+        dolphin.getModelStore().add(new ServerPresentationModel("p2", Collections.emptyList(), dolphin.getModelStore()));
+        dolphin.getModelStore().removeModelStoreListener("person", typedListener);
+        dolphin.getModelStore().removeModelStoreListener(listener);
+        Assert.assertEquals(3, listenerCallCount.get());
+        Assert.assertEquals(1, typedListenerCallCount.get());
     }
 
-    void testAddModelStoreListenerWithClosure() {
-        int typedListenerCallCount = 0
-        int listenerCallCount = 0
-        dolphin.getModelStore().addModelStoreListener 'person', { evt -> typedListenerCallCount++ }
-        dolphin.getModelStore().addModelStoreListener { evt -> listenerCallCount++ }
-        dolphin.getModelStore().add(new ServerPresentationModel('p1', [], dolphin.getModelStore()))
-        ServerPresentationModel modelWithType = new ServerPresentationModel('person1', [], dolphin.getModelStore())
-        modelWithType.setPresentationModelType('person')
-        dolphin.getModelStore().add(modelWithType)
-        dolphin.getModelStore().add(new ServerPresentationModel('p2', [], dolphin.getModelStore()))
-        assert 3 == listenerCallCount
-        assert 1 == typedListenerCallCount
+    public void testAddModelStoreListenerWithClosure() {
+        final AtomicInteger typedListenerCallCount = new AtomicInteger(0);
+        final AtomicInteger listenerCallCount = new AtomicInteger(0);
+        ModelStoreListener listener = new ModelStoreListener() {
+            @Override
+            public void modelStoreChanged(ModelStoreEvent event) {
+                listenerCallCount.incrementAndGet();
+            }
+
+        };
+        ModelStoreListener typedListener = new ModelStoreListener() {
+            @Override
+            public void modelStoreChanged(ModelStoreEvent event) {
+                typedListenerCallCount.incrementAndGet();
+            }
+
+        };
+        dolphin.getModelStore().addModelStoreListener("person", typedListener);
+        dolphin.getModelStore().addModelStoreListener(listener);
+        dolphin.getModelStore().add(new ServerPresentationModel("p1", Collections.emptyList(), dolphin.getModelStore()));
+        ServerPresentationModel modelWithType = new ServerPresentationModel("person1", Collections.emptyList(), dolphin.getModelStore());
+        modelWithType.setPresentationModelType("person");
+        dolphin.getModelStore().add(modelWithType);
+        dolphin.getModelStore().add(new ServerPresentationModel("p2", Collections.emptyList(), dolphin.getModelStore()));
+        Assert.assertEquals(3, listenerCallCount.get());
+        Assert.assertEquals(1, typedListenerCallCount.get());
     }
 
-    void testHasModelStoreListener() {
-        ModelStoreListener listener = getListener()
-        assert !dolphin.getModelStore().hasModelStoreListener(null)
-        assert !dolphin.getModelStore().hasModelStoreListener(listener)
-        dolphin.getModelStore().addModelStoreListener listener
-        assert dolphin.getModelStore().hasModelStoreListener(listener)
-        listener = getListener()
-        dolphin.getModelStore().addModelStoreListener('person', listener)
-        assert !dolphin.getModelStore().hasModelStoreListener('car',listener)
-        assert dolphin.getModelStore().hasModelStoreListener('person',listener)
+    public void testHasModelStoreListener() {
+        ModelStoreListener listener = getListener();
+        Assert.assertFalse(dolphin.getModelStore().hasModelStoreListener(null));
+        Assert.assertFalse(dolphin.getModelStore().hasModelStoreListener(listener));
+        dolphin.getModelStore().addModelStoreListener(listener);
+        Assert.assertTrue(dolphin.getModelStore().hasModelStoreListener(listener));
+        listener = getListener();
+        dolphin.getModelStore().addModelStoreListener("person", listener);
+        Assert.assertFalse(dolphin.getModelStore().hasModelStoreListener("car", listener));
+        Assert.assertTrue(dolphin.getModelStore().hasModelStoreListener("person", listener));
     }
 
-    void testRegisterDefaultActions() {
+    public void testRegisterDefaultActions() {
         dolphin.getServerConnector().registerDefaultActions();
-        def numDefaultActions = dolphin.serverConnector.dolphinServerActions.size()
+        int numDefaultActions = dolphin.getServerConnector().getRegistrationCount();
 
         // multiple calls should not lead to multiple initializations
         dolphin.getServerConnector().registerDefaultActions();
-        assert numDefaultActions == dolphin.serverConnector.dolphinServerActions.size()
+        Assert.assertEquals(numDefaultActions, dolphin.getServerConnector().getRegistrationCount());
     }
 
     private ModelStoreListener getListener() {
-        new ModelStoreListener() {
+        return new ModelStoreListener() {
             @Override
-            void modelStoreChanged(ModelStoreEvent event) {
+            public void modelStoreChanged(ModelStoreEvent event) {
                 // do nothing
             }
-        }
+
+        };
     }
+
+    private DefaultServerDolphin dolphin;
 }

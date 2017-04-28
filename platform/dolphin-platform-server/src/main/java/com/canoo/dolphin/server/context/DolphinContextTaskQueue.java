@@ -47,13 +47,16 @@ public class DolphinContextTaskQueue {
 
     private final DolphinSessionProvider sessionProvider;
 
+    private final CommunicationManager communicationManager;
+
     private final Lock taskLock = new ReentrantLock();
 
     private final Condition taskCondition = taskLock.newCondition();
 
-    public DolphinContextTaskQueue(final String dolphinSessionId, final DolphinSessionProvider sessionProvider, final long maxExecutionTime, final TimeUnit maxExecutionTimeUnit) {
+    public DolphinContextTaskQueue(final String dolphinSessionId, final DolphinSessionProvider sessionProvider, final CommunicationManager communicationManager, final long maxExecutionTime, final TimeUnit maxExecutionTimeUnit) {
         this.dolphinSessionId = Assert.requireNonBlank(dolphinSessionId, "dolphinSessionId");
         this.tasks = new LinkedBlockingQueue<>();
+        this.communicationManager = Assert.requireNonNull(communicationManager, "communicationManager");;
         this.sessionProvider = Assert.requireNonNull(sessionProvider, "sessionProvider");
         this.maxExecutionTime = maxExecutionTime;
         this.maxExecutionTimeUnit = Assert.requireNonNull(maxExecutionTimeUnit, "maxExecutionTimeUnit");
@@ -103,7 +106,7 @@ public class DolphinContextTaskQueue {
         LOG.trace("Running {} tasks in Dolphin Platform session {}", tasks.size(), dolphinSessionId);
         long endTime = System.currentTimeMillis() + maxExecutionTimeUnit.toMillis(maxExecutionTime);
 
-        while (true) {
+        while (!communicationManager.hasResponseCommands()) {
             final Runnable task = tasks.poll();
             if (task == null) {
                 try {
@@ -129,12 +132,9 @@ public class DolphinContextTaskQueue {
                     LOG.trace("Task executor executed task in Dolphin Platform session {}", dolphinSessionId);
                 } catch (Exception e) {
                     throw new DolphinTaskException("Error in running task in Dolphin Platform session " + dolphinSessionId, e);
-                } finally {
-                    LOG.info("Task executor for Dolphin Platform session {} ended after running task with {} task still open", dolphinSessionId, tasks.size());
-                    break;
                 }
             }
         }
-        LOG.trace("Task executor in Dolphin Platform session {} interrupted. Still {} tasks open", dolphinSessionId, tasks.size());
+        LOG.trace("Task executor in Dolphin Platform session {} ended. Still {} tasks open", dolphinSessionId, tasks.size());
     }
 }

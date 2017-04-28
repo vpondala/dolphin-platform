@@ -30,7 +30,7 @@ public class DolphinHttpSessionListener implements HttpSessionListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DolphinHttpSessionListener.class);
 
-    private int sessionTimeoutInSeconds = DolphinPlatformConfiguration.SESSION_TIMEOUT_DEFAULT_VALUE;
+    private int sessionTimeoutInSeconds;
 
     public void init(final DolphinPlatformConfiguration configuration) {
         this.sessionTimeoutInSeconds = Assert.requireNonNull(configuration, "configuration").getSessionTimeout();

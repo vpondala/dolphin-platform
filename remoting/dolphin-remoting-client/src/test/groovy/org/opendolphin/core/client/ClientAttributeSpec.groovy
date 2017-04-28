@@ -20,21 +20,22 @@ import spock.lang.Specification
 import java.beans.PropertyChangeListener
 
 class ClientAttributeSpec extends Specification {
+
     void "PropertyChangeListener is notified when an attribute value changes"() {
         given:
 
-        def attribute = new ClientAttribute('name', null)
-        attribute.value = ""
-        def changeListener = Mock(PropertyChangeListener)
+        ClientAttribute attribute = new ClientAttribute('name', null);
+        attribute.setValue("");
+        PropertyChangeListener changeListener = Mock(PropertyChangeListener.class);
 
         when:
 
-        attribute.addPropertyChangeListener("value", changeListener)
-        attribute.value = 'newValue'
+        attribute.addPropertyChangeListener("value", changeListener);
+        attribute.setValue("newValue");
 
         then:
 
-        1 * changeListener.propertyChange(_)
-        attribute.value == 'newValue'
+        1 * changeListener.propertyChange(_);
+        attribute.getValue() == 'newValue';
     }
 }

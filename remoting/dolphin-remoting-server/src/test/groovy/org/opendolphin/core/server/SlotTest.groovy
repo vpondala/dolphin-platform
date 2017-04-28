@@ -21,7 +21,7 @@ class SlotTest extends Specification {
 
     void "default ctor values for slots"() {
         given:
-        def slot = new Slot("myproperty", value)
+        Slot slot = new Slot("myproperty", value)
 
         expect:
         slot.value      == value

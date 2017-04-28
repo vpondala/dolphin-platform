@@ -18,7 +18,6 @@ package com.canoo.dolphin.server.event;
 import com.canoo.dolphin.server.bootstrap.DolphinPlatformBootstrap;
 import com.canoo.dolphin.server.config.DolphinPlatformConfiguration;
 import com.canoo.dolphin.server.event.impl.EventBusProvider;
-import com.canoo.dolphin.util.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,10 +45,13 @@ public class DistributedEventBusProvider implements EventBusProvider {
         if(iterator.hasNext()) {
             hazelcastProvider = iterator.next();
         }
-        if(hazelcastProvider == null) {
-            LOG.error("No hazelcast provider found!");
+        if(iterator.hasNext()) {
+            throw new IllegalStateException("More than one service implementation for found for " + HazelcastProvider.class);
         }
-        Assert.requireNonNull(hazelcastProvider, "hazelcastProvider");
+
+        if(hazelcastProvider == null) {
+            hazelcastProvider = new DefaultHazelcastProvider();
+        }
 
         LOG.debug("Using Hazelcast provider {}", hazelcastProvider.getClass());
 

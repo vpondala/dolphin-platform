@@ -19,8 +19,7 @@ import org.testng.annotations.Test;
 
 import java.util.logging.Level;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 public class ConfigurationFileLoaderTest {
 
@@ -35,7 +34,76 @@ public class ConfigurationFileLoaderTest {
             assertEquals(configuration.getDolphinPlatformServletMapping(), "/test");
             assertEquals(configuration.getOpenDolphinLogLevel(), Level.FINER);
         } catch (Exception e) {
-            fail();
+            fail("Error in test", e);
+        }
+    }
+
+    @Test
+    public void testConfigurationProvider() {
+        try {
+            //given:
+            DolphinPlatformConfiguration configuration = ConfigurationFileLoader.loadConfiguration();
+
+            //then:
+            assertEquals(configuration.getProperty(TestConfigurationProvider.PROPERTY_1_NAME), TestConfigurationProvider.PROPERTY_1_VALUE);
+            assertEquals(configuration.getProperty(TestConfigurationProvider.PROPERTY_2_NAME), TestConfigurationProvider.PROPERTY_2_VALUE);
+            assertEquals(configuration.getProperty(TestConfigurationProvider.PROPERTY_3_NAME), TestConfigurationProvider.PROPERTY_3_VALUE);
+            assertEquals(configuration.getProperty(AdditionalTestConfigurationProvider.PROPERTY_NAME), AdditionalTestConfigurationProvider.PROPERTY_VALUE);
+        } catch (Exception e) {
+            fail("Error in test", e);
+        }
+    }
+
+    @Test
+    public void testConfigurationProviderDoNotOverwrite() {
+        try {
+            //given:
+            DolphinPlatformConfiguration configuration = ConfigurationFileLoader.loadConfiguration();
+
+            //then:
+            assertEquals(configuration.isUseCrossSiteOriginFilter(), false);
+            assertEquals(configuration.getProperty(DolphinPlatformConfiguration.USE_CROSS_SITE_ORIGIN_FILTER), "false");
+        } catch (Exception e) {
+            fail("Error in test", e);
+        }
+    }
+
+    @Test
+    public void testNullPropertyWillNotBeAdded() {
+        try {
+            //given:
+            DolphinPlatformConfiguration configuration = ConfigurationFileLoader.loadConfiguration();
+
+            //when:
+            configuration.setProperty("test-key", null);
+
+            //then:
+            assertEquals(configuration.getProperty("test-key"), null);
+            assertEquals(configuration.getProperty("test-key", "a"), "a");
+            assertEquals(configuration.getProperty(TestConfigurationProvider.PROPERTY_3_NAME), null);
+            assertFalse(configuration.getPropertyKeys().contains("test-key"));
+            assertFalse(configuration.getPropertyKeys().contains(TestConfigurationProvider.PROPERTY_3_NAME));
+        } catch (Exception e) {
+            fail("Error in test", e);
+        }
+    }
+
+    @Test
+    public void testNullPropertyWillNotRemoveOldValue() {
+        try {
+            //given:
+            DolphinPlatformConfiguration configuration = ConfigurationFileLoader.loadConfiguration();
+
+            //when:
+            configuration.setProperty("test-key", "a");
+            configuration.setProperty("test-key", null);
+
+            //then:
+            assertEquals(configuration.getProperty("test-key"), "a");
+            assertEquals(configuration.getProperty("test-key", "b"), "a");
+            assertTrue(configuration.getPropertyKeys().contains("test-key"));
+        } catch (Exception e) {
+            fail("Error in test", e);
         }
     }
 }

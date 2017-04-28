@@ -91,6 +91,8 @@ public class DolphinContext {
 
     private final DolphinContextTaskQueue taskQueue;
 
+    private boolean hasResponseCommands = false;
+
     public DolphinContext(final DolphinPlatformConfiguration configuration, DolphinSessionProvider dolphinSessionProvider, ContainerManager containerManager, ControllerRepository controllerRepository, OpenDolphinFactory dolphinFactory, Callback<DolphinContext> preDestroyCallback, Callback<DolphinContext> onDestroyCallback) {
         this.configuration = Assert.requireNonNull(configuration, "configuration");
         Assert.requireNonNull(containerManager, "containerManager");
@@ -113,8 +115,13 @@ public class DolphinContext {
                 }
             }
         });
-
-        taskQueue = new DolphinContextTaskQueue(id, dolphinSessionProvider, configuration.getMaxPollTime(), TimeUnit.MILLISECONDS);
+        CommunicationManager manager = new CommunicationManager() {
+            @Override
+            public boolean hasResponseCommands() {
+                return hasResponseCommands || dolphin.getModelStore().hasResponseCommands();
+            }
+        };
+        taskQueue = new DolphinContextTaskQueue(id, dolphinSessionProvider, manager, configuration.getMaxPollTime(), TimeUnit.MILLISECONDS);
 
         //Init BeanRepository
         dispatcher = new ServerEventDispatcher(dolphin);
@@ -205,7 +212,7 @@ public class DolphinContext {
                 registerCommand(registry, StartLongPollCommand.class, new Callback<StartLongPollCommand>() {
                     @Override
                     public void call(StartLongPollCommand createContextCommand) {
-                        if(configuration.isUseGc()) {
+                        if (configuration.isUseGc()) {
                             LOG.trace("Handling GarbageCollection for DolphinContext {}", getId());
                             onGarbageCollection();
                         }
@@ -311,6 +318,7 @@ public class DolphinContext {
         List<Command> results = new LinkedList<>();
         for (Command command : commands) {
             results.addAll(dolphin.getServerConnector().receive(command));
+            hasResponseCommands = !results.isEmpty();
         }
         return results;
     }

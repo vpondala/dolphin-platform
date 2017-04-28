@@ -1,46 +1,55 @@
-/*
- * Copyright 2015-2017 Canoo Engineering AG.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.opendolphin.core.client.comm
+package org.opendolphin.core.client.comm;
 
-class StandardCommandBatcherTest extends GroovyTestCase {
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-	CommandBatcher batcher
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-	@Override
-	protected void setUp() throws Exception {
-		batcher = new CommandBatcher()
-	}
+public class StandardCommandBatcherTest {
 
-	void testEmpty() {
-		assert batcher.isEmpty()
-	}
+    private CommandBatcher batcher;
 
-	void testOne() {
-		def cah = new CommandAndHandler(null)
-		batcher.batch(cah)
-        assert batcher.waitingBatches.val == [cah]
-	}
+    @Before
+    public void setUp() throws Exception {
+        batcher = new CommandBatcher();
+    }
 
-	void testMultipleDoesNotBatch() {
-		def list = [new CommandAndHandler(null)] * 3
+    @Test
+    public void testEmpty() {
+        Assert.assertTrue(batcher.isEmpty());
+    }
 
-		list.each { cwh -> batcher.batch(cwh) }
+    @Test
+    public void testOne() {
+        CommandAndHandler cah = new CommandAndHandler(null);
+        batcher.batch(cah);
+        try {
+            Assert.assertEquals(Collections.singletonList(cah), batcher.getWaitingBatches().getVal());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
 
-        assert batcher.waitingBatches.val == [list[0]]
-        assert batcher.waitingBatches.val == [list[1]]
-        assert batcher.waitingBatches.val == [list[2]]
-	}
+    @Test
+    public void testMultipleDoesNotBatch() {
+
+        List<CommandAndHandler> list = Arrays.asList(new CommandAndHandler(null), new CommandAndHandler(null), new CommandAndHandler(null));
+        for (CommandAndHandler cwh : list) {
+            batcher.batch(cwh);
+        }
+
+        try {
+            Assert.assertEquals(Collections.singletonList(list.get(0)), batcher.getWaitingBatches().getVal());
+            Assert.assertEquals(Collections.singletonList(list.get(1)), batcher.getWaitingBatches().getVal());
+            Assert.assertEquals(Collections.singletonList(list.get(2)), batcher.getWaitingBatches().getVal());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
+        }
+    }
+
 }

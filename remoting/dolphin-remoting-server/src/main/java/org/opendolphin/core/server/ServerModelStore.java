@@ -71,6 +71,13 @@ public class ServerModelStore extends ModelStore<ServerAttribute, ServerPresenta
         return currentResponse;
     }
 
+    public boolean hasResponseCommands() {
+        if(currentResponse != null && !currentResponse.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * A shared mutable state that is safe to use since we are thread-confined
      */

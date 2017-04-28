@@ -21,7 +21,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
+import java.util.ServiceLoader;
 
 /**
  * This class loads a Dolphin Platform configuration (see {@link DolphinPlatformConfiguration}) based on a property file.
@@ -55,6 +57,28 @@ public class ConfigurationFileLoader {
      * @return a configuration
      */
     public static DolphinPlatformConfiguration loadConfiguration() {
+        DolphinPlatformConfiguration configuration = createConfiguration();
+
+        ServiceLoader<ConfigurationProvider> serviceLoader = ServiceLoader.load(ConfigurationProvider.class);
+        for(ConfigurationProvider provider : serviceLoader) {
+            Map<String, String> additionalProperties = provider.getProperties();
+            for(Map.Entry<String, String> property : additionalProperties.entrySet()) {
+                if(!configuration.containsProperty(property.getKey())) {
+                    configuration.setProperty(property.getKey(), property.getValue());
+                }
+            }
+        }
+        LOG.debug("Configuration created with {} properties", configuration.getPropertyKeys().size());
+        if(LOG.isTraceEnabled()) {
+            for(String key : configuration.getPropertyKeys()) {
+                LOG.debug("Dolphin Platform configured with '{}'='{}'", key, configuration.getProperty(key));
+            }
+        }
+
+        return configuration;
+    }
+
+    private static DolphinPlatformConfiguration createConfiguration() {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 

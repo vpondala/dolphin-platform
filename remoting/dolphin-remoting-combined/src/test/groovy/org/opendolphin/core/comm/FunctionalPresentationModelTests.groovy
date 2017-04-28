@@ -1,344 +1,442 @@
-/*
- * Copyright 2015-2017 Canoo Engineering AG.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.opendolphin.core.comm
+package org.opendolphin.core.comm;
 
-import core.client.comm.InMemoryClientConnector
-import org.opendolphin.LogConfig
-import org.opendolphin.core.PresentationModel
-import org.opendolphin.core.client.ClientAttribute
-import org.opendolphin.core.client.ClientDolphin
-import org.opendolphin.core.client.comm.BlindCommandBatcher
-import org.opendolphin.core.client.comm.OnFinishedHandler
-import org.opendolphin.core.client.comm.RunLaterUiThreadHandler
-import org.opendolphin.core.server.*
-import org.opendolphin.core.server.action.DolphinServerAction
-import org.opendolphin.core.server.comm.ActionRegistry
-import org.opendolphin.core.server.comm.CommandHandler
+import core.client.comm.InMemoryClientConnector;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.opendolphin.LogConfig;
+import org.opendolphin.core.Attribute;
+import org.opendolphin.core.PresentationModel;
+import org.opendolphin.core.client.ClientAttribute;
+import org.opendolphin.core.client.ClientDolphin;
+import org.opendolphin.core.client.ClientPresentationModel;
+import org.opendolphin.core.client.comm.BlindCommandBatcher;
+import org.opendolphin.core.client.comm.OnFinishedHandler;
+import org.opendolphin.core.client.comm.RunLaterUiThreadHandler;
+import org.opendolphin.core.server.*;
+import org.opendolphin.core.server.action.DolphinServerAction;
+import org.opendolphin.core.server.comm.ActionRegistry;
+import org.opendolphin.core.server.comm.CommandHandler;
 
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import java.util.logging.Level
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Level;
+
 /**
  * Showcase for how to test an application without the GUI by
  * issuing the respective commands and model changes against the
  * ClientModelStore
  */
+public class FunctionalPresentationModelTests {
 
-class FunctionalPresentationModelTests extends GroovyTestCase {
+    final private class CreateCommand extends Command {
+    }
 
-    private final class CreateCommand extends Command {}
-    private final class PerformanceCommand extends Command {}
-    private final class CheckNotificationReachedCommand extends Command {}
-    private final class JavaCommand extends Command {}
-    private final class ArbitraryCommand extends Command {}
-    private final class DeleteCommand extends Command {}
-    private final class FetchDataCommand extends Command {}
-    private final class LoginCommand extends Command {}
-    private final class SomeCommand extends Command {}
-    private final class NoSuchActionRegisteredCommand extends Command {}
-    private final class Set2Command extends Command {}
-    private final class Assert3Command extends Command {}
-    private final class CheckTagIsKnownOnServerSideCommand extends Command {}
+    final private class PerformanceCommand extends Command {
+    }
+
+    final private class CheckNotificationReachedCommand extends Command {
+    }
+
+    final private class JavaCommand extends Command {
+    }
+
+    final private class ArbitraryCommand extends Command {
+    }
+
+    final private class DeleteCommand extends Command {
+    }
+
+    final private class FetchDataCommand extends Command {
+    }
+
+    final private class LoginCommand extends Command {
+    }
+
+    final private class NoSuchActionRegisteredCommand extends Command {
+    }
+
+    final private class Set2Command extends Command {
+    }
+
+    final private class Assert3Command extends Command {
+    }
+
+    final private class CheckTagIsKnownOnServerSideCommand extends Command {
+    }
+
+    private volatile TestInMemoryConfig context;
+    private DefaultServerDolphin serverDolphin;
+    private ClientDolphin clientDolphin;
 
 
-    volatile TestInMemoryConfig context
-    DefaultServerDolphin serverDolphin
-    ClientDolphin clientDolphin
-
-    @Override
-    protected void setUp() {
-        context = new TestInMemoryConfig()
-        serverDolphin = context.serverDolphin
-        clientDolphin = context.clientDolphin
+    @Before
+    public void setUp() {
+        context = new TestInMemoryConfig();
+        serverDolphin = ((DefaultServerDolphin) (context.getServerDolphin()));
+        clientDolphin = context.getClientDolphin();
         LogConfig.logOnLevel(Level.OFF);
     }
 
-    @Override
-    protected void tearDown() {
-        assert context.done.await(10, TimeUnit.SECONDS)
-    }
-
-    void testQualifiersInClientPMs() {
-        PresentationModel modelA = clientDolphin.getModelStore().createModel("1", null, new ClientAttribute("a", 0, "QUAL"))
-        PresentationModel modelB = clientDolphin.getModelStore().createModel("2", null, new ClientAttribute("b", 0, "QUAL"))
-
-        modelA.getAttribute("a").setValue(1)
-
-        assert modelB.getAttribute("b").getValue() == 1
-        context.assertionsDone() // make sure the assertions are really executed
-    }
-
-    void testPerformanceWithStandardCommandBatcher() {
-        doTestPerformance()
-    }
-
-    void testPerformanceWithBlindCommandBatcher() {
-        def batcher = new BlindCommandBatcher(mergeValueChanges: true, deferMillis: 100)
-        def connector = new InMemoryClientConnector(context.clientDolphin.modelStore, serverDolphin.serverConnector, batcher, new RunLaterUiThreadHandler())
-        context.clientDolphin.clientConnector = connector
-        doTestPerformance()
-    }
-
-
-    void doTestPerformance() {
-        long id = 0
-        registerAction serverDolphin, PerformanceCommand.class, { cmd, response ->
-            100.times { attr ->
-                ServerModelStore.presentationModelCommand(response, "id_${id++}".toString(), null, new DTO(new Slot("attr_$attr", attr)))
-            }
-        }
-        def start = System.nanoTime()
-        100.times { soOften ->
-            clientDolphin.getClientConnector().send new PerformanceCommand(), new OnFinishedHandler() {
-                @Override
-                void onFinished() {
-                }
-            }
-        }
-        clientDolphin.getClientConnector().send new PerformanceCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                println((System.nanoTime() - start).intdiv(1_000_000))
-                context.assertionsDone() // make sure the assertions are really executed
-            }
+    @After
+    public void tearDown() {
+        try {
+            Assert.assertTrue(context.getDone().await(10, TimeUnit.SECONDS));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Assert.fail(e.getMessage());
         }
     }
 
-    void testCreationRoundtripDefaultBehavior() {
-        registerAction serverDolphin, CreateCommand.class, { cmd, response ->
-            ServerModelStore.presentationModelCommand(response, "id".toString(), null, new DTO(new Slot("attr", 'attr')))
-        }
-        registerAction serverDolphin, CheckNotificationReachedCommand.class, { cmd, response ->
-            assert 1 == serverDolphin.getModelStore().listPresentationModels().size()
-            assert serverDolphin.getModelStore().findPresentationModelById("id")
-        }
-
-        clientDolphin.getClientConnector().send new CreateCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                clientDolphin.getClientConnector().send new CheckNotificationReachedCommand(), new OnFinishedHandler() {
-
-                    @Override
-                    void onFinished() {
-                        context.assertionsDone() // make sure the assertions are really executed
-                    }
-                }
-            }
-        }
-    }
-
-    void testCreationRoundtripForTags() {
-        registerAction serverDolphin, CreateCommand.class, { cmd, response ->
-            def NO_TYPE = null
-            def NO_QUALIFIER = null
-            ServerModelStore.presentationModelCommand(response, "id".toString(), NO_TYPE, new DTO(new Slot("attr", true, NO_QUALIFIER)))
-        }
-        registerAction serverDolphin, CheckTagIsKnownOnServerSideCommand.class, { cmd, response ->
-        }
-
-        clientDolphin.getClientConnector().send new CreateCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                clientDolphin.getClientConnector().send new CheckTagIsKnownOnServerSideCommand(), new OnFinishedHandler() {
-
-                    @Override
-                    void onFinished() {
-                        context.assertionsDone()
-                    }
-                }
-            }
-        }
-    }
-
-    void testFetchingAnInitialListOfData() {
-        registerAction serverDolphin, FetchDataCommand.class, { cmd, response ->
-            ('a'..'z').each {
-                DTO dto = new DTO(new Slot('char', it))
-                // sending CreatePresentationModelCommand _without_ adding the pm to the server model store
-                ServerModelStore.presentationModelCommand(response, it, null, dto)
-            }
-        }
-        clientDolphin.getClientConnector().send new FetchDataCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                // pmIds from a single action should come in sequence
-                assert 'a' == context.clientDolphin.getModelStore().findPresentationModelById('a').getAttribute("char").value
-                assert 'z' == context.clientDolphin.getModelStore().findPresentationModelById('z').getAttribute("char").value
-                context.assertionsDone() // make sure the assertions are really executed
-            }
-        }
-    }
-
-    public <T extends Command> void registerAction(ServerDolphin serverDolphin, Class<T> commandClass, CommandHandler<T> handler) {
+    private <T extends Command> void registerAction(ServerDolphin serverDolphin, final Class<T> commandClass, final CommandHandler<T> handler) {
         serverDolphin.getServerConnector().register(new DolphinServerAction() {
+            @Override
+            public void registerIn(ActionRegistry registry) {
+                registry.register(commandClass, handler);
+            }
+
+        });
+    }
+
+    @Test
+    public void testQualifiersInClientPMs() {
+        PresentationModel modelA = clientDolphin.getModelStore().createModel("1", null, new ClientAttribute("a", 0, "QUAL"));
+        PresentationModel modelB = clientDolphin.getModelStore().createModel("2", null, new ClientAttribute("b", 0, "QUAL"));
+
+        ((ClientPresentationModel) modelA).getAttribute("a").setValue(1);
+        Assert.assertEquals(1, ((ClientPresentationModel) modelB).getAttribute("b").getValue());
+        context.assertionsDone();// make sure the assertions are really executed
+    }
+
+    @Test
+    public void testPerformanceWithStandardCommandBatcher() {
+        doTestPerformance();
+    }
+
+    @Test
+    public void testPerformanceWithBlindCommandBatcher() {
+        BlindCommandBatcher batcher = new BlindCommandBatcher();
+        batcher.setMergeValueChanges(true);
+        batcher.setDeferMillis(100);
+        InMemoryClientConnector connector = new InMemoryClientConnector(clientDolphin.getModelStore(), serverDolphin.getServerConnector(), batcher, new RunLaterUiThreadHandler());
+        clientDolphin.setClientConnector(connector);
+        doTestPerformance();
+    }
+
+    @Test
+    public void doTestPerformance() {
+        final AtomicLong id = new AtomicLong(0);
+        registerAction(serverDolphin, PerformanceCommand.class, new CommandHandler<PerformanceCommand>() {
+            @Override
+            public void handleCommand(PerformanceCommand command, List<Command> response) {
+                for (int i = 0; i < 100; i++) {
+                    ServerModelStore.presentationModelCommand(response, "id_" + id.getAndIncrement(), null, new DTO(new Slot("attr_" + i, i)));
+                }
+            }
+        });
+
+        final long start = System.nanoTime();
+        for (int i = 0; i < 100; i++) {
+            clientDolphin.getClientConnector().send(new PerformanceCommand(), new OnFinishedHandler() {
+                @Override
+                public void onFinished() {
+                }
+
+            });
+        }
+
+
+        clientDolphin.getClientConnector().send(new PerformanceCommand(), new OnFinishedHandler() {
+            @Override
+            public void onFinished() {
+                System.out.print(new char[0]);
+                System.out.println((System.nanoTime() - start) / 1_000_000);
+                context.assertionsDone();// make sure the assertions are really executed
+            }
+
+        });
+    }
+
+    @Test
+    public void testCreationRoundtripDefaultBehavior() {
+        registerAction(serverDolphin, CreateCommand.class, new CommandHandler<CreateCommand>() {
+            @Override
+            public void handleCommand(CreateCommand command, List<Command> response) {
+                ServerModelStore.presentationModelCommand(response, "id", null, new DTO(new Slot("attr", "attr")));
+            }
+
+        });
+
+        registerAction(serverDolphin, CheckNotificationReachedCommand.class, new CommandHandler<CheckNotificationReachedCommand>() {
+            @Override
+            public void handleCommand(CheckNotificationReachedCommand command, List<Command> response) {
+                Assert.assertEquals(1, serverDolphin.getModelStore().listPresentationModels().size());
+                Assert.assertNotNull(serverDolphin.getModelStore().findPresentationModelById("id"));
+            }
+
+        });
+
+        clientDolphin.getClientConnector().send(new CreateCommand(), new OnFinishedHandler() {
+            @Override
+            public void onFinished() {
+                clientDolphin.getClientConnector().send(new CheckNotificationReachedCommand(), new OnFinishedHandler() {
+                    @Override
+                    public void onFinished() {
+                        context.assertionsDone();// make sure the assertions are really executed
+                    }
+
+                });
+            }
+
+        });
+    }
+
+    @Test
+    public void testCreationRoundtripForTags() {
+        registerAction(serverDolphin, CreateCommand.class, new CommandHandler<CreateCommand>() {
+            @Override
+            public void handleCommand(CreateCommand command, List<Command> response) {
+                ServerModelStore.presentationModelCommand(response, "id", null, new DTO(new Slot("attr", true, null)));
+            }
+
+        });
+
+        registerAction(serverDolphin, CheckTagIsKnownOnServerSideCommand.class, new CommandHandler<CheckTagIsKnownOnServerSideCommand>() {
+            @Override
+            public void handleCommand(CheckTagIsKnownOnServerSideCommand command, List<Command> response) {
+            }
+
+        });
+
+        clientDolphin.getClientConnector().send(new CreateCommand(), new OnFinishedHandler() {
+            @Override
+            public void onFinished() {
+                clientDolphin.getClientConnector().send(new CheckTagIsKnownOnServerSideCommand(), new OnFinishedHandler() {
+                    @Override
+                    public void onFinished() {
+                        context.assertionsDone();
+                    }
+
+                });
+            }
+
+        });
+    }
+
+    @Test
+    public void testFetchingAnInitialListOfData() {
+        registerAction(serverDolphin, FetchDataCommand.class, new CommandHandler<FetchDataCommand>() {
+            @Override
+            public void handleCommand(FetchDataCommand command, List<Command> response) {
+                for (String val : new ArrayList<String>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"))) {
+                    // sending CreatePresentationModelCommand _without_ adding the pm to the server model store
+                    ServerModelStore.presentationModelCommand(response, val, null, new DTO(new Slot("char", val)));
+                }
+
+            }
+
+        });
+
+        clientDolphin.getClientConnector().send(new FetchDataCommand(), new OnFinishedHandler() {
+            @Override
+            public void onFinished() {
+                // pmIds from a single action should come in sequence
+                Assert.assertEquals("a", context.getClientDolphin().getModelStore().findPresentationModelById("a").getAttribute("char").getValue());
+                Assert.assertEquals("z", context.getClientDolphin().getModelStore().findPresentationModelById("z").getAttribute("char").getValue());
+                context.assertionsDone();// make sure the assertions are really executed
+            }
+
+        });
+    }
+
+    @Test
+    public void testLoginUseCase() {
+        registerAction(serverDolphin, LoginCommand.class, new CommandHandler<LoginCommand>() {
 
             @Override
-            void registerIn(ActionRegistry registry) {
-                registry.register(commandClass, handler);
+            public void handleCommand(LoginCommand command, List<Command> response) {
+                PresentationModel user = serverDolphin.getModelStore().findPresentationModelById("user");
+                Attribute nameAttribute = user.getAttribute("name");
+                Attribute passwordAttribute = user.getAttribute("password");
+                if (nameAttribute.getValue() != null && nameAttribute.getValue().equals("Dierk") && passwordAttribute.getValue() != null &&passwordAttribute.getValue().equals("Koenig")) {
+                    ServerModelStore.changeValueCommand(response, ((ServerPresentationModel) user).getAttribute("loggedIn"), "true");
+                }
+            }
+        });
+
+
+        final ClientPresentationModel user = clientDolphin.getModelStore().createModel("user", null, new ClientAttribute("name", null), new ClientAttribute("password", null), new ClientAttribute("loggedIn", null));
+
+        clientDolphin.getClientConnector().send(new LoginCommand(), new OnFinishedHandler() {
+
+            @Override
+            public void onFinished() {
+                Assert.assertNull(user.getAttribute("loggedIn").getValue());
+            }
+        });
+
+        user.getAttribute("name").setValue("Dierk");
+        user.getAttribute("password").setValue("Koenig");
+
+        clientDolphin.getClientConnector().send(new LoginCommand(), new OnFinishedHandler() {
+
+            @Override
+            public void onFinished() {
+                Assert.assertNotNull(user.getAttribute("loggedIn").getValue());
+                context.assertionsDone();
             }
         });
     }
 
-    void testLoginUseCase() {
-        registerAction serverDolphin, LoginCommand.class, { cmd, response ->
-            def user = context.serverDolphin.getModelStore().findPresentationModelById('user')
-            if (user.getAttribute("name").value == 'Dierk' && user.getAttribute("password").value == 'Koenig') {
-                ServerModelStore.changeValueCommand(response, user.getAttribute("loggedIn"), 'true')
-            }
-        }
-        def user = clientDolphin.getModelStore().createModel('user', null, new ClientAttribute("name", null), new ClientAttribute("password", null), new ClientAttribute("loggedIn", null))
-        clientDolphin.getClientConnector().send new LoginCommand(), new OnFinishedHandler() {
-
+    @Test
+    public void testUnregisteredCommandWithLog() {
+        clientDolphin.getClientConnector().send(new NoSuchActionRegisteredCommand(), new OnFinishedHandler() {
             @Override
-            void onFinished() {
-                assert !user.getAttribute("loggedIn").value
+            public void onFinished() {
+                // unknown actions are silently ignored and logged as warnings on the server side.
             }
-        }
-        user.getAttribute("name").value = "Dierk"
-        user.getAttribute("password").value = "Koenig"
 
-        clientDolphin.getClientConnector().send new LoginCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                assert user.getAttribute("loggedIn").value
-                context.assertionsDone()
-            }
-        }
+        });
+        context.assertionsDone();
     }
 
-    void testUnregisteredCommandWithLog() {
-        clientDolphin.getClientConnector().send new NoSuchActionRegisteredCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-// unknown actions are silently ignored and logged as warnings on the server side.
-            }
-        }
-        context.assertionsDone()
+    @Test
+    public void testUnregisteredCommandWithoutLog() {
+        clientDolphin.getClientConnector().send(new NoSuchActionRegisteredCommand(), null);
+        context.assertionsDone();
     }
 
-    void testUnregisteredCommandWithoutLog() {
-        clientDolphin.getClientConnector().send(new NoSuchActionRegisteredCommand(), null)
-        context.assertionsDone()
+    @Test
+    public void testIdNotFoundInVariousCommands() {
+        clientDolphin.getClientConnector().send(new ValueChangedCommand("0", null, null));
+        ServerModelStore.changeValueCommand(null, null, null);
+        ServerModelStore.changeValueCommand(null, new ServerAttribute("a", 42), 42);
+        context.assertionsDone();
     }
 
-    // silly and only for the coverage, we test behavior when id is wrong ...
-    void testIdNotFoundInVariousCommands() {
-        clientDolphin.clientConnector.send new ValueChangedCommand(attributeId: 0)
-        ServerModelStore.changeValueCommand(null, null, null)
-        ServerModelStore.changeValueCommand(null, new ServerAttribute('a', 42), 42)
-        context.assertionsDone()
-    }
-
-
-    void testActionAndSendJavaLike() {
-        boolean reached = false
+    @Test
+    public void testActionAndSendJavaLike() {
+        final AtomicBoolean reached = new AtomicBoolean(false);
         registerAction(serverDolphin, JavaCommand.class, new CommandHandler<JavaCommand>() {
             @Override
-            void handleCommand(JavaCommand command, List<Command> response) {
-                reached = true
+            public void handleCommand(JavaCommand command, List<Command> response) {
+                reached.set(true);
             }
+
         });
         clientDolphin.getClientConnector().send(new JavaCommand(), new OnFinishedHandler() {
             @Override
-            void onFinished() {
-                assert reached
-                context.assertionsDone()
+            public void onFinished() {
+                Assert.assertTrue(reached.get());
+                context.assertionsDone();
             }
-        })
-    }
 
-
-    void testRemovePresentationModel() {
-        clientDolphin.getModelStore().createModel('pm', null, new ClientAttribute("attr", 1))
-
-        registerAction serverDolphin, DeleteCommand.class, { cmd, response ->
-            serverDolphin.getModelStore().remove(serverDolphin.getModelStore().findPresentationModelById('pm'))
-            assert serverDolphin.getModelStore().findPresentationModelById('pm') == null
-        }
-        assert clientDolphin.getModelStore().findPresentationModelById('pm')
-
-        clientDolphin.getClientConnector().send new DeleteCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                assert clientDolphin.getModelStore().findPresentationModelById('pm') == null
-                context.assertionsDone()
-            }
-        }
-    }
-
-
-    void testWithNullResponses() {
-        clientDolphin.getModelStore().createModel('pm', null, new ClientAttribute("attr", 1))
-
-        registerAction serverDolphin, ArbitraryCommand.class, { cmd, response ->
-            ServerModelStore.deleteCommand([], null)
-            ServerModelStore.deleteCommand([], '')
-            ServerModelStore.deleteCommand(null, '')
-            ServerModelStore.presentationModelCommand(null, null, null, null)
-            ServerModelStore.changeValueCommand([], null, null)
-        }
-        clientDolphin.getClientConnector().send(new ArbitraryCommand(), new OnFinishedHandler() {
-
-            @Override
-            void onFinished() {
-                context.assertionsDone()
-            }
         });
     }
 
-    void testStateConflictBetweenClientAndServer() {
+    @Test
+    public void testRemovePresentationModel() {
+        clientDolphin.getModelStore().createModel("pm", null, new ClientAttribute("attr", 1));
+
+        registerAction(serverDolphin, DeleteCommand.class, new CommandHandler<DeleteCommand>() {
+            @Override
+            public void handleCommand(DeleteCommand command, List<Command> response) {
+                serverDolphin.getModelStore().remove(serverDolphin.getModelStore().findPresentationModelById("pm"));
+                Assert.assertNull(serverDolphin.getModelStore().findPresentationModelById("pm"));
+            }
+
+        });
+        Assert.assertNotNull(clientDolphin.getModelStore().findPresentationModelById("pm"));
+
+        clientDolphin.getClientConnector().send(new DeleteCommand(), new OnFinishedHandler() {
+            @Override
+            public void onFinished() {
+                Assert.assertNull(clientDolphin.getModelStore().findPresentationModelById("pm"));
+                context.assertionsDone();
+            }
+
+        });
+    }
+
+    @Test
+    public void testWithNullResponses() {
+        clientDolphin.getModelStore().createModel("pm", null, new ClientAttribute("attr", 1));
+
+        registerAction(serverDolphin, ArbitraryCommand.class, new CommandHandler<ArbitraryCommand>() {
+            @Override
+            public void handleCommand(ArbitraryCommand command, List<Command> response) {
+                ServerModelStore.deleteCommand(new ArrayList(), null);
+                ServerModelStore.deleteCommand(new ArrayList(), "");
+                ServerModelStore.deleteCommand(null, "");
+                ServerModelStore.presentationModelCommand(null, null, null, null);
+                ServerModelStore.changeValueCommand(new ArrayList(), null, null);
+            }
+
+        });
+
+        clientDolphin.getClientConnector().send(new ArbitraryCommand(), new OnFinishedHandler() {
+            @Override
+            public void onFinished() {
+                context.assertionsDone();
+            }
+
+        });
+    }
+
+    @Test
+    public void testStateConflictBetweenClientAndServer() {
         LogConfig.logOnLevel(Level.INFO);
-        def latch = new CountDownLatch(1)
-        def pm = clientDolphin.getModelStore().createModel('pm', null, new ClientAttribute("attr", 1))
-        def attr = pm.getAttribute('attr')
+        final CountDownLatch latch = new CountDownLatch(1);
+        ClientPresentationModel pm = clientDolphin.getModelStore().createModel("pm", null, new ClientAttribute("attr", 1));
+        final ClientAttribute attr = pm.getAttribute("attr");
 
-        registerAction serverDolphin, Set2Command.class, { cmd, response ->
-            latch.await() // mimic a server delay such that the client has enough time to change the value concurrently
-            serverDolphin.getModelStore().findPresentationModelById('pm').getAttribute('attr').value == 1
-            serverDolphin.getModelStore().findPresentationModelById('pm').getAttribute('attr').value = 2
-            serverDolphin.getModelStore().findPresentationModelById('pm').getAttribute('attr').value == 2 // immediate change of server state
-        }
-        registerAction serverDolphin, Assert3Command.class, { cmd, response ->
-            assert serverDolphin.getModelStore().findPresentationModelById('pm').getAttribute('attr').value == 3
-        }
+        registerAction(serverDolphin, Set2Command.class, new CommandHandler<Set2Command>() {
+            @Override
+            public void handleCommand(Set2Command command, List<Command> response) {
+                try {
+                    latch.await();// mimic a server delay such that the client has enough time to change the value concurrently
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    Assert.fail(e.getMessage());
+                }
+                Assert.assertEquals(1, serverDolphin.getModelStore().findPresentationModelById("pm").getAttribute("attr").getValue());
+                serverDolphin.getModelStore().findPresentationModelById("pm").getAttribute("attr").setValue(2);
+                Assert.assertEquals(2, serverDolphin.getModelStore().findPresentationModelById("pm").getAttribute("attr").getValue());// immediate change of server state
+            }
 
-        clientDolphin.getClientConnector().send(new Set2Command(), null) // a conflict could arise when the server value is changed ...
-        attr.value = 3            // ... while the client value is changed concurrently
-        latch.countDown()
-        clientDolphin.getClientConnector().send(new Assert3Command(), null)
+        });
+
+        registerAction(serverDolphin, Assert3Command.class, new CommandHandler<Assert3Command>() {
+            @Override
+            public void handleCommand(Assert3Command command, List<Command> response) {
+                Assert.assertEquals(3, serverDolphin.getModelStore().findPresentationModelById("pm").getAttribute("attr").getValue());
+            }
+
+        });
+
+
+        clientDolphin.getClientConnector().send(new Set2Command(), null);
+        // a conflict could arise when the server value is changed ...
+        attr.setValue(3);// ... while the client value is changed concurrently
+        latch.countDown();
+        clientDolphin.getClientConnector().send(new Assert3Command(), null);
         // since from the client perspective, the last change was to 3, server and client should both see the 3
 
         // in between these calls a conflicting value change could be transferred, setting both value to 2
-
         clientDolphin.getClientConnector().send(new Assert3Command(), new OnFinishedHandler() {
-
             @Override
-            void onFinished() {
-                assert attr.value == 3
-                context.assertionsDone()
+            public void onFinished() {
+                Assert.assertEquals(3, attr.getValue());
+                context.assertionsDone();
             }
+
         });
 
     }
-
 }
