@@ -15,12 +15,10 @@
  */
 package org.opendolphin.core.server.comm;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.opendolphin.core.comm.Command;
-
-import java.util.List;
+import org.junit.Assert
+import org.junit.Before
+import org.junit.Test
+import org.opendolphin.core.comm.Command
 
 public class ActionRegistryTests {
 
@@ -33,21 +31,16 @@ public class ActionRegistryTests {
         registry = new ActionRegistry();
     }
 
-    private <T extends Command> CommandHandler createDummyHandler() {
-        return new CommandHandler<T>() {
-
-            @Override
-            public void handleCommand(T command, List<Command> response) {
-
-            }
-        };
-    }
-
     @Test
     public void testRegisterCommand() {
         //given:
         Assert.assertEquals(0, registry.getActions().size());
-        CommandHandler firstAction = createDummyHandler();
+        CommandHandler<TestDataCommand> firstAction = new CommandHandler<TestDataCommand>() {
+            @Override
+            void handleCommand(TestDataCommand command, List response) {
+
+            }
+        }
 
         //when:
         registry.register(TestDataCommand.class, firstAction);
@@ -62,7 +55,12 @@ public class ActionRegistryTests {
     public void testRegisterCommandHandler() {
 
         //given:
-        CommandHandler<TestDataCommand> commandHandler = createDummyHandler();
+        CommandHandler<TestDataCommand> commandHandler = new CommandHandler<TestDataCommand>() {
+            @Override
+            void handleCommand(TestDataCommand command, List response) {
+
+            }
+        }
 
         //when:
         registry.register(TestDataCommand.class, commandHandler);
@@ -78,7 +76,12 @@ public class ActionRegistryTests {
 
         //given:
         Assert.assertEquals(0, registry.getActions().size());
-        CommandHandler action = createDummyHandler();
+        CommandHandler<TestDataCommand> action = new CommandHandler<TestDataCommand>() {
+            @Override
+            void handleCommand(TestDataCommand command, List response) {
+
+            }
+        }
 
         //when:
         registry.register(TestDataCommand.class, action);
