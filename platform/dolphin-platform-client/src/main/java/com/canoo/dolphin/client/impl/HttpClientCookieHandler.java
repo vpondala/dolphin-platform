@@ -31,7 +31,11 @@ public class HttpClientCookieHandler {
         if (cookiesHeader != null) {
             LOG.debug("found '{}' header field", PlatformConstants.SET_COOKIE_HEADER);
             for (String cookie : cookiesHeader) {
-                LOG.debug("will parse '{}' header content '{}'", cookie);
+                if (cookie == null || cookie.isEmpty()) {
+                    continue;
+                }
+                LOG.debug("**************** will parse '{}' ", cookie);
+                System.out.println("**************** will parse cookie : " + cookie);
                 List<HttpCookie> cookies = new ArrayList<>();
                 try {
                     cookies.addAll(HttpCookie.parse(cookie));
