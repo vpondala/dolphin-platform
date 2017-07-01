@@ -4,7 +4,7 @@ import com.canoo.dolphin.impl.commands.CreateContextCommand;
 import com.canoo.impl.platform.core.Assert;
 import com.google.gson.JsonObject;
 
-import static com.canoo.dolphin.impl.codec.CommandConstants.*;
+import static org.opendolphin.core.comm.CommandConstants.*;
 
 public class CreateContextCommandEncoder extends AbstractCommandEncoder<CreateContextCommand> {
     @Override

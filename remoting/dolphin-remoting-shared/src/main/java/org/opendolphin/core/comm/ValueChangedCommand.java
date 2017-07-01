@@ -22,9 +22,11 @@ public final class ValueChangedCommand extends Command {
     private Object newValue;
 
     public ValueChangedCommand() {
+        super(CommandConstants.VALUE_CHANGED_ATTRIBUTE_ID);
     }
 
     public ValueChangedCommand(String attributeId, Object newValue) {
+        this();
         this.attributeId = attributeId;
         this.newValue = newValue;
     }

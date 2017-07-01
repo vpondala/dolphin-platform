@@ -23,4 +23,7 @@ package org.opendolphin.core.comm;
  */
 @Deprecated
 public final class EmptyCommand extends Command {
+    public EmptyCommand() {
+        super(CommandConstants.EMPTY_COMMAND_ID);
+    }
 }

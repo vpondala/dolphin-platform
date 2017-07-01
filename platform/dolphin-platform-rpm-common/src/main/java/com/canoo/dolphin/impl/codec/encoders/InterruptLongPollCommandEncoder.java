@@ -4,8 +4,8 @@ import com.canoo.dolphin.impl.commands.InterruptLongPollCommand;
 import com.canoo.impl.platform.core.Assert;
 import com.google.gson.JsonObject;
 
-import static com.canoo.dolphin.impl.codec.CommandConstants.ID;
-import static com.canoo.dolphin.impl.codec.CommandConstants.INTERRUPT_LONG_POLL_COMMAND_ID;
+import static org.opendolphin.core.comm.CommandConstants.ID;
+import static org.opendolphin.core.comm.CommandConstants.INTERRUPT_LONG_POLL_COMMAND_ID;
 
 @Deprecated
 public class InterruptLongPollCommandEncoder extends AbstractCommandEncoder<InterruptLongPollCommand> {

@@ -4,7 +4,7 @@ import com.canoo.impl.platform.core.Assert;
 import com.google.gson.JsonObject;
 import org.opendolphin.core.comm.AttributeMetadataChangedCommand;
 
-import static com.canoo.dolphin.impl.codec.CommandConstants.*;
+import static org.opendolphin.core.comm.CommandConstants.*;
 
 public class AttributeMetadataChangedCommandEncoder extends AbstractCommandEncoder<AttributeMetadataChangedCommand> {
 

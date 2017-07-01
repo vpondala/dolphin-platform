@@ -19,10 +19,12 @@ package org.opendolphin.core.comm;
 public final class PresentationModelDeletedCommand extends Command {
 
     public PresentationModelDeletedCommand(String pmId) {
+        this();
         this.pmId = pmId;
     }
 
     public PresentationModelDeletedCommand() {
+        super(CommandConstants.PRESENTATION_MODEL_DELETED_COMMAND_ID);
     }
 
     public String getPmId() {

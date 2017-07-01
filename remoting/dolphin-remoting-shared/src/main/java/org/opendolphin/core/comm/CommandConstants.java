@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.canoo.dolphin.impl.codec;
+package org.opendolphin.core.comm;
 
 public interface CommandConstants {
 

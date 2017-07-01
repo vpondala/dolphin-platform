@@ -20,7 +20,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import org.opendolphin.core.comm.ValueChangedCommand;
 
-import static com.canoo.dolphin.impl.codec.CommandConstants.*;
+import static org.opendolphin.core.comm.CommandConstants.*;
 
 public class ValueChangedCommandEncoder extends AbstractCommandEncoder<ValueChangedCommand> {
 
