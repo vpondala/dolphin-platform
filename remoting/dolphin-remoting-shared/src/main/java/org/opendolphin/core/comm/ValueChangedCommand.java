@@ -22,7 +22,7 @@ public final class ValueChangedCommand extends Command {
     private Object newValue;
 
     public ValueChangedCommand() {
-        super(CommandConstants.VALUE_CHANGED_ATTRIBUTE_ID);
+        super(CommandConstants.VALUE_CHANGED_COMMAND_ID);
     }
 
     public ValueChangedCommand(String attributeId, Object newValue) {
