@@ -16,16 +16,11 @@
 package org.opendolphin.core.comm;
 
 /**
- * A command where the id can be set from the outside for general purposes.
- * Signal commands are transmitted outside the usual sequence but possibly in the same
- * session. Therefore any handler for this command must neither change nor access any unprotected shared
- * mutable state like the dolphin instance or the model store.
+ * A notification that does nothing on the server.
+ * It is only used to hook into the communication at a known point
+ * such that the onFinished handler can be executed
+ * in the expected sequence.
  */
-public class SignalCommand extends Command {
-    public SignalCommand() {
-    }
-
-    public SignalCommand(String id) {
-        super(id);
-    }
+@Deprecated
+public final class EmptyCommand extends Command {
 }

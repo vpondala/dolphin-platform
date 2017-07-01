@@ -15,12 +15,14 @@
  */
 package org.opendolphin.core.comm;
 
-public final class DeletedPresentationModelNotification extends Command {
-    public DeletedPresentationModelNotification(String pmId) {
+@Deprecated
+public final class PresentationModelDeletedCommand extends Command {
+
+    public PresentationModelDeletedCommand(String pmId) {
         this.pmId = pmId;
     }
 
-    public DeletedPresentationModelNotification() {
+    public PresentationModelDeletedCommand() {
     }
 
     public String getPmId() {

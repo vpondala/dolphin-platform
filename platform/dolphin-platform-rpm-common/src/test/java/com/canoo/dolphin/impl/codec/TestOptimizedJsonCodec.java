@@ -19,7 +19,7 @@ import com.canoo.dolphin.impl.commands.CallActionCommand;
 import org.hamcrest.Matchers;
 import org.opendolphin.core.comm.Command;
 import org.opendolphin.core.comm.CreatePresentationModelCommand;
-import org.opendolphin.core.comm.EmptyNotification;
+import org.opendolphin.core.comm.EmptyCommand;
 import org.opendolphin.core.comm.ValueChangedCommand;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -411,10 +411,10 @@ public class TestOptimizedJsonCodec {
     }
 
     private static Command createCommand() {
-        return new EmptyNotification();
+        return new EmptyCommand();
     }
 
     private static String createCommandJsonString() {
-        return "{\"id\":\"Empty\",\"className\":\"org.opendolphin.core.comm.EmptyNotification\"}";
+        return "{\"id\":\"Empty\",\"className\":\"org.opendolphin.core.comm.EmptyCommand\"}";
     }
 }

@@ -17,41 +17,40 @@ package com.canoo.dolphin.impl.codec;
 
 public interface CommandConstants {
 
-    String ID = "id";
 
+    String START_LONG_POLL_COMMAND_ID = "StartLongPoll";
+    String INTERRUPT_LONG_POLL_COMMAND_ID = "InterruptLongPoll";
     String CREATE_CONTEXT_COMMAND_ID = "CreateContext";
     String DESTROY_CONTEXT_COMMAND_ID = "DestroyContext";
-
-
-
     String VALUE_CHANGED_COMMAND_ID = "ValueChanged";
+    String CREATE_PRESENTATION_MODEL_COMMAND_ID = "CreatePresentationModel";
+    String CREATE_CONTROLLER_COMMAND_ID = "CreateController";
+    String DESTROY_CONTROLLER_COMMAND_ID = "DestroyController";
+    String CALL_ACTION_COMMAND_ID = "CallAction";
+    String CHANGE_ATTRIBUTE_METADATA_COMMAND_ID = "ChangeAttributeMetadata";
+    String ATTRIBUTE_METADATA_CHANGED_COMMAND_ID = "AttributeMetadataChanged";
+    String EMPTY_COMMAND_ID = "Empty";
+    String PRESENTATION_MODEL_DELETED_COMMAND_ID = "PresentationModelDeleted";
+    String DELETE_PRESENTATION_MODEL_COMMAND_ID = "DeletePresentationModelCommand";
+
+
+    String ID = "id";
     String VALUE_CHANGED_ATTRIBUTE_ID = "a";
     String OLD_VALUE = "o";
     String NEW_VALUE = "n";
-
-    String CREATE_PRESENTATION_MODEL_COMMAND_ID = "CreatePresentationModel";
     String VALUE = "value";
     String PROPERTY_NAME = "propertyName";
-
-
+    String METADATA_NAME = "mn";
     String PM_ID = "p";
     String PM_TYPE = "t";
     String PM_ATTRIBUTES = "a";
-
     String ATTRIBUTE_NAME = "n";
     String ATTRIBUTE_ID = "i";
     String ATTRIBUTE_VALUE = "v";
     String ATTRIBUTE_TAG = "t";
-
-
-    String CREATE_CONTROLLER_COMMAND_ID = "CreateController";
     String PARENT_CONTROLLER_ID = "p";
     String CONTROLLER_NAME = "n";
-
-    String DESTROY_CONTROLLER_COMMAND_ID = "DestroyController";
     String CONTROLLER_ID = "c";
-
-    String CALL_ACTION_COMMAND_ID = "CallAction";
     String ACTION_NAME = "n";
     String PARAMS = "p";
     String PARAM_NAME = "n";

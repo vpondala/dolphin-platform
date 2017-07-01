@@ -15,19 +15,29 @@
  */
 package com.canoo.dolphin.impl.codec;
 
+import com.canoo.dolphin.impl.codec.encoders.AbstractCommandEncoder;
+import com.canoo.dolphin.impl.codec.encoders.AttributeMetadataChangedCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.CallActionCommandEncoder;
+import com.canoo.dolphin.impl.codec.encoders.ChangeAttributeMetadataCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.CommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.CreateContextCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.CreateControllerCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.CreatePresentationModelEncoder;
+import com.canoo.dolphin.impl.codec.encoders.DeletePresentationModelCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.DestroyContextCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.DestroyControllerCommandEncoder;
+import com.canoo.dolphin.impl.codec.encoders.EmptyCommandEncoder;
+import com.canoo.dolphin.impl.codec.encoders.InterruptLongPollCommandEncoder;
+import com.canoo.dolphin.impl.codec.encoders.PresentationModelDeletedCommandEncoder;
+import com.canoo.dolphin.impl.codec.encoders.StartLongPollCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.ValueChangedCommandEncoder;
 import com.canoo.dolphin.impl.commands.CallActionCommand;
 import com.canoo.dolphin.impl.commands.CreateContextCommand;
 import com.canoo.dolphin.impl.commands.CreateControllerCommand;
 import com.canoo.dolphin.impl.commands.DestroyContextCommand;
 import com.canoo.dolphin.impl.commands.DestroyControllerCommand;
+import com.canoo.dolphin.impl.commands.InterruptLongPollCommand;
+import com.canoo.dolphin.impl.commands.StartLongPollCommand;
 import com.canoo.impl.platform.core.Assert;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,16 +47,19 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import org.opendolphin.core.comm.AttributeMetadataChangedCommand;
+import org.opendolphin.core.comm.ChangeAttributeMetadataCommand;
 import org.opendolphin.core.comm.Codec;
 import org.opendolphin.core.comm.Command;
 import org.opendolphin.core.comm.CreatePresentationModelCommand;
-import org.opendolphin.core.comm.JsonCodec;
+import org.opendolphin.core.comm.DeletePresentationModelCommand;
+import org.opendolphin.core.comm.EmptyCommand;
+import org.opendolphin.core.comm.PresentationModelDeletedCommand;
 import org.opendolphin.core.comm.ValueChangedCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,46 +70,48 @@ public class OptimizedJsonCodec implements Codec {
 
     private static final Logger LOG = LoggerFactory.getLogger(OptimizedJsonCodec.class);
 
-    private static final Gson GSON = new GsonBuilder().serializeNulls().create();
+    private static final OptimizedJsonCodec INSTANCE = new OptimizedJsonCodec();
 
-    private static final Map<Class<? extends Command>, CommandEncoder<?>> ENCODERS = new HashMap<>();
-    private static final Map<String, CommandEncoder<?>> DECODERS = new HashMap<>();
+    private final Gson GSON;
 
-    static {
-        final CreatePresentationModelEncoder createPresentationModelEncoder = new CreatePresentationModelEncoder();
-        ENCODERS.put(CreatePresentationModelCommand.class, createPresentationModelEncoder);
-        DECODERS.put(CREATE_PRESENTATION_MODEL_COMMAND_ID, createPresentationModelEncoder);
+    private final Map<Class<? extends Command>, CommandEncoder<?>> ENCODERS = new HashMap<>();
 
-        final ValueChangedCommandEncoder valueChangedCommandEncoder = new ValueChangedCommandEncoder();
-        ENCODERS.put(ValueChangedCommand.class, valueChangedCommandEncoder);
-        DECODERS.put(VALUE_CHANGED_COMMAND_ID, valueChangedCommandEncoder);
+    private final Map<String, CommandEncoder<?>> DECODERS = new HashMap<>();
 
-        final CreateControllerCommandEncoder createControllerCommandEncoder = new CreateControllerCommandEncoder();
-        ENCODERS.put(CreateControllerCommand.class, createControllerCommandEncoder);
-        DECODERS.put(CREATE_CONTROLLER_COMMAND_ID, createControllerCommandEncoder);
+    private OptimizedJsonCodec() {
+        GSON = new GsonBuilder().serializeNulls().create();
 
-        final DestroyControllerCommandEncoder destroyControllerCommandEncoder = new DestroyControllerCommandEncoder();
-        ENCODERS.put(DestroyControllerCommand.class, destroyControllerCommandEncoder);
-        DECODERS.put(DESTROY_CONTROLLER_COMMAND_ID, destroyControllerCommandEncoder);
+        addEncoder(new StartLongPollCommandEncoder(), StartLongPollCommand.class, START_LONG_POLL_COMMAND_ID);
+        addEncoder(new InterruptLongPollCommandEncoder(), InterruptLongPollCommand.class, INTERRUPT_LONG_POLL_COMMAND_ID);
 
-        final CallActionCommandEncoder callActionCommandEncoder = new CallActionCommandEncoder();
-        ENCODERS.put(CallActionCommand.class, callActionCommandEncoder);
-        DECODERS.put(CALL_ACTION_COMMAND_ID, callActionCommandEncoder);
+        addEncoder(new CreatePresentationModelEncoder(), CreatePresentationModelCommand.class, CREATE_PRESENTATION_MODEL_COMMAND_ID);
+        addEncoder(new DeletePresentationModelCommandEncoder(), DeletePresentationModelCommand.class, DELETE_PRESENTATION_MODEL_COMMAND_ID);
+        addEncoder(new PresentationModelDeletedCommandEncoder(), PresentationModelDeletedCommand.class, PRESENTATION_MODEL_DELETED_COMMAND_ID);
+        addEncoder(new ValueChangedCommandEncoder(), ValueChangedCommand.class, VALUE_CHANGED_COMMAND_ID);
+        addEncoder(new ChangeAttributeMetadataCommandEncoder(), ChangeAttributeMetadataCommand.class, CHANGE_ATTRIBUTE_METADATA_COMMAND_ID);
+        addEncoder(new AttributeMetadataChangedCommandEncoder(), AttributeMetadataChangedCommand.class, ATTRIBUTE_METADATA_CHANGED_COMMAND_ID);
 
-        final CreateContextCommandEncoder createContextCommandEncoder = new CreateContextCommandEncoder();
-        ENCODERS.put(CreateContextCommand.class, createContextCommandEncoder);
-        DECODERS.put(CREATE_CONTEXT_COMMAND_ID, createContextCommandEncoder);
+        addEncoder(new EmptyCommandEncoder(), EmptyCommand.class, EMPTY_COMMAND_ID);
 
-        final DestroyContextCommandEncoder destroyContextCommandEncoder = new DestroyContextCommandEncoder();
-        ENCODERS.put(DestroyContextCommand.class, destroyContextCommandEncoder);
-        DECODERS.put(DESTROY_CONTEXT_COMMAND_ID, destroyContextCommandEncoder);
+        addEncoder(new CreateContextCommandEncoder(), CreateContextCommand.class, CREATE_CONTEXT_COMMAND_ID);
+        addEncoder(new DestroyContextCommandEncoder(), DestroyContextCommand.class, DESTROY_CONTEXT_COMMAND_ID);
+
+        addEncoder(new CreateControllerCommandEncoder(), CreateControllerCommand.class, CREATE_CONTROLLER_COMMAND_ID);
+        addEncoder(new DestroyControllerCommandEncoder(), DestroyControllerCommand.class, DESTROY_CONTROLLER_COMMAND_ID);
+        addEncoder(new CallActionCommandEncoder(), CallActionCommand.class, CALL_ACTION_COMMAND_ID);
     }
 
-    private final Codec fallBack = new JsonCodec();
+    private <C extends Command> void addEncoder(final AbstractCommandEncoder<C> encoder, final Class<C> commandClass, final String commandId) {
+        Assert.requireNonNull(encoder, "encoder");
+        Assert.requireNonNull(commandClass, "commandClass");
+        Assert.requireNonNull(commandId, "commandId");
+        ENCODERS.put(commandClass, encoder);
+        DECODERS.put(commandId, encoder);
+    }
 
     @Override
     @SuppressWarnings("unchecked")
-    public String encode(List<? extends Command> commands) {
+    public String encode(final List<? extends Command> commands) {
         Assert.requireNonNull(commands, "commands");
         LOG.trace("Encoding command list with {} commands", commands.size());
         final StringBuilder builder = new StringBuilder("[");
@@ -106,13 +121,11 @@ public class OptimizedJsonCodec implements Codec {
             } else {
                 LOG.trace("Encoding command of type {}", command.getClass());
                 final CommandEncoder encoder = ENCODERS.get(command.getClass());
-                if (encoder != null) {
-                    final JsonObject jsonObject = encoder.encode(command);
-                    GSON.toJson(jsonObject, builder);
-                } else {
-                    final String result = fallBack.encode(Collections.singletonList(command));
-                    builder.append(result.substring(1, result.length() - 1));
+                if (encoder == null) {
+                    throw new RuntimeException("No encoder for command type " + command.getClass() + " found");
                 }
+                final JsonObject jsonObject = encoder.encode(command);
+                GSON.toJson(jsonObject, builder);
                 builder.append(",");
             }
         }
@@ -128,37 +141,34 @@ public class OptimizedJsonCodec implements Codec {
     }
 
     @Override
-    public List<Command> decode(String transmitted) {
+    public List<Command> decode(final String transmitted) {
         Assert.requireNonNull(transmitted, "transmitted");
         LOG.trace("Decoding message: {}", transmitted);
         try {
             final List<Command> commands = new ArrayList<>();
             final JsonArray array = (JsonArray) new JsonParser().parse(transmitted);
-
             for (final JsonElement jsonElement : array) {
                 final JsonObject command = (JsonObject) jsonElement;
-                JsonPrimitive idPrimitive = command.getAsJsonPrimitive("id");
-
-                String id = null;
-                if (idPrimitive != null) {
-                    id = idPrimitive.getAsString();
+                final JsonPrimitive idElement = command.getAsJsonPrimitive("id");
+                if (idElement == null) {
+                    throw new RuntimeException("Can not encode command without id!");
                 }
+                String id = idElement.getAsString();
                 LOG.trace("Decoding command: {}", id);
-                CommandEncoder<?> encoder = null;
-                if (id != null) {
-                    encoder = DECODERS.get(id);
+                final CommandEncoder<?> encoder = DECODERS.get(id);
+                if (encoder == null) {
+                    throw new RuntimeException("Can not encode command of type " + id + ". No matching encoder found!");
                 }
-                if (encoder != null) {
-                    commands.add(encoder.decode(command));
-                } else {
-                    commands.addAll(fallBack.decode("[" + command.toString() + "]"));
-                }
+                commands.add(encoder.decode(command));
             }
             LOG.trace("Decoded command list with {} commands", commands.size());
             return commands;
-        } catch (ClassCastException | NullPointerException ex) {
+        } catch (Exception ex) {
             throw new JsonParseException("Illegal JSON detected", ex);
         }
     }
 
+    public static OptimizedJsonCodec getInstance() {
+        return INSTANCE;
+    }
 }
