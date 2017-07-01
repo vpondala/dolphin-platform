@@ -17,7 +17,6 @@ package org.opendolphin.core.comm;
 
 public interface CommandConstants {
 
-
     String START_LONG_POLL_COMMAND_ID = "StartLongPoll";
     String INTERRUPT_LONG_POLL_COMMAND_ID = "InterruptLongPoll";
     String CREATE_CONTEXT_COMMAND_ID = "CreateContext";
@@ -33,26 +32,32 @@ public interface CommandConstants {
     String PRESENTATION_MODEL_DELETED_COMMAND_ID = "PresentationModelDeleted";
     String DELETE_PRESENTATION_MODEL_COMMAND_ID = "DeletePresentationModelCommand";
 
-
     String ID = "id";
-    String VALUE_CHANGED_ATTRIBUTE_ID = "a";
-    String OLD_VALUE = "o";
+    String ATTRIBUTE_ID = "a_id";
+    String PM_ID = "p_id";
+    String CONTROLLER_ID = "c_id";
+    String PM_TYPE = "t";
+    String NAME = "n";
+    String VALUE = "v";
+    String PARAMS = "p";
+    String PM_ATTRIBUTES = "a";
+
+
+
+    /*
     String NEW_VALUE = "n";
     String VALUE = "value";
-    String PROPERTY_NAME = "propertyName";
-    String METADATA_NAME = "mn";
-    String PM_ID = "p";
+    String PROPERTY_NAME = "n";
+    String METADATA_NAME = "m";
     String PM_TYPE = "t";
     String PM_ATTRIBUTES = "a";
     String ATTRIBUTE_NAME = "n";
-    String ATTRIBUTE_ID = "i";
     String ATTRIBUTE_VALUE = "v";
-    String ATTRIBUTE_TAG = "t";
     String PARENT_CONTROLLER_ID = "p";
     String CONTROLLER_NAME = "n";
-    String CONTROLLER_ID = "c";
     String ACTION_NAME = "n";
     String PARAMS = "p";
     String PARAM_NAME = "n";
     String PARAM_VALUE = "v";
+    */
 }

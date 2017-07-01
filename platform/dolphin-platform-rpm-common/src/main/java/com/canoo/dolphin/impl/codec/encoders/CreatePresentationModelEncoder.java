@@ -42,11 +42,11 @@ public class  CreatePresentationModelEncoder extends AbstractCommandEncoder<Crea
         final JsonArray jsonArray = new JsonArray();
         for (final Map<String, Object> attribute : command.getAttributes()) {
             final JsonObject jsonAttribute = new JsonObject();
-            jsonAttribute.addProperty(ATTRIBUTE_NAME, String.valueOf(attribute.get(PROPERTY_NAME)));
+            jsonAttribute.addProperty(NAME, String.valueOf(attribute.get(NAME)));
             jsonAttribute.addProperty(ATTRIBUTE_ID, String.valueOf(attribute.get(ID)));
             final Object value = attribute.get(VALUE);
             if (value != null) {
-                jsonAttribute.add(ATTRIBUTE_VALUE, ValueEncoder.encodeValue(attribute.get(VALUE)));
+                jsonAttribute.add(VALUE, ValueEncoder.encodeValue(attribute.get(VALUE)));
             }
             jsonArray.add(jsonAttribute);
         }
@@ -72,9 +72,9 @@ public class  CreatePresentationModelEncoder extends AbstractCommandEncoder<Crea
             for (final JsonElement jsonElement : jsonArray) {
                 final JsonObject attribute = jsonElement.getAsJsonObject();
                 final HashMap<String, Object> map = new HashMap<>();
-                map.put(PROPERTY_NAME,getStringElement(attribute, ATTRIBUTE_NAME));
+                map.put(NAME,getStringElement(attribute, NAME));
                 map.put(ID, getStringElement(attribute, ATTRIBUTE_ID));
-                final Object value = attribute.has(ATTRIBUTE_VALUE)? ValueEncoder.decodeValue(attribute.get(ATTRIBUTE_VALUE)) : null;
+                final Object value = attribute.has(VALUE)? ValueEncoder.decodeValue(attribute.get(VALUE)) : null;
                 map.put(VALUE, value);
                 map.put("baseValue", value);
                 map.put("qualifier", null);

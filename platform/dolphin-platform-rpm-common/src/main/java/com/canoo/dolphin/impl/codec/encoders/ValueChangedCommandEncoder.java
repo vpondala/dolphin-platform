@@ -29,9 +29,9 @@ public class ValueChangedCommandEncoder extends AbstractCommandEncoder<ValueChan
         Assert.requireNonNull(command, "command");
 
         final JsonObject jsonCommand = new JsonObject();
-        jsonCommand.addProperty(VALUE_CHANGED_ATTRIBUTE_ID, command.getAttributeId());
+        jsonCommand.addProperty(ATTRIBUTE_ID, command.getAttributeId());
         if (command.getNewValue() != null) {
-            jsonCommand.add(NEW_VALUE, ValueEncoder.encodeValue(command.getNewValue()));
+            jsonCommand.add(VALUE, ValueEncoder.encodeValue(command.getNewValue()));
         }
         jsonCommand.addProperty(ID, VALUE_CHANGED_COMMAND_ID);
         return jsonCommand;
@@ -44,8 +44,8 @@ public class ValueChangedCommandEncoder extends AbstractCommandEncoder<ValueChan
         try {
             final ValueChangedCommand command = new ValueChangedCommand();
 
-            command.setNewValue(ValueEncoder.decodeValue(jsonObject.get(NEW_VALUE)));
-            command.setAttributeId(getStringElement(jsonObject, VALUE_CHANGED_ATTRIBUTE_ID));
+            command.setNewValue(ValueEncoder.decodeValue(jsonObject.get(VALUE)));
+            command.setAttributeId(getStringElement(jsonObject, ATTRIBUTE_ID));
 
             return command;
         } catch (IllegalStateException | ClassCastException | NullPointerException ex) {

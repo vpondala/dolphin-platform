@@ -28,8 +28,8 @@ public class CreateControllerCommandEncoder extends AbstractCommandEncoder<Creat
     public JsonObject encode(final CreateControllerCommand command) {
         Assert.requireNonNull(command, "command");
         final JsonObject jsonCommand = new JsonObject();
-        jsonCommand.addProperty(PARENT_CONTROLLER_ID, command.getParentControllerId());
-        jsonCommand.addProperty(CONTROLLER_NAME, command.getControllerName());
+        jsonCommand.addProperty(CONTROLLER_ID, command.getParentControllerId());
+        jsonCommand.addProperty(NAME, command.getControllerName());
         jsonCommand.addProperty(ID, CREATE_CONTROLLER_COMMAND_ID);
         return jsonCommand;
     }
@@ -39,10 +39,10 @@ public class CreateControllerCommandEncoder extends AbstractCommandEncoder<Creat
         Assert.requireNonNull(jsonObject, "jsonObject");
         try {
             final CreateControllerCommand command = new CreateControllerCommand();
-            if(jsonObject.has(PARENT_CONTROLLER_ID) && !isElementJsonNull(jsonObject, PARENT_CONTROLLER_ID)) {
-                command.setParentControllerId(getStringElement(jsonObject, PARENT_CONTROLLER_ID));
+            if(jsonObject.has(CONTROLLER_ID) && !isElementJsonNull(jsonObject, CONTROLLER_ID)) {
+                command.setParentControllerId(getStringElement(jsonObject, CONTROLLER_ID));
             }
-            command.setControllerName(getStringElement(jsonObject, CONTROLLER_NAME));
+            command.setControllerName(getStringElement(jsonObject, NAME));
             return command;
         } catch (Exception ex) {
             throw new JsonParseException("Illegal JSON detected", ex);

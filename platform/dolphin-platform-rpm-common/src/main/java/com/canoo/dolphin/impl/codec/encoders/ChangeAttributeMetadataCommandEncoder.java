@@ -13,7 +13,7 @@ public class ChangeAttributeMetadataCommandEncoder extends AbstractCommandEncode
         final JsonObject jsonCommand = new JsonObject();
         jsonCommand.addProperty(ID, CHANGE_ATTRIBUTE_METADATA_COMMAND_ID);
         jsonCommand.addProperty(ATTRIBUTE_ID, command.getAttributeId());
-        jsonCommand.addProperty(METADATA_NAME, command.getMetadataName());
+        jsonCommand.addProperty(NAME, command.getMetadataName());
         jsonCommand.add(VALUE, ValueEncoder.encodeValue(command.getValue()));
         return jsonCommand;
     }
@@ -22,7 +22,7 @@ public class ChangeAttributeMetadataCommandEncoder extends AbstractCommandEncode
     public ChangeAttributeMetadataCommand decode(JsonObject jsonObject) {
         ChangeAttributeMetadataCommand command = new ChangeAttributeMetadataCommand();
         command.setAttributeId(getStringElement(jsonObject, ATTRIBUTE_ID));
-        command.setMetadataName(getStringElement(jsonObject, METADATA_NAME));
+        command.setMetadataName(getStringElement(jsonObject, NAME));
         command.setValue(ValueEncoder.decodeValue(jsonObject.get(VALUE)));
         return null;
     }
