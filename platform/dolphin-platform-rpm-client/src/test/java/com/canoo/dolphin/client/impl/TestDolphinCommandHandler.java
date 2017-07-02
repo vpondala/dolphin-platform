@@ -34,7 +34,11 @@ import static org.testng.Assert.assertEquals;
 
 public class TestDolphinCommandHandler extends AbstractDolphinBasedTest {
 
-    private final class TestChangeCommand extends AbstractTestCommand {}
+    private final class TestChangeCommand extends AbstractTestCommand {
+        public TestChangeCommand() {
+            super("TestChangeCommand");
+        }
+    }
 
     @Test
     public void testInvocation() throws Exception {

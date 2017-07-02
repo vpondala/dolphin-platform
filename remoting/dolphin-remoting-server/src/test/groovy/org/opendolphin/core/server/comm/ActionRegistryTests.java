@@ -27,6 +27,9 @@ public class ActionRegistryTests {
     private ActionRegistry registry;
 
     final private class TestDataCommand extends AbstractTestCommand {
+        public TestDataCommand() {
+            super("TestDataCommand");
+        }
     }
 
     @Before

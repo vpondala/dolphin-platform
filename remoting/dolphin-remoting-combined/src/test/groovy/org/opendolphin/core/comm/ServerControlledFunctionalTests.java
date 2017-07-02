@@ -47,27 +47,51 @@ public class ServerControlledFunctionalTests {
     private ClientDolphin clientDolphin;
 
     final private class CreatePmCommand extends AbstractTestCommand {
+        public CreatePmCommand() {
+            super("CreatePmCommand");
+        }
     }
 
     final private class CheckPmIsThereCommand extends AbstractTestCommand {
+        public CheckPmIsThereCommand() {
+            super("CheckPmIsThereCommand");
+        }
     }
 
     final private class DeleteAndRecreateCommand extends AbstractTestCommand {
+        public DeleteAndRecreateCommand() {
+            super("DeleteAndRecreateCommand");
+        }
     }
 
     final private class AssertRetainedServerStateCommand extends AbstractTestCommand {
+        public AssertRetainedServerStateCommand() {
+            super("AssertRetainedServerStateCommand");
+        }
     }
 
     final private class ChangeValueMultipleTimesAndBackToBaseCommand extends AbstractTestCommand {
+        public ChangeValueMultipleTimesAndBackToBaseCommand() {
+            super("ChangeValueMultipleTimesAndBackToBaseCommand");
+        }
     }
 
     final private class RemoveCommand extends AbstractTestCommand {
+        public RemoveCommand() {
+            super("RemoveCommand");
+        }
     }
 
     final private class SetAndUnsetQualifierCommand extends AbstractTestCommand {
+        public SetAndUnsetQualifierCommand() {
+            super("SetAndUnsetQualifierCommand");
+        }
     }
 
     final private class SetQualifierCommand extends AbstractTestCommand {
+        public SetQualifierCommand() {
+            super("SetQualifierCommand");
+        }
     }
 
     @Before

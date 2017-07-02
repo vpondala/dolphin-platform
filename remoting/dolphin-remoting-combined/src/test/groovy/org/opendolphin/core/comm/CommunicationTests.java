@@ -48,6 +48,9 @@ public class CommunicationTests {
     private TestInMemoryConfig config;
 
     final private class ButtonActionCommand extends AbstractTestCommand {
+        public ButtonActionCommand() {
+            super("ButtonActionCommand");
+        }
     }
 
     @Before

@@ -17,6 +17,7 @@ package com.canoo.dolphin.impl.codec;
 
 import com.canoo.dolphin.impl.commands.CallActionCommand;
 import org.hamcrest.Matchers;
+import org.opendolphin.core.Attribute;
 import org.opendolphin.core.comm.Command;
 import org.opendolphin.core.comm.CreatePresentationModelCommand;
 import org.opendolphin.core.comm.EmptyCommand;
@@ -338,44 +339,34 @@ public class TestOptimizedJsonCodec {
         command.setPmType("com.canoo.icos.casemanager.model.casedetails.CaseInfoBean");
 
         final Map<String, Object> sourceSystem = new HashMap<>();
-        sourceSystem.put("propertyName", "@@@ SOURCE_SYSTEM @@@");
-        sourceSystem.put("id", "3204S");
-        sourceSystem.put("qualifier", null);
-        sourceSystem.put("value", "server");
-        sourceSystem.put("baseValue", "server");
-        sourceSystem.put("tag", "VALUE");
+        sourceSystem.put(Attribute.PROPERTY_NAME, "@@@ SOURCE_SYSTEM @@@");
+        sourceSystem.put(Attribute.ID, "3204S");
+        sourceSystem.put(Attribute.QUALIFIER_NAME, null);
+        sourceSystem.put(Attribute.VALUE_NAME, "server");
 
         final Map<String, Object> caseDetailsLabel = new HashMap<>();
-        caseDetailsLabel.put("propertyName", "caseDetailsLabel");
-        caseDetailsLabel.put("id", "3205S");
-        caseDetailsLabel.put("qualifier", null);
-        caseDetailsLabel.put("value", null);
-        caseDetailsLabel.put("baseValue", null);
-        caseDetailsLabel.put("tag", "VALUE");
+        caseDetailsLabel.put(Attribute.PROPERTY_NAME, "caseDetailsLabel");
+        caseDetailsLabel.put(Attribute.ID, "3205S");
+        caseDetailsLabel.put(Attribute.QUALIFIER_NAME, null);
+        caseDetailsLabel.put(Attribute.VALUE_NAME, null);
 
         final Map<String, Object> caseIdLabel = new HashMap<>();
-        caseIdLabel.put("propertyName", "caseIdLabel");
-        caseIdLabel.put("id", "3206S");
-        caseIdLabel.put("qualifier", null);
-        caseIdLabel.put("value", null);
-        caseIdLabel.put("baseValue", null);
-        caseIdLabel.put("tag", "VALUE");
+        caseIdLabel.put(Attribute.PROPERTY_NAME, "caseIdLabel");
+        caseIdLabel.put(Attribute.ID, "3206S");
+        caseIdLabel.put(Attribute.QUALIFIER_NAME, null);
+        caseIdLabel.put(Attribute.VALUE_NAME, null);
 
         final Map<String, Object> statusLabel = new HashMap<>();
-        statusLabel.put("propertyName", "statusLabel");
-        statusLabel.put("id", "3207S");
-        statusLabel.put("qualifier", null);
-        statusLabel.put("value", null);
-        statusLabel.put("baseValue", null);
-        statusLabel.put("tag", "VALUE");
+        statusLabel.put(Attribute.PROPERTY_NAME, "statusLabel");
+        statusLabel.put(Attribute.ID, "3207S");
+        statusLabel.put(Attribute.QUALIFIER_NAME, null);
+        statusLabel.put(Attribute.VALUE_NAME, null);
 
         final Map<String, Object> status = new HashMap<>();
-        status.put("propertyName", "status");
-        status.put("id", "3208S");
-        status.put("qualifier", null);
-        status.put("value", null);
-        status.put("baseValue", null);
-        status.put("tag", "VALUE");
+        status.put(Attribute.PROPERTY_NAME, "status");
+        status.put(Attribute.ID, "3208S");
+        status.put(Attribute.QUALIFIER_NAME, null);
+        status.put(Attribute.VALUE_NAME, null);
 
         command.setAttributes(Arrays.asList(sourceSystem, caseDetailsLabel, caseIdLabel, statusLabel, status));
 
@@ -390,20 +381,24 @@ public class TestOptimizedJsonCodec {
                 "\"a\":[" +
                     "{" +
                         "\"n\":\"@@@ SOURCE_SYSTEM @@@\"," +
-                        "\"i\":\"3204S\"," +
+                        "\"a_id\":\"3204S\"," +
                         "\"v\":\"server\"" +
                     "},{" +
                         "\"n\":\"caseDetailsLabel\"," +
-                        "\"i\":\"3205S\"" +
+                        "\"a_id\":\"3205S\"," +
+                    "\"v\":null" +
                     "},{" +
                         "\"n\":\"caseIdLabel\"," +
-                        "\"i\":\"3206S\"" +
+                        "\"a_id\":\"3206S\"," +
+                    "\"v\":null" +
                     "},{" +
                         "\"n\":\"statusLabel\"," +
-                        "\"i\":\"3207S\"" +
+                        "\"a_id\":\"3207S\"," +
+                    "\"v\":null" +
                     "},{" +
                         "\"n\":\"status\"," +
-                        "\"i\":\"3208S\"" +
+                        "\"a_id\":\"3208S\"," +
+                    "\"v\":null" +
                     "}" +
                 "]," +
                 "\"id\":\"CreatePresentationModel\"" +
