@@ -30,7 +30,7 @@ import java.util.Map;
 
 import static org.opendolphin.core.comm.CommandConstants.*;
 
-public class CreatePresentationModelEncoder extends AbstractCommandEncoder<CreatePresentationModelCommand> {
+public class CreatePresentationModelCommandEncoder extends AbstractCommandEncoder<CreatePresentationModelCommand> {
 
     @Override
     public JsonObject encode(CreatePresentationModelCommand command) {

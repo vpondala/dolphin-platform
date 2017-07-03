@@ -22,7 +22,7 @@ import com.canoo.dolphin.impl.codec.encoders.ChangeAttributeMetadataCommandEncod
 import com.canoo.dolphin.impl.codec.encoders.CommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.CreateContextCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.CreateControllerCommandEncoder;
-import com.canoo.dolphin.impl.codec.encoders.CreatePresentationModelEncoder;
+import com.canoo.dolphin.impl.codec.encoders.CreatePresentationModelCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.DeletePresentationModelCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.DestroyContextCommandEncoder;
 import com.canoo.dolphin.impl.codec.encoders.DestroyControllerCommandEncoder;
@@ -84,7 +84,7 @@ public class OptimizedJsonCodec implements Codec {
         addEncoder(new StartLongPollCommandEncoder(), StartLongPollCommand.class, START_LONG_POLL_COMMAND_ID);
         addEncoder(new InterruptLongPollCommandEncoder(), InterruptLongPollCommand.class, INTERRUPT_LONG_POLL_COMMAND_ID);
 
-        addEncoder(new CreatePresentationModelEncoder(), CreatePresentationModelCommand.class, CREATE_PRESENTATION_MODEL_COMMAND_ID);
+        addEncoder(new CreatePresentationModelCommandEncoder(), CreatePresentationModelCommand.class, CREATE_PRESENTATION_MODEL_COMMAND_ID);
         addEncoder(new DeletePresentationModelCommandEncoder(), DeletePresentationModelCommand.class, DELETE_PRESENTATION_MODEL_COMMAND_ID);
         addEncoder(new PresentationModelDeletedCommandEncoder(), PresentationModelDeletedCommand.class, PRESENTATION_MODEL_DELETED_COMMAND_ID);
         addEncoder(new ValueChangedCommandEncoder(), ValueChangedCommand.class, VALUE_CHANGED_COMMAND_ID);
