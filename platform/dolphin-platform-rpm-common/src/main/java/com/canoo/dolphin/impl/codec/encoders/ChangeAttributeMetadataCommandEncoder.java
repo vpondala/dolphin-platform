@@ -6,7 +6,7 @@ import org.opendolphin.core.comm.ChangeAttributeMetadataCommand;
 
 import static org.opendolphin.core.comm.CommandConstants.*;
 
-public class ChangeAttributeMetadataCommandEncoder extends AbstractCommandEncoder<ChangeAttributeMetadataCommand> {
+public class ChangeAttributeMetadataCommandEncoder extends AbstractCommandTranscoder<ChangeAttributeMetadataCommand> {
     @Override
     public JsonObject encode(ChangeAttributeMetadataCommand command) {
         Assert.requireNonNull(command, "command");

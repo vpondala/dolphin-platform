@@ -22,7 +22,7 @@ import com.google.gson.JsonParseException;
 
 import static org.opendolphin.core.comm.CommandConstants.*;
 
-public class CreateControllerCommandEncoder extends AbstractCommandEncoder<CreateControllerCommand> {
+public class CreateControllerCommandEncoder extends AbstractCommandTranscoder<CreateControllerCommand> {
 
     @Override
     public JsonObject encode(final CreateControllerCommand command) {

@@ -8,7 +8,7 @@ import static org.opendolphin.core.comm.CommandConstants.ID;
 import static org.opendolphin.core.comm.CommandConstants.INTERRUPT_LONG_POLL_COMMAND_ID;
 
 @Deprecated
-public class InterruptLongPollCommandEncoder extends AbstractCommandEncoder<InterruptLongPollCommand> {
+public class InterruptLongPollCommandEncoder extends AbstractCommandTranscoder<InterruptLongPollCommand> {
 
     @Override
     public JsonObject encode(InterruptLongPollCommand command) {

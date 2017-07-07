@@ -22,7 +22,7 @@ import com.google.gson.JsonParseException;
 
 import static org.opendolphin.core.comm.CommandConstants.*;
 
-public class DestroyControllerCommandEncoder extends AbstractCommandEncoder<DestroyControllerCommand> {
+public class DestroyControllerCommandEncoder extends AbstractCommandTranscoder<DestroyControllerCommand> {
 
     @Override
     public JsonObject encode(final DestroyControllerCommand command) {

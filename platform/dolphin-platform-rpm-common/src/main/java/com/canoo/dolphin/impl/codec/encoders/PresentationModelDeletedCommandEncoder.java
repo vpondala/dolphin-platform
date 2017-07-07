@@ -7,7 +7,7 @@ import org.opendolphin.core.comm.PresentationModelDeletedCommand;
 import static org.opendolphin.core.comm.CommandConstants.*;
 
 @Deprecated
-public class PresentationModelDeletedCommandEncoder extends AbstractCommandEncoder<PresentationModelDeletedCommand> {
+public class PresentationModelDeletedCommandEncoder extends AbstractCommandTranscoder<PresentationModelDeletedCommand> {
 
     @Override
     public JsonObject encode(PresentationModelDeletedCommand command) {

@@ -41,23 +41,4 @@ public interface CommandConstants {
     String VALUE = "v";
     String PARAMS = "p";
     String PM_ATTRIBUTES = "a";
-
-
-
-    /*
-    String NEW_VALUE = "n";
-    String VALUE = "value";
-    String PROPERTY_NAME = "n";
-    String METADATA_NAME = "m";
-    String PM_TYPE = "t";
-    String PM_ATTRIBUTES = "a";
-    String ATTRIBUTE_NAME = "n";
-    String ATTRIBUTE_VALUE = "v";
-    String PARENT_CONTROLLER_ID = "p";
-    String CONTROLLER_NAME = "n";
-    String ACTION_NAME = "n";
-    String PARAMS = "p";
-    String PARAM_NAME = "n";
-    String PARAM_VALUE = "v";
-    */
 }

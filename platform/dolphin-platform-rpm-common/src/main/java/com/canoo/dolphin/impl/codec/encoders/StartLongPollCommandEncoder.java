@@ -7,7 +7,7 @@ import com.google.gson.JsonObject;
 import static org.opendolphin.core.comm.CommandConstants.ID;
 import static org.opendolphin.core.comm.CommandConstants.START_LONG_POLL_COMMAND_ID;
 
-public class StartLongPollCommandEncoder extends AbstractCommandEncoder<StartLongPollCommand> {
+public class StartLongPollCommandEncoder extends AbstractCommandTranscoder<StartLongPollCommand> {
 
     @Override
     public JsonObject encode(StartLongPollCommand command) {

@@ -6,7 +6,7 @@ import org.opendolphin.core.comm.AttributeMetadataChangedCommand;
 
 import static org.opendolphin.core.comm.CommandConstants.*;
 
-public class AttributeMetadataChangedCommandEncoder extends AbstractCommandEncoder<AttributeMetadataChangedCommand> {
+public class AttributeMetadataChangedCommandEncoder extends AbstractCommandTranscoder<AttributeMetadataChangedCommand> {
 
     @Override
     public JsonObject encode(AttributeMetadataChangedCommand command) {

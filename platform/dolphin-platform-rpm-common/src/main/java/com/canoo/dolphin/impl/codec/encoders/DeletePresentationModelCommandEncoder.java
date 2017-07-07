@@ -6,7 +6,7 @@ import org.opendolphin.core.comm.DeletePresentationModelCommand;
 
 import static org.opendolphin.core.comm.CommandConstants.*;
 
-public class DeletePresentationModelCommandEncoder extends AbstractCommandEncoder<DeletePresentationModelCommand> {
+public class DeletePresentationModelCommandEncoder extends AbstractCommandTranscoder<DeletePresentationModelCommand> {
 
     @Override
     public JsonObject encode(DeletePresentationModelCommand command) {

@@ -8,7 +8,7 @@ import static org.opendolphin.core.comm.CommandConstants.EMPTY_COMMAND_ID;
 import static org.opendolphin.core.comm.CommandConstants.ID;
 
 @Deprecated
-public class EmptyCommandEncoder extends AbstractCommandEncoder<EmptyCommand> {
+public class EmptyCommandEncoder extends AbstractCommandTranscoder<EmptyCommand> {
     @Override
     public JsonObject encode(EmptyCommand command) {
         Assert.requireNonNull(command, "command");

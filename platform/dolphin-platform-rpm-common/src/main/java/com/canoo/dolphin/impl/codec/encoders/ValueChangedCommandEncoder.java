@@ -22,7 +22,7 @@ import org.opendolphin.core.comm.ValueChangedCommand;
 
 import static org.opendolphin.core.comm.CommandConstants.*;
 
-public class ValueChangedCommandEncoder extends AbstractCommandEncoder<ValueChangedCommand> {
+public class ValueChangedCommandEncoder extends AbstractCommandTranscoder<ValueChangedCommand> {
 
     @Override
     public JsonObject encode(ValueChangedCommand command) {
