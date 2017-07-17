@@ -349,7 +349,6 @@ public class PropertyTestControllerTest extends SpringTestNGControllerTest {
         controller.invoke(SET_TO_INFINITY_VALUES_ACTION);
 
         //then
-        Assert.assertEquals(controller.getModel().getBigDecimalValue(), BigDecimal.valueOf(Double.POSITIVE_INFINITY));
         Assert.assertEquals(controller.getModel().getDoubleValue().doubleValue(), Double.POSITIVE_INFINITY);
         Assert.assertEquals(controller.getModel().getFloatValue().floatValue(), Float.POSITIVE_INFINITY);
     }
@@ -360,7 +359,6 @@ public class PropertyTestControllerTest extends SpringTestNGControllerTest {
         controller.invoke(SET_TO_NEGATIVE_INFINITY_VALUES_ACTION);
 
         //then
-        Assert.assertEquals(controller.getModel().getBigDecimalValue(), BigDecimal.valueOf(Double.NEGATIVE_INFINITY));
         Assert.assertEquals(controller.getModel().getDoubleValue().doubleValue(), Double.NEGATIVE_INFINITY);
         Assert.assertEquals(controller.getModel().getFloatValue().floatValue(), Float.NEGATIVE_INFINITY);
     }

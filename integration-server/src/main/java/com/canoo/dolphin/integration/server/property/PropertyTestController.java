@@ -120,14 +120,12 @@ public class PropertyTestController {
 
     @DolphinAction(SET_TO_INFINITY_VALUES_ACTION)
     public void setToInfinity() {
-        model.setBigDecimalValue(BigDecimal.valueOf(Double.POSITIVE_INFINITY));
         model.setDoubleValue(Double.POSITIVE_INFINITY);
         model.setFloatValue(Float.POSITIVE_INFINITY);
     }
 
     @DolphinAction(SET_TO_NEGATIVE_INFINITY_VALUES_ACTION)
     public void setToNegativeInfinity() {
-        model.setBigDecimalValue(BigDecimal.valueOf(Double.NEGATIVE_INFINITY));
         model.setDoubleValue(Double.NEGATIVE_INFINITY);
         model.setFloatValue(Float.NEGATIVE_INFINITY);
     }
