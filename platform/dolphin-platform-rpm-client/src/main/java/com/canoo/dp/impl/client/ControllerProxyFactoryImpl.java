@@ -36,7 +36,10 @@ public class ControllerProxyFactoryImpl implements ControllerProxyFactory {
 
     private final AbstractClientConnector clientConnector;
 
+    private final Converters converters;
+
     public ControllerProxyFactoryImpl(final DolphinCommandHandler dolphinCommandHandler, final AbstractClientConnector clientConnector, final ClientModelStore modelStore, final BeanRepository beanRepository, final EventDispatcher dispatcher, final Converters converters) {
+        this.converters = Assert.requireNonNull(converters, "converters");
         this.platformBeanRepository = new ClientPlatformBeanRepository(modelStore, beanRepository, dispatcher, converters);
         this.dolphinCommandHandler = Assert.requireNonNull(dolphinCommandHandler, "dolphinCommandHandler");
         this.clientConnector = Assert.requireNonNull(clientConnector, "clientConnector");
@@ -62,7 +65,7 @@ public class ControllerProxyFactoryImpl implements ControllerProxyFactory {
         return dolphinCommandHandler.invokeDolphinCommand(createControllerCommand).thenApply(new Function<Void, ControllerProxy<T>>() {
             @Override
             public ControllerProxy<T> apply(Void aVoid) {
-                return new ControllerProxyImpl<T>(bean.getControllerId(), (T) bean.getModel(), clientConnector, platformBeanRepository, ControllerProxyFactoryImpl.this);
+                return new ControllerProxyImpl<T>(bean.getControllerId(), (T) bean.getModel(), clientConnector, platformBeanRepository, ControllerProxyFactoryImpl.this, converters);
             }
         });
     }

@@ -28,6 +28,10 @@ import java.util.concurrent.TimeoutException;
 
 public class AbstractIntegrationTest {
 
+    private int bootTimeoutInMinutes = 3;
+
+    private int timeoutInMinutes = 1;
+
     public final static String ENDPOINTS_DATAPROVIDER = "endpoints";
 
     protected void waitUntilServerIsUp(String host, long time, TimeUnit timeUnit) throws TimeoutException {
@@ -53,8 +57,9 @@ public class AbstractIntegrationTest {
             } catch (Exception e) {
                 // do nothing since server is not up at the moment...
             }
+            //Check server state again in 10 sec
             try {
-                Thread.sleep(1_000);
+                Thread.sleep(10_000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -71,9 +76,9 @@ public class AbstractIntegrationTest {
 
     protected ClientContext connect(String endpoint) {
         try {
-            waitUntilServerIsUp(endpoint, 5, TimeUnit.MINUTES);
+            waitUntilServerIsUp(endpoint, bootTimeoutInMinutes, TimeUnit.MINUTES);
             ClientConfiguration configuration = new ClientConfiguration(new URL(endpoint + "/dolphin"), r -> r.run());
-            configuration.setConnectionTimeout(10_000L);
+            configuration.setConnectionTimeout(timeoutInMinutes * 10_000L);
             ClientContext clientContext = ClientContextFactory.create(configuration);
             Assert.requireNonNull(clientContext, "clientContext");
 
@@ -87,7 +92,7 @@ public class AbstractIntegrationTest {
 
     protected void invoke(ControllerProxy<?> controllerProxy, String actionName, String containerType, Param... params) {
         try {
-            controllerProxy.invoke(actionName, params).get(2, TimeUnit.MINUTES);
+            controllerProxy.invoke(actionName, params).get(timeoutInMinutes, TimeUnit.MINUTES);
         } catch (Exception e) {
             throw new RuntimeException("Can not handle action " + actionName + " for containerType " + containerType, e);
         }
@@ -95,7 +100,7 @@ public class AbstractIntegrationTest {
 
     protected void destroy(ControllerProxy<?> controllerProxy, String endpoint) {
         try {
-            controllerProxy.destroy().get(2, TimeUnit.MINUTES);
+            controllerProxy.destroy().get(timeoutInMinutes, TimeUnit.MINUTES);
         } catch (Exception e) {
             throw new RuntimeException("Can not destroy controller for endpoint " + endpoint, e);
         }
@@ -103,17 +108,9 @@ public class AbstractIntegrationTest {
 
     protected void disconnect(ClientContext clientContext, String endpoint) {
         try {
-            clientContext.disconnect().get(2, TimeUnit.MINUTES);
+            clientContext.disconnect().get(timeoutInMinutes, TimeUnit.MINUTES);
         } catch (Exception e) {
             throw new RuntimeException("Can not disconnect client context for endpoint " + endpoint, e);
-        }
-    }
-
-    protected void sleep(long time, TimeUnit timeUnit) {
-        try {
-            Thread.sleep(timeUnit.toMillis(time));
-        } catch (Exception e) {
-            throw new RuntimeException("Can not sleep :(", e);
         }
     }
 

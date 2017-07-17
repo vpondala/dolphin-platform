@@ -114,6 +114,8 @@ public class PropertyTestController {
         shortChangedSubscription = model.shortValueProperty().onChanged(e -> model.setShortValueChanged(true));
         stringChangedSubscription = model.stringValueProperty().onChanged(e -> model.setStringValueChanged(true));
         uuidChangedSubscription = model.uuidValueProperty().onChanged(e -> model.setUuidValueChanged(true));
+
+        model.stringValueProperty().onChanged(e -> System.out.println("Value changed from " + e.getOldValue() + " to " + e.getNewValue()));
     }
 
     @DolphinAction(REMOVE_CHANGE_LISTENER)

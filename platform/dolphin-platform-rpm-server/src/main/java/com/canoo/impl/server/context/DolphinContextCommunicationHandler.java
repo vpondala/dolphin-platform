@@ -125,7 +125,11 @@ public class DolphinContextCommunicationHandler {
     }
 
     public DolphinContext getCurrentDolphinContext() {
-        return getContext(sessionProvider.getCurrentClientSession());
+        final ClientSession clientSession = sessionProvider.getCurrentClientSession();
+        if(clientSession == null) {
+            return null;
+        }
+        return getContext(clientSession);
     }
 
     private DolphinContext getOrCreateContext(final ClientSession clientSession, final List<Command> commands) {

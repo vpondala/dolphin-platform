@@ -27,7 +27,6 @@ public class ValueChangedCommandEncoder extends AbstractCommandTranscoder<ValueC
     @Override
     public JsonObject encode(ValueChangedCommand command) {
         Assert.requireNonNull(command, "command");
-
         final JsonObject jsonCommand = new JsonObject();
         jsonCommand.addProperty(ATTRIBUTE_ID, command.getAttributeId());
         if (command.getNewValue() != null) {
@@ -40,17 +39,13 @@ public class ValueChangedCommandEncoder extends AbstractCommandTranscoder<ValueC
     @Override
     public ValueChangedCommand decode(JsonObject jsonObject) {
         Assert.requireNonNull(jsonObject, "jsonObject");
-
         try {
             final ValueChangedCommand command = new ValueChangedCommand();
-
             command.setNewValue(ValueEncoder.decodeValue(jsonObject.get(VALUE)));
             command.setAttributeId(getStringElement(jsonObject, ATTRIBUTE_ID));
-
             return command;
         } catch (IllegalStateException | ClassCastException | NullPointerException ex) {
             throw new JsonParseException("Illegal JSON detected", ex);
         }
     }
-
 }

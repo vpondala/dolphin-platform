@@ -8,6 +8,20 @@ be true most of the public API of the Dolphin Platform is stable since 0.8.5 and
 package structure or adding additional methods to public interfaces. In addition it will be best practice to not use any
 method of the API is annotated by `@Deprecated` since we plan to remove all this methods and classes for the final 1.0.0 release.
 
+== Version 0.16.0
+_Release date: Jul 10, 2017_
+
+* SPI name refactored for hazelcast config plugin (https://github.com/canoo/dolphin-platform/issues/553[issue])
+* EventBus Proxy (https://github.com/canoo/dolphin-platform/issues/554[issue])
+* Fix for bean params
+* Convert TypeScript code to ES6 (https://github.com/canoo/dolphin-platform/issues/520[issue])
+* ClientContext provide isConnected() (https://github.com/canoo/dolphin-platform/issues/511[issue])
+* Sending the old value with the ValueChangeEvent is now optional (https://github.com/canoo/dolphin-platform/issues/529[issue])
+* Fix Error when calling an DolphinAction with null param value (https://github.com/canoo/dolphin-platform/issues/542[issue])
+* Fix Error for sending UTF-8 chars as values (https://github.com/canoo/dolphin-platform/issues/540[issue])
+* Fix NPE while publishing on Dolphin-EventBus without having a session  (https://github.com/canoo/dolphin-platform/issues/534[issue])
+
+
 == Version 0.15.0
 _Release date: Jun 21, 2017_
 

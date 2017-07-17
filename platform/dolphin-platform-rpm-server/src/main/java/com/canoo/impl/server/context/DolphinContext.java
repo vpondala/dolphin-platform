@@ -134,7 +134,7 @@ public class DolphinContext {
         mBeanRegistry = new DolphinContextMBeanRegistry(clientSession.getId());
 
         //Init ControllerHandler
-        controllerHandler = new ControllerHandler(mBeanRegistry, beanFactory, beanBuilder, beanRepository, controllerRepository);
+        controllerHandler = new ControllerHandler(mBeanRegistry, beanFactory, beanBuilder, beanRepository, controllerRepository, converters);
 
         //Register commands
         registerDolphinPlatformDefaultCommands();

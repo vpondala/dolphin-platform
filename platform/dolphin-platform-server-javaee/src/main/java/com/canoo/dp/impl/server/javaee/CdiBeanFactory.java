@@ -16,20 +16,22 @@
 package com.canoo.dp.impl.server.javaee;
 
 import com.canoo.dolphin.BeanManager;
-import com.canoo.platform.server.RemotingContext;
-import com.canoo.platform.server.binding.PropertyBinder;
-import com.canoo.impl.server.context.DolphinContext;
-import com.canoo.impl.server.context.DolphinContextProvider;
-import com.canoo.impl.server.context.RemotingContextImpl;
-import com.canoo.platform.server.event.DolphinEventBus;
 import com.canoo.impl.platform.core.Assert;
 import com.canoo.impl.server.bootstrap.PlatformBootstrap;
 import com.canoo.impl.server.client.ClientSessionProvider;
+import com.canoo.impl.server.context.DolphinContext;
+import com.canoo.impl.server.context.DolphinContextProvider;
+import com.canoo.impl.server.context.RemotingContextImpl;
+import com.canoo.impl.server.event.LazyEventBusInvocationHandler;
+import com.canoo.platform.server.RemotingContext;
+import com.canoo.platform.server.binding.PropertyBinder;
 import com.canoo.platform.server.client.ClientSession;
+import com.canoo.platform.server.event.DolphinEventBus;
 import com.canoo.platform.server.javaee.ClientScoped;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
+import java.lang.reflect.Proxy;
 
 /**
  * Factory that provides all needed Dolphin Platform extensions as CDI beans.
@@ -71,7 +73,7 @@ public class CdiBeanFactory {
     @Produces
     @ApplicationScoped
     public DolphinEventBus createEventBus() {
-        return PlatformBootstrap.getServerCoreComponents().getInstance(DolphinEventBus.class);
+        return (DolphinEventBus) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{DolphinEventBus.class}, new LazyEventBusInvocationHandler());
     }
 
     @Produces

@@ -25,6 +25,8 @@ public class EnterpriseTestBean {
 
     private Property<Boolean> preDestroyCalled;
 
+    private Property<Boolean> eventBusInjected;
+
     public Property<Boolean> postConstructCalledProperty() {
         return postConstructCalled;
     }
@@ -47,5 +49,17 @@ public class EnterpriseTestBean {
 
     public Boolean getPreDestroyCalled() {
         return preDestroyCalled.get();
+    }
+
+    public Boolean getEventBusInjected() {
+        return eventBusInjected.get();
+    }
+
+    public Property<Boolean> eventBusInjectedProperty() {
+        return eventBusInjected;
+    }
+
+    public void setEventBusInjected(Boolean eventBusInjected) {
+        this.eventBusInjected.set(eventBusInjected);
     }
 }

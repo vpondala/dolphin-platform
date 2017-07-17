@@ -18,9 +18,12 @@ package com.canoo.dolphin.integration.server.enterprise;
 import com.canoo.dolphin.integration.enterprise.EnterpriseTestBean;
 import com.canoo.platform.server.DolphinController;
 import com.canoo.platform.server.DolphinModel;
+import com.canoo.platform.server.event.DolphinEventBus;
+import com.canoo.platform.server.event.Topic;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.inject.Inject;
 
 import static com.canoo.dolphin.integration.enterprise.EnterpriseTestConstants.ENTERPRISE_CONTROLLER_NAME;
 
@@ -30,9 +33,22 @@ public class EnterpriseTestController {
     @DolphinModel
     private EnterpriseTestBean model;
 
+    @Inject
+    private DolphinEventBus eventBus;
+
     @PostConstruct
     private void init() {
         model.setPostConstructCalled(true);
+
+        model.setEventBusInjected(false);
+        if(eventBus != null) {
+            try {
+                eventBus.publish(Topic.create(), "test-data");
+                model.setEventBusInjected(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @PreDestroy

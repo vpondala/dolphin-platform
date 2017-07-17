@@ -15,7 +15,8 @@
  */
 package com.canoo.impl.server.controller;
 
-import com.canoo.dolphin.impl.codec.JsonNumberUtils;
+import com.canoo.dolphin.converter.ValueConverterException;
+import com.canoo.dolphin.impl.Converters;
 import com.canoo.dolphin.internal.BeanRepository;
 import com.canoo.impl.platform.core.Assert;
 import com.canoo.impl.platform.core.ReflectionHelper;
@@ -75,12 +76,15 @@ public class ControllerHandler {
 
     private final BeanRepository beanRepository;
 
-    public ControllerHandler(final DolphinContextMBeanRegistry mBeanRegistry, final ManagedBeanFactory beanFactory, final ServerBeanBuilder beanBuilder, final BeanRepository beanRepository, final ControllerRepository controllerRepository) {
+    private final Converters converters;
+
+    public ControllerHandler(final DolphinContextMBeanRegistry mBeanRegistry, final ManagedBeanFactory beanFactory, final ServerBeanBuilder beanBuilder, final BeanRepository beanRepository, final ControllerRepository controllerRepository, final Converters converters) {
         this.mBeanRegistry = Assert.requireNonNull(mBeanRegistry, "mBeanRegistry");
         this.beanFactory = Assert.requireNonNull(beanFactory, "beanFactory");
         this.beanBuilder = Assert.requireNonNull(beanBuilder, "beanBuilder");
         this.controllerRepository = Assert.requireNonNull(controllerRepository, "controllerRepository");
         this.beanRepository = Assert.requireNonNull(beanRepository, "beanRepository");
+        this.converters = Assert.requireNonNull(converters, "converters");
     }
 
     public Object getControllerModel(String id) {
@@ -284,13 +288,13 @@ public class ControllerHandler {
             }
             ReflectionHelper.invokePrivileged(actionMethod, controller, args.toArray());
         } catch (InvokeActionException e) {
-            throw e;
+          throw e;
         } catch (Exception e) {
-            throw new InvokeActionException(e);
+            throw new InvokeActionException("Can not call action '" + actionName + "'", e);
         }
     }
 
-    private List<Object> getArgs(final Method method, final Map<String, Object> params) {
+    private List<Object> getArgs(final Method method, final Map<String, Object> params) throws ValueConverterException {
         Assert.requireNonNull(method, "method");
         Assert.requireNonNull(params, "params");
 
@@ -314,13 +318,13 @@ public class ControllerHandler {
             Class<?> type = method.getParameters()[i].getType();
             if(value != null) {
                 LOG.trace("Param check of value {} with type {} for param with type {}", value, value.getClass(), type);
-            }
-            if(ReflectionHelper.isNumber(type)) {
-                args.add(JsonNumberUtils.convert(type, value));
+                args.add(converters.getConverter(type).convertFromDolphin(value));
             } else {
-                args.add(value);
+                if(type.isPrimitive()) {
+                    throw new IllegalArgumentException("Can not use 'null' for primitive type of parameter '" + paramName + "'");
+                }
+                args.add(null);
             }
-
         }
         return args;
     }

@@ -15,6 +15,9 @@
  */
 package com.canoo.dp.impl.client;
 
+import com.canoo.dolphin.converter.ValueConverterException;
+import com.canoo.dolphin.impl.Converters;
+import com.canoo.dolphin.mapping.MappingException;
 import com.canoo.platform.client.ControllerActionException;
 import com.canoo.platform.client.ControllerInitalizationException;
 import com.canoo.platform.client.ControllerProxy;
@@ -25,11 +28,15 @@ import com.canoo.dolphin.impl.commands.DestroyControllerCommand;
 import com.canoo.impl.platform.core.Assert;
 import org.opendolphin.core.client.comm.AbstractClientConnector;
 import org.opendolphin.core.client.comm.OnFinishedHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 
 public class ControllerProxyImpl<T> implements ControllerProxy<T> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ControllerProxyImpl.class);
 
     private final String controllerId;
 
@@ -39,16 +46,19 @@ public class ControllerProxyImpl<T> implements ControllerProxy<T> {
 
     private final ControllerProxyFactory controllerProxyFactory;
 
+    private final Converters converters;
+
     private T model;
 
     private volatile boolean destroyed = false;
 
-    public ControllerProxyImpl(final String controllerId, final T model, final AbstractClientConnector clientConnector, final ClientPlatformBeanRepository platformBeanRepository, final ControllerProxyFactory controllerProxyFactory) {
+    public ControllerProxyImpl(final String controllerId, final T model, final AbstractClientConnector clientConnector, final ClientPlatformBeanRepository platformBeanRepository, final ControllerProxyFactory controllerProxyFactory, final Converters converters) {
         this.clientConnector = Assert.requireNonNull(clientConnector, "clientConnector");
         this.controllerId = Assert.requireNonBlank(controllerId, "controllerId");
         this.controllerProxyFactory = Assert.requireNonNull(controllerProxyFactory, "controllerProxyFactory");
         this.model = Assert.requireNonNull(model, "model");
         this.platformBeanRepository = Assert.requireNonNull(platformBeanRepository, "platformBeanRepository");
+        this.converters = Assert.requireNonNull(converters, "converters");
     }
 
     @Override
@@ -69,7 +79,16 @@ public class ControllerProxyImpl<T> implements ControllerProxy<T> {
         callActionCommand.setActionName(actionName);
         if(params != null) {
             for (Param param : params) {
-                callActionCommand.addParam(param.getName(), param.getValue());
+                Object value = param.getValue();
+                if(value == null) {
+                    callActionCommand.addParam(param.getName(), null);
+                } else {
+                    try {
+                        callActionCommand.addParam(param.getName(), converters.getConverter(value.getClass()).convertToDolphin(value));
+                    } catch (ValueConverterException e) {
+                        throw new MappingException("Error in value conversion of param '" + param.getName() + "' for action '" + actionName + "'", e);
+                    }
+                }
             }
         }
 

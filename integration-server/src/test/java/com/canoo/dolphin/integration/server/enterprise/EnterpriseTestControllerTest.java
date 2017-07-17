@@ -48,6 +48,12 @@ public class EnterpriseTestControllerTest extends SpringTestNGControllerTest {
     }
 
     @Test
+    public void testInjection() {
+        Assert.assertTrue(controller.getModel().getEventBusInjected());
+        destroy();
+    }
+
+    @Test
     public void testPreDestroyCalled() {
         Property<Boolean> preDestroyCalledProperty = controller.getModel().preDestroyCalledProperty();
         destroy();
