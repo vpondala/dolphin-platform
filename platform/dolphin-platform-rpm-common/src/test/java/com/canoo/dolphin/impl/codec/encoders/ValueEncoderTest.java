@@ -83,6 +83,48 @@ public class ValueEncoderTest {
     }
 
     @Test
+    public void testDoubleNaNEncode() {
+        //given:
+        Object value = Double.NaN;
+
+        //when:
+        JsonElement encoded = ValueEncoder.encodeValue(value);
+
+        //then:
+        Assert.assertNotNull(encoded);
+        Assert.assertTrue(encoded.isJsonPrimitive());
+        Assert.assertEquals(encoded.getAsNumber(), Double.NaN);
+    }
+
+    @Test
+    public void testDoubleInfinityEncode() {
+        //given:
+        Object value = Double.POSITIVE_INFINITY;
+
+        //when:
+        JsonElement encoded = ValueEncoder.encodeValue(value);
+
+        //then:
+        Assert.assertNotNull(encoded);
+        Assert.assertTrue(encoded.isJsonPrimitive());
+        Assert.assertEquals(encoded.getAsNumber(), Double.POSITIVE_INFINITY);
+    }
+
+    @Test
+    public void testDoubleNegativeInfinityEncode() {
+        //given:
+        Object value = Double.NEGATIVE_INFINITY;
+
+        //when:
+        JsonElement encoded = ValueEncoder.encodeValue(value);
+
+        //then:
+        Assert.assertNotNull(encoded);
+        Assert.assertTrue(encoded.isJsonPrimitive());
+        Assert.assertEquals(encoded.getAsNumber(), Double.NEGATIVE_INFINITY);
+    }
+
+    @Test
     public void testFloatEncode() {
         //given:
         Object value = 42.9f;
@@ -187,6 +229,34 @@ public class ValueEncoderTest {
         Assert.assertNotNull(decoded);
         Assert.assertEquals(decoded.getClass(), Double.class);
         Assert.assertEquals(decoded, 42.2d);
+    }
+
+    @Test
+    public void testDoubleNaNDecode() {
+        //given:
+        JsonElement value = new JsonPrimitive(Double.NaN);
+
+        //when:
+        Object decoded = ValueEncoder.decodeValue(value);
+
+        //then:
+        Assert.assertNotNull(decoded);
+        Assert.assertEquals(decoded.getClass(), Double.class);
+        Assert.assertEquals(decoded, Double.NaN);
+    }
+
+    @Test
+    public void testDoubleInfinityDecode() {
+        //given:
+        JsonElement value = new JsonPrimitive(Double.POSITIVE_INFINITY);
+
+        //when:
+        Object decoded = ValueEncoder.decodeValue(value);
+
+        //then:
+        Assert.assertNotNull(decoded);
+        Assert.assertEquals(decoded.getClass(), Double.class);
+        Assert.assertEquals(decoded, Double.POSITIVE_INFINITY);
     }
 
     @Test

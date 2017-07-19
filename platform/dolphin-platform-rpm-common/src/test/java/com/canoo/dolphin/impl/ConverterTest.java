@@ -67,6 +67,8 @@ public class ConverterTest {
         checkConversion(converter, 0.0);
         checkConversion(converter, Double.MAX_VALUE);
         checkConversion(converter, Double.MIN_VALUE);
+        checkConversion(converter, Double.NEGATIVE_INFINITY);
+        checkConversion(converter, Double.POSITIVE_INFINITY);
     }
 
     private void checkConversion(Converter converter, Object val) {

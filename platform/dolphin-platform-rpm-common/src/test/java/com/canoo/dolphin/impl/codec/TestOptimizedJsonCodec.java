@@ -281,6 +281,28 @@ public class TestOptimizedJsonCodec {
     }
 
     @Test
+    public void testNaNSupport() {
+        final List<Command> commands = Arrays.asList(new ValueChangedCommand("test-at", Double.NaN));
+        String json = new OptimizedJsonCodec().encode(commands);
+        final List<Command> fromJsonCommands = new OptimizedJsonCodec().decode(json);
+        Assert.assertNotNull(fromJsonCommands);
+        Assert.assertEquals(commands.size(), 1);
+        Assert.assertEquals(commands.get(0).getClass(), ValueChangedCommand.class);
+        Assert.assertEquals(((ValueChangedCommand)commands.get(0)).getNewValue(), Double.NaN);
+    }
+
+    @Test
+    public void testInfinitySupport() {
+        final List<Command> commands = Arrays.asList(new ValueChangedCommand("test-at", Double.POSITIVE_INFINITY));
+        String json = new OptimizedJsonCodec().encode(commands);
+        final List<Command> fromJsonCommands = new OptimizedJsonCodec().decode(json);
+        Assert.assertNotNull(fromJsonCommands);
+        Assert.assertEquals(commands.size(), 1);
+        Assert.assertEquals(commands.get(0).getClass(), ValueChangedCommand.class);
+        Assert.assertEquals(((ValueChangedCommand)commands.get(0)).getNewValue(), Double.POSITIVE_INFINITY);
+    }
+
+    @Test
     public void shouldDecodeCallActionCommand() {
         //given:
         final String json = "[{\"c\":\"4711\",\"n\":\"action\",\"p\":[],\"id\":\"CallAction\"}]";

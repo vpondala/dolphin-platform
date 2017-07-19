@@ -57,7 +57,7 @@ public class OptimizedJsonCodec implements Codec {
 
     private static final Logger LOG = LoggerFactory.getLogger(OptimizedJsonCodec.class);
 
-    private static final Gson GSON = new GsonBuilder().serializeNulls().create();
+    private static final Gson GSON = new GsonBuilder().serializeNulls().serializeSpecialFloatingPointValues().create();
 
     private static final Map<Class<? extends Command>, CommandEncoder<?>> ENCODERS = new HashMap<>();
     private static final Map<String, CommandEncoder<?>> DECODERS = new HashMap<>();
