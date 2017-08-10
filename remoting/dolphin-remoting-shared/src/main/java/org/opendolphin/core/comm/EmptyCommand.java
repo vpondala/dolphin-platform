@@ -15,6 +15,8 @@
  */
 package org.opendolphin.core.comm;
 
+import static org.opendolphin.core.comm.CommandConstants.EMPTY_COMMAND_ID;
+
 /**
  * A notification that does nothing on the server.
  * It is only used to hook into the communication at a known point
@@ -24,6 +26,6 @@ package org.opendolphin.core.comm;
 @Deprecated
 public final class EmptyCommand extends Command {
     public EmptyCommand() {
-        super(CommandConstants.EMPTY_COMMAND_ID);
+        super(EMPTY_COMMAND_ID);
     }
 }

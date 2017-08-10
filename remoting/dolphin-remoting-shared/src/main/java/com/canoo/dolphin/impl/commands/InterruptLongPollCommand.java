@@ -18,10 +18,12 @@ package com.canoo.dolphin.impl.commands;
 import org.opendolphin.core.comm.Command;
 import org.opendolphin.core.comm.CommandConstants;
 
+import static org.opendolphin.core.comm.CommandConstants.INTERRUPT_LONG_POLL_COMMAND_ID;
+
 public final class InterruptLongPollCommand extends Command {
 
     public InterruptLongPollCommand() {
-        super(CommandConstants.INTERRUPT_LONG_POLL_COMMAND_ID);
+        super(INTERRUPT_LONG_POLL_COMMAND_ID);
     }
 }
 

@@ -26,7 +26,7 @@ import java.util.Map;
 
 import static org.opendolphin.core.comm.CommandConstants.*;
 
-public class CallActionCommandEncoder extends AbstractCommandEncoder<CallActionCommand> {
+public class CallActionCommandEncoder extends AbstractCommandTranscoder<CallActionCommand> {
 
     @Override
     public JsonObject encode(final CallActionCommand command) {

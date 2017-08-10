@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.canoo.dolphin.impl.commands;
+package com.canoo.dp.impl.remoting.commands;
 
-import com.canoo.impl.platform.core.Assert;
+import com.canoo.dp.impl.platform.core.Assert;
 import org.opendolphin.core.comm.Command;
-import org.opendolphin.core.comm.CommandConstants;
+
+import static org.opendolphin.core.comm.CommandConstants.DESTROY_CONTROLLER_COMMAND_ID;
 
 public final class DestroyControllerCommand extends Command {
 
     private String controllerId;
 
     public DestroyControllerCommand() {
-        super(CommandConstants.DESTROY_CONTROLLER_COMMAND_ID);
+        super(DESTROY_CONTROLLER_COMMAND_ID);
     }
 
     public String getControllerId() {

@@ -15,7 +15,23 @@
  */
 package com.canoo.dp.impl.remoting.codec;
 
-import com.canoo.dp.impl.remoting.codec.encoders.CommandEncoder;
+import com.canoo.dp.impl.platform.core.Assert;
+import com.canoo.dp.impl.remoting.codec.encoders.AbstractCommandTranscoder;
+import com.canoo.dp.impl.remoting.codec.encoders.AttributeMetadataChangedCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.CallActionCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.ChangeAttributeMetadataCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.CommandTranscoder;
+import com.canoo.dp.impl.remoting.codec.encoders.CreateContextCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.CreateControllerCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.CreatePresentationModelCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.DeletePresentationModelCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.DestroyContextCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.DestroyControllerCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.EmptyCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.InterruptLongPollCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.PresentationModelDeletedCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.StartLongPollCommandEncoder;
+import com.canoo.dp.impl.remoting.codec.encoders.ValueChangedCommandEncoder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -44,7 +60,7 @@ public class OptimizedJsonCodec implements Codec {
 
     private final Gson GSON;
 
-    private final Map<String, CommandEncoder<?>> transcoders = new HashMap<>();
+    private final Map<String, CommandTranscoder<?>> transcoders = new HashMap<>();
 
     private OptimizedJsonCodec() {
         GSON = new GsonBuilder().serializeNulls().create();

@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.canoo.dolphin.impl.commands;
+package com.canoo.dp.impl.remoting.commands;
 
-import org.opendolphin.core.comm.CommandConstants;
 import org.opendolphin.core.comm.Command;
+
+import static org.opendolphin.core.comm.CommandConstants.CREATE_CONTEXT_COMMAND_ID;
 
 public final class CreateContextCommand extends Command {
 
     public CreateContextCommand() {
-        super(CommandConstants.CREATE_CONTEXT_COMMAND_ID);
+        super(CREATE_CONTEXT_COMMAND_ID);
     }
 }

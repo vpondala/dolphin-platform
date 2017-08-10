@@ -15,13 +15,13 @@
  */
 package com.canoo.dp.impl.remoting.commands;
 
-import com.canoo.dp.impl.remoting.PlatformRemotingConstants;
 import org.opendolphin.core.comm.Command;
-import org.opendolphin.core.comm.CommandConstants;
+
+import static org.opendolphin.core.comm.CommandConstants.DESTROY_CONTEXT_COMMAND_ID;
 
 public final class DestroyContextCommand extends Command {
 
     public DestroyContextCommand() {
-        super(CommandConstants.DESTROY_CONTEXT_COMMAND_ID);
+        super(DESTROY_CONTEXT_COMMAND_ID);
     }
 }

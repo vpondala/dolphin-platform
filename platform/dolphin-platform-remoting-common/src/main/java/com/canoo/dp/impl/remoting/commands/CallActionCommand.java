@@ -15,14 +15,14 @@
  */
 package com.canoo.dp.impl.remoting.commands;
 
-import com.canoo.dp.impl.remoting.PlatformRemotingConstants;
 import com.canoo.dp.impl.platform.core.Assert;
 import org.opendolphin.core.comm.Command;
-import org.opendolphin.core.comm.CommandConstants;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.opendolphin.core.comm.CommandConstants.CALL_ACTION_COMMAND_ID;
 
 public final class CallActionCommand extends Command {
 
@@ -33,7 +33,7 @@ public final class CallActionCommand extends Command {
     private final Map<String, Object> params = new HashMap<>();
 
     public CallActionCommand() {
-        super(CommandConstants.CALL_ACTION_COMMAND_ID);
+        super(CALL_ACTION_COMMAND_ID);
     }
 
     public String getControllerId() {

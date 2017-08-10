@@ -16,12 +16,13 @@
 package com.canoo.dolphin.impl.commands;
 
 import org.opendolphin.core.comm.Command;
-import org.opendolphin.core.comm.CommandConstants;
+
+import static org.opendolphin.core.comm.CommandConstants.START_LONG_POLL_COMMAND_ID;
 
 public final class StartLongPollCommand extends Command {
 
     public StartLongPollCommand() {
-        super(CommandConstants.START_LONG_POLL_COMMAND_ID);
+        super(START_LONG_POLL_COMMAND_ID);
     }
 }
 

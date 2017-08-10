@@ -15,6 +15,8 @@
  */
 package org.opendolphin.core.comm;
 
+import static org.opendolphin.core.comm.CommandConstants.PRESENTATION_MODEL_DELETED_COMMAND_ID;
+
 @Deprecated
 public final class PresentationModelDeletedCommand extends Command {
 
@@ -24,7 +26,7 @@ public final class PresentationModelDeletedCommand extends Command {
     }
 
     public PresentationModelDeletedCommand() {
-        super(CommandConstants.PRESENTATION_MODEL_DELETED_COMMAND_ID);
+        super(PRESENTATION_MODEL_DELETED_COMMAND_ID);
     }
 
     public String getPmId() {

@@ -40,7 +40,7 @@ public abstract class Command implements Serializable {
     }
 
     public String toString() {
-        return "Command: " + getId();
+        return "Command of type " + getId();
     }
 
 }

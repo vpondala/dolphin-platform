@@ -15,6 +15,10 @@
  */
 package org.opendolphin.core.comm;
 
+import static org.opendolphin.core.comm.CommandConstants.CHANGE_ATTRIBUTE_METADATA_COMMAND_ID;
+
+//Deprecated because the only type that can change is the qualifier. We should name it to QualifierChangedCommand or something
+@Deprecated
 public final class ChangeAttributeMetadataCommand extends Command {
 
     private String attributeId;
@@ -22,7 +26,7 @@ public final class ChangeAttributeMetadataCommand extends Command {
     private Object value;
 
     public ChangeAttributeMetadataCommand() {
-        super(CommandConstants.CHANGE_ATTRIBUTE_METADATA_COMMAND_ID);
+        super(CHANGE_ATTRIBUTE_METADATA_COMMAND_ID);
     }
 
     public ChangeAttributeMetadataCommand(final String attributeId, final String metadataName, final Object value) {

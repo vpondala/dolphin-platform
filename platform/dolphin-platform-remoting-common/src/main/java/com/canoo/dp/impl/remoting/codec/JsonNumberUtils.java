@@ -1,5 +1,6 @@
 package com.canoo.dp.impl.remoting.codec;
 
+
 import com.canoo.dp.impl.platform.core.Assert;
 import com.canoo.dp.impl.platform.core.ReflectionHelper;
 

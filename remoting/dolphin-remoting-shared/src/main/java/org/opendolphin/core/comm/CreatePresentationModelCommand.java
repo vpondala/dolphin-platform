@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.opendolphin.core.comm.CommandConstants.CREATE_PRESENTATION_MODEL_COMMAND_ID;
+
 public final class CreatePresentationModelCommand extends Command {
 
     private String pmId;
@@ -49,7 +51,7 @@ public final class CreatePresentationModelCommand extends Command {
     }
 
     public CreatePresentationModelCommand() {
-        super(CommandConstants.CREATE_PRESENTATION_MODEL_COMMAND_ID);
+        super(CREATE_PRESENTATION_MODEL_COMMAND_ID);
     }
 
     /**
