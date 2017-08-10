@@ -15,6 +15,7 @@
  */
 package com.canoo.platform.server.client;
 
+import javax.servlet.http.HttpSession;
 import java.util.Set;
 
 /**
@@ -62,4 +63,5 @@ public interface ClientSession {
      */
     String getId();
 
+    HttpSession getHttpSession();
 }

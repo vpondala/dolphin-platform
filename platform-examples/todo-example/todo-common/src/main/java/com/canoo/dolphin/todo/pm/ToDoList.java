@@ -15,9 +15,9 @@
  */
 package com.canoo.dolphin.todo.pm;
 
-import com.canoo.dolphin.collections.ObservableList;
-import com.canoo.dolphin.mapping.DolphinBean;
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.platform.remoting.ObservableList;
+import com.canoo.platform.remoting.DolphinBean;
+import com.canoo.platform.remoting.Property;
 
 @DolphinBean
 public class ToDoList {

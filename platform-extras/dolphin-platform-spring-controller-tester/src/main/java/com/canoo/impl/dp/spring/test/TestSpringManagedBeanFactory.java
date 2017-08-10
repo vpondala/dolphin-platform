@@ -16,22 +16,15 @@
 package com.canoo.impl.dp.spring.test;
 
 import com.canoo.dp.impl.server.spring.AbstractSpringManagedBeanFactory;
-import com.canoo.impl.platform.core.Assert;
+import com.canoo.dp.impl.platform.core.Assert;
 import org.springframework.context.ApplicationContext;
-
-import javax.servlet.ServletContext;
 
 public class TestSpringManagedBeanFactory extends AbstractSpringManagedBeanFactory {
 
     private final ApplicationContext webApplicationContext;
 
-    public TestSpringManagedBeanFactory(ApplicationContext webApplicationContext) {
+    public TestSpringManagedBeanFactory(final ApplicationContext webApplicationContext) {
         this.webApplicationContext = Assert.requireNonNull(webApplicationContext, "webApplicationContext");
-    }
-
-    @Override
-    public void init(ServletContext servletContext) {
-        init();
     }
 
     @Override

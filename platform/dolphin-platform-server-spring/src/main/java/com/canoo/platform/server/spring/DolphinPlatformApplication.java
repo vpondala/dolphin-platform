@@ -49,6 +49,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @ComponentScan(excludeFilters = {
         @ComponentScan.Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
         @ComponentScan.Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
-@Import({DolphinPlatformSpringBootstrap.class, SpringBeanFactory.class})
+@EnableDolphinPlatform
 public @interface DolphinPlatformApplication {
 }

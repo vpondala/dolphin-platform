@@ -15,7 +15,7 @@
  */
 package com.canoo.dolphin.test.qualifier;
 
-import com.canoo.platform.server.binding.Qualifier;
+import com.canoo.platform.remoting.server.binding.Qualifier;
 
 public interface QualifierTestConstants {
 

@@ -15,9 +15,9 @@
  */
 package com.canoo.dolphin.validation;
 
-import com.canoo.dolphin.impl.MockedProperty;
-import com.canoo.dolphin.mapping.DolphinBean;
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.dp.impl.remoting.MockedProperty;
+import com.canoo.platform.remoting.DolphinBean;
+import com.canoo.platform.remoting.Property;
 
 import javax.validation.constraints.AssertFalse;
 import javax.validation.constraints.AssertTrue;

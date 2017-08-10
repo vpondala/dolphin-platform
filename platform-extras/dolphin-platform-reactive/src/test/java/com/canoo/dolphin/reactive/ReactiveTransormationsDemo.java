@@ -15,10 +15,10 @@
  */
 package com.canoo.dolphin.reactive;
 
-import com.canoo.dolphin.event.ValueChangeEvent;
-import com.canoo.dolphin.event.ValueChangeListener;
-import com.canoo.dolphin.impl.MockedProperty;
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.platform.remoting.ValueChangeEvent;
+import com.canoo.platform.remoting.ValueChangeListener;
+import com.canoo.dp.impl.remoting.MockedProperty;
+import com.canoo.platform.remoting.Property;
 import rx.functions.Func1;
 
 import java.util.concurrent.TimeUnit;

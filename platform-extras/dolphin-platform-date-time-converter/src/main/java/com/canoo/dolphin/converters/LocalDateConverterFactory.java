@@ -15,10 +15,10 @@
  */
 package com.canoo.dolphin.converters;
 
-import com.canoo.dolphin.converter.Converter;
-import com.canoo.dolphin.converter.ValueConverterException;
-import com.canoo.dolphin.impl.converters.AbstractConverterFactory;
-import com.canoo.dolphin.impl.converters.AbstractStringConverter;
+import com.canoo.platform.remoting.spi.converter.Converter;
+import com.canoo.platform.remoting.spi.converter.ValueConverterException;
+import com.canoo.dp.impl.remoting.converters.AbstractConverterFactory;
+import com.canoo.dp.impl.remoting.converters.AbstractStringConverter;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,8 +29,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static com.canoo.impl.platform.core.PlatformConstants.REMOTING_DATE_FORMAT_PATTERN;
-import static com.canoo.impl.platform.core.PlatformConstants.TIMEZONE_UTC;
+import static com.canoo.dp.impl.platform.core.PlatformConstants.REMOTING_DATE_FORMAT_PATTERN;
+import static com.canoo.dp.impl.platform.core.PlatformConstants.TIMEZONE_UTC;
 import static com.canoo.dolphin.converters.ValueFieldTypes.LOCAL_DATE_FIELD_TYPE;
 
 public class LocalDateConverterFactory extends AbstractConverterFactory {

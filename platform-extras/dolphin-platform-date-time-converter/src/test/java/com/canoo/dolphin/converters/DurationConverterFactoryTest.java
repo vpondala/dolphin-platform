@@ -15,10 +15,10 @@
  */
 package com.canoo.dolphin.converters;
 
-import com.canoo.dolphin.converter.Converter;
-import com.canoo.dolphin.converter.ValueConverterException;
-import com.canoo.dolphin.impl.Converters;
-import com.canoo.dolphin.internal.BeanRepository;
+import com.canoo.platform.remoting.spi.converter.Converter;
+import com.canoo.platform.remoting.spi.converter.ValueConverterException;
+import com.canoo.dp.impl.remoting.Converters;
+import com.canoo.dp.impl.remoting.BeanRepository;
 import mockit.Mocked;
 import org.testng.annotations.Test;
 

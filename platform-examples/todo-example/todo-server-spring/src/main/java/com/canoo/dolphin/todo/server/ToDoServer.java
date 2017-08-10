@@ -15,10 +15,10 @@
  */
 package com.canoo.dolphin.todo.server;
 
-import com.canoo.platform.server.spring.DolphinPlatformApplication;
+import com.canoo.platform.remoting.server.spring.DolphinPlatformRemotingApplication;
 import org.springframework.boot.SpringApplication;
 
-@DolphinPlatformApplication
+@DolphinPlatformRemotingApplication
 public class ToDoServer {
 
     public static void main(String... args) {

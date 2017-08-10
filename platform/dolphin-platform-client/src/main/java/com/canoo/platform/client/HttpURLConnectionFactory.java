@@ -19,8 +19,17 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Factory interface to create a url connection
+ */
 public interface HttpURLConnectionFactory {
 
+    /**
+     * Creates a url connection for the given url
+     * @param url the url
+     * @return the connection
+     * @throws IOException if the connection can not be created
+     */
     HttpURLConnection create(URL url) throws IOException;
 
 }

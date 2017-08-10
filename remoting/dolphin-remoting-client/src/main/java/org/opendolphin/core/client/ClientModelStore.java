@@ -97,4 +97,9 @@ public class ClientModelStore extends ModelStore<ClientAttribute, ClientPresenta
         add(result);
         return result;
     }
+
+    @Deprecated
+    public AttributeChangeListener getAttributeChangeListener() {
+        return attributeChangeListener;
+    }
 }

@@ -15,10 +15,10 @@
  */
 package com.canoo.dolphin.converters;
 
-import com.canoo.dolphin.converter.Converter;
-import com.canoo.dolphin.converter.ValueConverterException;
-import com.canoo.dolphin.impl.converters.AbstractConverterFactory;
-import com.canoo.dolphin.impl.converters.AbstractStringConverter;
+import com.canoo.platform.remoting.spi.converter.Converter;
+import com.canoo.platform.remoting.spi.converter.ValueConverterException;
+import com.canoo.dp.impl.remoting.converters.AbstractConverterFactory;
+import com.canoo.dp.impl.remoting.converters.AbstractStringConverter;
 
 import java.time.Duration;
 

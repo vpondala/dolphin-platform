@@ -17,6 +17,6 @@
 description = ''
 dependencies {
   compile project(':todo-common')
-  compile project(':dolphin-platform-rpm-server')
+  compile project(':dolphin-platform-remoting-server')
   compile 'javax.inject:javax.inject:1'
 }

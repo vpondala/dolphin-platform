@@ -15,10 +15,10 @@
  */
 package com.canoo.dolphin.integration;
 
-import com.canoo.platform.client.ClientContext;
-import com.canoo.platform.client.ControllerProxy;
+import com.canoo.platform.remoting.client.ClientContext;
+import com.canoo.platform.remoting.client.ControllerProxy;
 import com.canoo.dolphin.integration.enterprise.EnterpriseTestBean;
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.platform.remoting.Property;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

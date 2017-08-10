@@ -15,9 +15,10 @@
  */
 package com.canoo.platform.spring.test;
 
-import com.canoo.platform.client.Param;
-import com.canoo.platform.server.DolphinAction;
-import com.canoo.platform.server.DolphinController;
+import com.canoo.platform.remoting.client.Param;
+import com.canoo.platform.remoting.DolphinBean;
+import com.canoo.platform.remoting.server.DolphinAction;
+import com.canoo.platform.remoting.server.DolphinController;
 
 /**
  * Provides acces to a controller (see {@link DolphinController}) and its model for tests
@@ -26,7 +27,7 @@ import com.canoo.platform.server.DolphinController;
 public interface ControllerUnderTest<T> {
 
     /**
-     * Returns the model of the controller (see {@link com.canoo.dolphin.mapping.DolphinBean})
+     * Returns the model of the controller (see {@link DolphinBean})
      * @return the model
      */
     T getModel();

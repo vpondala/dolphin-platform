@@ -16,7 +16,7 @@
 package com.canoo.dolphin.todo.server;
 
 import com.canoo.dolphin.todo.pm.ToDoList;
-import com.canoo.platform.client.Param;
+import com.canoo.platform.remoting.client.Param;
 import com.canoo.platform.spring.test.ControllerUnderTest;
 import com.canoo.platform.spring.test.SpringTestNGControllerTest;
 import org.springframework.boot.test.context.SpringBootTest;

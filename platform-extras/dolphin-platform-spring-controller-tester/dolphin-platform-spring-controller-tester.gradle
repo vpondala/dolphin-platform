@@ -15,8 +15,8 @@
  */
 
 dependencies {
-    compile project(':dolphin-platform-server-spring')
-    compile project(':dolphin-platform-rpm-client')
+    compile project(':dolphin-platform-remoting-server-spring')
+    compile project(':dolphin-platform-remoting-client')
     compile project(':dolphin-remoting-combined')
     compile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
     compile "org.testng:testng:$testngVersion"

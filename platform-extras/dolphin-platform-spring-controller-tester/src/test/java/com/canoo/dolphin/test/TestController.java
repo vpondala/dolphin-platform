@@ -15,14 +15,14 @@
  */
 package com.canoo.dolphin.test;
 
-import com.canoo.dolphin.BeanManager;
-import com.canoo.platform.server.DolphinAction;
-import com.canoo.platform.server.DolphinController;
-import com.canoo.platform.server.DolphinModel;
-import com.canoo.platform.server.event.DolphinEventBus;
-import com.canoo.platform.server.event.Message;
-import com.canoo.platform.server.event.MessageListener;
-import com.canoo.platform.server.event.Topic;
+import com.canoo.platform.remoting.BeanManager;
+import com.canoo.platform.remoting.server.DolphinAction;
+import com.canoo.platform.remoting.server.DolphinController;
+import com.canoo.platform.remoting.server.DolphinModel;
+import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.Message;
+import com.canoo.platform.remoting.server.event.MessageListener;
+import com.canoo.platform.remoting.server.event.Topic;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;

@@ -8,6 +8,18 @@ be true most of the public API of the Dolphin Platform is stable since 0.8.5 and
 package structure or adding additional methods to public interfaces. In addition it will be best practice to not use any
 method of the API is annotated by `@Deprecated` since we plan to remove all this methods and classes for the final 1.0.0 release.
 
+== Version 0.17.0
+_Release date: Aug 10, 2017_
+
+* EventBus can be injected before bootstrap is done (https://github.com/canoo/dolphin-platform/issues/577[issue])
+* RemotingContext can not be injected in controller tests (https://github.com/canoo/dolphin-platform/issues/572[issue])
+* Split of public and private API (https://github.com/canoo/dolphin-platform/pull/581[issue])
+* More session filters for event bus (https://github.com/canoo/dolphin-platform/pull/539[issue])
+* General support of the client session for Java clients (https://github.com/canoo/dolphin-platform/pull/579[issue])
+* Encoding problem in remoting layer for JavaEE (https://github.com/canoo/dolphin-platform/issues/559[issue])
+* provide RemotingContext.getClientSession() method (https://github.com/canoo/dolphin-platform/issues/552[issue])
+
+
 == Version 0.16.0
 _Release date: Jul 10, 2017_
 

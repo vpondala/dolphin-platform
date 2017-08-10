@@ -16,16 +16,16 @@
 package com.canoo.impl.dp.spring.test;
 
 import com.canoo.dp.impl.client.ClientContextImpl;
-import com.canoo.impl.platform.core.Assert;
-import com.canoo.impl.server.client.ClientSessionProvider;
-import com.canoo.impl.server.config.ConfigurationFileLoader;
-import com.canoo.impl.server.config.RemotingConfiguration;
-import com.canoo.impl.server.context.DolphinContext;
-import com.canoo.impl.server.controller.ControllerRepository;
-import com.canoo.impl.server.controller.ControllerValidationException;
-import com.canoo.impl.server.scanner.DefaultClasspathScanner;
-import com.canoo.platform.client.ClientConfiguration;
-import com.canoo.platform.client.ClientContext;
+import com.canoo.dp.impl.platform.core.Assert;
+import com.canoo.dp.impl.server.client.ClientSessionProvider;
+import com.canoo.dp.impl.server.config.ConfigurationFileLoader;
+import com.canoo.dp.impl.server.config.RemotingConfiguration;
+import com.canoo.dp.impl.server.context.DolphinContext;
+import com.canoo.dp.impl.server.controller.ControllerRepository;
+import com.canoo.dp.impl.server.controller.ControllerValidationException;
+import com.canoo.dp.impl.server.scanner.DefaultClasspathScanner;
+import com.canoo.platform.remoting.client.ClientConfiguration;
+import com.canoo.platform.remoting.client.ClientContext;
 import com.canoo.platform.server.client.ClientSession;
 import org.opendolphin.core.client.ClientModelStore;
 import org.opendolphin.core.client.comm.AbstractClientConnector;
@@ -33,6 +33,7 @@ import org.opendolphin.core.comm.Command;
 import org.opendolphin.util.Function;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.http.HttpSession;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -46,8 +47,9 @@ public class TestConfiguration {
 
     private final ClientContextImpl clientContext;
 
-    public TestConfiguration(final WebApplicationContext context) throws ControllerValidationException, MalformedURLException, ExecutionException, InterruptedException {
+    public TestConfiguration(final WebApplicationContext context, final HttpSession httpSession) throws ControllerValidationException, MalformedURLException, ExecutionException, InterruptedException {
         Assert.requireNonNull(context, "context");
+        Assert.requireNonNull(httpSession, "httpSession");
 
         //Client
         final ExecutorService clientExecutor = Executors.newSingleThreadExecutor();
@@ -73,7 +75,7 @@ public class TestConfiguration {
         final TestSpringManagedBeanFactory containerManager = new TestSpringManagedBeanFactory(context);
         containerManager.init(context.getServletContext());
         final DolphinContextProviderMock dolphinContextProviderMock = new DolphinContextProviderMock();
-        dolphinTestContext = new DolphinTestContext(new RemotingConfiguration(ConfigurationFileLoader.loadConfiguration()), dolphinContextProviderMock, containerManager, controllerRepository);
+        dolphinTestContext = new DolphinTestContext(new RemotingConfiguration(ConfigurationFileLoader.loadConfiguration()), dolphinContextProviderMock, containerManager, controllerRepository, httpSession);
         dolphinContextProviderMock.setCurrentContext(dolphinTestContext);
     }
 

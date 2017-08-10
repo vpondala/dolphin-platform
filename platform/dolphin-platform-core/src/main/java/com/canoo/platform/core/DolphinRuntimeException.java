@@ -18,16 +18,30 @@ package com.canoo.platform.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * General runtime exception for the Dolphin Platform
+ */
 public class DolphinRuntimeException extends RuntimeException {
 
     private static final Logger LOG = LoggerFactory.getLogger(DolphinRuntimeException.class);
 
     private final transient Thread thread;
 
+    /**
+     * Constructor
+     * @param message message of the exception
+     * @param cause cause of the exception
+     */
     public DolphinRuntimeException(String message, Throwable cause) {
         this(Thread.currentThread(), message, cause);
     }
 
+    /**
+     * Constructor
+     * @param thread Thread in that the exception happend
+     * @param message message of the exception
+     * @param cause cause of the exception
+     */
     public DolphinRuntimeException(Thread thread, String message, Throwable cause) {
         super(message, cause);
         if(thread != null) {
@@ -38,6 +52,10 @@ public class DolphinRuntimeException extends RuntimeException {
         }
     }
 
+    /**
+     * Returns the thread in that this exception was created
+     * @return the thread in that this exception was created
+     */
     public Thread getThread() {
         return thread;
     }

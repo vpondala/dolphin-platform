@@ -15,9 +15,9 @@
  */
 package com.canoo.dolphin.integration;
 
-import com.canoo.platform.client.ClientContext;
-import com.canoo.platform.client.ControllerProxy;
-import com.canoo.platform.client.Param;
+import com.canoo.platform.remoting.client.ClientContext;
+import com.canoo.platform.remoting.client.ControllerProxy;
+import com.canoo.platform.remoting.client.Param;
 import com.canoo.dolphin.integration.action.ActionTestBean;
 import org.testng.Assert;
 import org.testng.annotations.Test;

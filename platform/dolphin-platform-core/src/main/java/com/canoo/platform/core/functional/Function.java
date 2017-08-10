@@ -15,7 +15,18 @@
  */
 package com.canoo.platform.core.functional;
 
+/**
+ * A basic function interface.
+ *
+ * @param <T> type of the input value
+ * @param <R> type of the ouput value
+ */
 public interface Function<T, R> {
 
+    /**
+     * method of the function that will return a value based on the input value
+     * @param t input value
+     * @return output value
+     */
     R call(T t);
 }

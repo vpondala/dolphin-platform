@@ -15,5 +15,5 @@
  */
 
 dependencies {
-  compile project(':dolphin-platform-rpm-common')
+  compile project(':dolphin-platform-remoting-common')
 }

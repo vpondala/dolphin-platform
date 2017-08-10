@@ -15,13 +15,13 @@
  */
 package com.canoo.dolphin.todo.server;
 
-import com.canoo.dolphin.BeanManager;
+import com.canoo.platform.remoting.BeanManager;
 import com.canoo.dolphin.samples.processmonitor.model.ProcessBean;
 import com.canoo.dolphin.samples.processmonitor.model.ProcessListBean;
-import com.canoo.platform.server.ClientSessionExecutor;
-import com.canoo.platform.server.DolphinController;
-import com.canoo.platform.server.DolphinModel;
-import com.canoo.platform.server.RemotingContext;
+import com.canoo.platform.remoting.server.ClientSessionExecutor;
+import com.canoo.platform.remoting.server.DolphinController;
+import com.canoo.platform.remoting.server.DolphinModel;
+import com.canoo.platform.remoting.server.RemotingContext;
 import oshi.SystemInfo;
 import oshi.hardware.GlobalMemory;
 import oshi.software.os.OSProcess;

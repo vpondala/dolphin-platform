@@ -20,6 +20,6 @@ mainClassName = 'com.canoo.dolphin.samples.processmonitor.ProcessMonitorClient'
 
 dependencies {
   compile project(':process-monitor-common')
-  compile project(':dolphin-platform-rpm-client-javafx')
+  compile project(':dolphin-platform-remoting-client-javafx')
   runtime "org.slf4j:slf4j-simple:$slf4jVersion"
 }

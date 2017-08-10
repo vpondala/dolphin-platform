@@ -1,1 +1,1 @@
-com.canoo.impl.server.event.DistributedEventBusConfigProvider
+com.canoo.dp.impl.server.event.DistributedEventBusConfigProvider

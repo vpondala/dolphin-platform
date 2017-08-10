@@ -15,7 +15,7 @@
  */
 package com.canoo.platform.spring.test;
 
-import com.canoo.platform.server.DolphinController;
+import com.canoo.platform.remoting.server.DolphinController;
 
 /**
  * Basic interface for testing a Dolpgin Platform controller (see {@link DolphinController}).

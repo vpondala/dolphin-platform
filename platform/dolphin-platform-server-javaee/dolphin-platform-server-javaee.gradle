@@ -15,7 +15,7 @@
  */
 
 dependencies {
-    compile project(':dolphin-platform-rpm-server')
+    compile project(':dolphin-platform-server')
     compile "org.apache.deltaspike.core:deltaspike-core-api:$deltaSpikeVersion"
     runtime "org.apache.deltaspike.core:deltaspike-core-impl:$deltaSpikeVersion"
     compileOnly 'javax.enterprise:cdi-api:1.1'

@@ -15,10 +15,10 @@
  */
 package com.canoo.dolphin.webdeployment.server;
 
-import com.canoo.platform.server.spring.DolphinPlatformApplication;
+import com.canoo.platform.remoting.server.spring.DolphinPlatformRemotingApplication;
 import org.springframework.boot.SpringApplication;
 
-@DolphinPlatformApplication
+@DolphinPlatformRemotingApplication
 public class ServerApplication {
 
     public static void main(String[] args) throws Exception {

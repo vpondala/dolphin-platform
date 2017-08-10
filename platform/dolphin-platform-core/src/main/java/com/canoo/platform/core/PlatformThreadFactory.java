@@ -17,7 +17,14 @@ package com.canoo.platform.core;
 
 import java.util.concurrent.ThreadFactory;
 
+/**
+ * Thread factory for the Dolphin Platform
+ */
 public interface PlatformThreadFactory extends ThreadFactory {
 
+    /**
+     * Sets the exception handler that will handle all uncaught exceptions
+     * @param uncaughtExceptionHandler the exception handler that will handle all uncaught exceptions
+     */
     void setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler uncaughtExceptionHandler);
 }

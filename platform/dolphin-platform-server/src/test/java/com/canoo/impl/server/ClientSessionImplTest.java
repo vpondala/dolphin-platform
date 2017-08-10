@@ -15,7 +15,8 @@
  */
 package com.canoo.impl.server;
 
-import com.canoo.impl.server.client.HttpClientSessionImpl;
+import com.canoo.dp.impl.server.client.HttpClientSessionImpl;
+import com.canoo.impl.server.util.HttpSessionMock;
 import com.canoo.platform.server.client.ClientSession;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -25,7 +26,7 @@ public class ClientSessionImplTest {
     @Test
     public void testAddAttribute() {
         //given:
-        ClientSession dolphinSession = new HttpClientSessionImpl();
+        ClientSession dolphinSession = new HttpClientSessionImpl(new HttpSessionMock());
 
         //when:
         dolphinSession.setAttribute("test-attribute", "Hello Dolphin Session");
@@ -39,7 +40,7 @@ public class ClientSessionImplTest {
     @Test
     public void testNullAttribute() {
         //given:
-        ClientSession dolphinSession = new HttpClientSessionImpl();
+        ClientSession dolphinSession = new HttpClientSessionImpl(new HttpSessionMock());
 
         //then:
         Assert.assertEquals(0, dolphinSession.getAttributeNames().size());
@@ -49,7 +50,7 @@ public class ClientSessionImplTest {
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testImmutableAttributeSet() {
         //given:
-        ClientSession dolphinSession = new HttpClientSessionImpl();
+        ClientSession dolphinSession = new HttpClientSessionImpl(new HttpSessionMock());
 
         //then:
         dolphinSession.getAttributeNames().add("att");
@@ -58,7 +59,7 @@ public class ClientSessionImplTest {
     @Test(expectedExceptions = UnsupportedOperationException.class)
     public void testImmutableAttributeSet2() {
         //given:
-        ClientSession dolphinSession = new HttpClientSessionImpl();
+        ClientSession dolphinSession = new HttpClientSessionImpl(new HttpSessionMock());
 
         //when:
         dolphinSession.setAttribute("test-attribute", "Hello Dolphin Session");
@@ -70,7 +71,7 @@ public class ClientSessionImplTest {
     @Test
     public void testRemoveAttribute() {
         //given:
-        ClientSession dolphinSession = new HttpClientSessionImpl();
+        ClientSession dolphinSession = new HttpClientSessionImpl(new HttpSessionMock());
 
         //when:
         dolphinSession.setAttribute("test-attribute", "Hello Dolphin Session");
@@ -84,7 +85,7 @@ public class ClientSessionImplTest {
     @Test
     public void testMultipleAttributes() {
         //given:
-        ClientSession dolphinSession = new HttpClientSessionImpl();
+        ClientSession dolphinSession = new HttpClientSessionImpl(new HttpSessionMock());
 
         //when:
         dolphinSession.setAttribute("test-attribute1", "Hello Dolphin Session");
@@ -104,7 +105,7 @@ public class ClientSessionImplTest {
     @Test
     public void testInvalidate() {
         //given:
-        ClientSession dolphinSession = new HttpClientSessionImpl();
+        ClientSession dolphinSession = new HttpClientSessionImpl(new HttpSessionMock());
 
         //when:
         dolphinSession.setAttribute("test-attribute1", "Hello Dolphin Session");

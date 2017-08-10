@@ -15,11 +15,11 @@
  */
 package com.canoo.dolphin.test.eventbus;
 
-import com.canoo.platform.server.DolphinController;
-import com.canoo.platform.server.DolphinModel;
-import com.canoo.platform.server.event.DolphinEventBus;
-import com.canoo.platform.server.event.Message;
-import com.canoo.platform.server.event.MessageListener;
+import com.canoo.platform.remoting.server.DolphinController;
+import com.canoo.platform.remoting.server.DolphinModel;
+import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.Message;
+import com.canoo.platform.remoting.server.event.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;

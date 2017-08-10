@@ -20,6 +20,6 @@ mainClassName = 'com.canoo.dolphin.todo.client.ToDoClient'
 
 dependencies {
   compile project(':todo-common')
-  compile project(':dolphin-platform-rpm-client-javafx')
+  compile project(':dolphin-platform-remoting-client-javafx')
   runtime "org.slf4j:slf4j-simple:$slf4jVersion"
 }

@@ -15,8 +15,8 @@
  */
 package com.canoo.dolphin.integration.property;
 
-import com.canoo.dolphin.mapping.DolphinBean;
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.platform.remoting.DolphinBean;
+import com.canoo.platform.remoting.Property;
 
 import java.lang.annotation.ElementType;
 import java.math.BigDecimal;

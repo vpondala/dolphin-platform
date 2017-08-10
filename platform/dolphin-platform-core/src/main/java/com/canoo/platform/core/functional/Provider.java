@@ -15,7 +15,16 @@
  */
 package com.canoo.platform.core.functional;
 
+/**
+ * A basic provider interface.
+ *
+ * @param <T> type of the values that will be provided
+ */
 public interface Provider<T> {
 
+    /**
+     * provides a value
+     * @return the provided value
+     */
     T get();
 }

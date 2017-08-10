@@ -15,8 +15,8 @@
  */
 package com.canoo.dolphin.test.eventbus;
 
-import com.canoo.dolphin.mapping.DolphinBean;
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.platform.remoting.DolphinBean;
+import com.canoo.platform.remoting.Property;
 
 @DolphinBean
 public class EventBusTestModel {

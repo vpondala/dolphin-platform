@@ -3,7 +3,7 @@ package com.canoo.dolphin.integration.server.listener;
 import com.canoo.platform.server.ServerListener;
 import com.canoo.platform.server.client.ClientSession;
 import com.canoo.platform.server.client.ClientSessionListener;
-import com.canoo.platform.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.DolphinEventBus;
 
 import javax.inject.Inject;
 

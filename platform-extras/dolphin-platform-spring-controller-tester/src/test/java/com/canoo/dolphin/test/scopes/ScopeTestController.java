@@ -15,8 +15,8 @@
  */
 package com.canoo.dolphin.test.scopes;
 
-import com.canoo.platform.server.DolphinController;
-import com.canoo.platform.server.DolphinModel;
+import com.canoo.platform.remoting.server.DolphinController;
+import com.canoo.platform.remoting.server.DolphinModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;

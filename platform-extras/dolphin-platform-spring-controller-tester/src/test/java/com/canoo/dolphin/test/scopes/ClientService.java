@@ -15,13 +15,13 @@
  */
 package com.canoo.dolphin.test.scopes;
 
-import com.canoo.platform.server.spring.ClientScoped;
+import com.canoo.platform.server.spring.ClientScope;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-@ClientScoped
+@ClientScope
 public class ClientService {
 
     private final String id;

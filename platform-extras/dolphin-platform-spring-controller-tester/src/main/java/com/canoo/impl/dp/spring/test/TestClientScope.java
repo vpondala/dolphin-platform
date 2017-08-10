@@ -15,11 +15,11 @@
  */
 package com.canoo.impl.dp.spring.test;
 
-import com.canoo.dp.impl.server.spring.ClientScope;
-import com.canoo.impl.platform.core.Assert;
+import com.canoo.dp.impl.server.spring.ClientScopeImpl;
+import com.canoo.dp.impl.platform.core.Assert;
 import com.canoo.platform.server.client.ClientSession;
 
-public class TestClientScope extends ClientScope {
+public class TestClientScope extends ClientScopeImpl {
 
     private final ClientSession clientSession;
 

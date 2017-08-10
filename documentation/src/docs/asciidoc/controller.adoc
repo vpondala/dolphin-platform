@@ -275,7 +275,7 @@ any controller.
 
 The Dolphin Platform bean manager provides methods to manage the model layer. More information about the model layer
 and how to use the bean manager can be found in the *Model API* chapter. The bean manager is defined by the
-`com.canoo.dolphin.BeanManager` interface. Instances are managed objects in the client session scope.
+`com.canoo.platform.remoting.BeanManager` interface. Instances are managed objects in the client session scope.
 
 Example:
 
@@ -295,7 +295,7 @@ public class MyViewController {
 === The event bus
 The Dolphin Platform provides its own event bus that can be used to provide interaction between several sessions or to
 access the Dolphin Platform from a background thread or endpoint. The event bus is defined by the
- `com.canoo.platform.server.event.DolphinEventBus` interface. Instances are managed objects in the application scope.
+ `com.canoo.platform.remoting.server.event.DolphinEventBus` interface. Instances are managed objects in the application scope.
 
 Example:
 
@@ -336,7 +336,7 @@ public class MyViewController {
 
 === The property binder
 The Dolphin Platform provides a way to create binding between properties in the model layer. This bindings can be
-created by injecting the com.canoo.platform.server.binding.PropertyBinder interface. A more detailed description of
+created by injecting the com.canoo.platform.remoting.server.binding.PropertyBinder interface. A more detailed description of
 bindings can be found in the *Model API* chapter. Instances are managed objects in the client session scope.
 
 Example:

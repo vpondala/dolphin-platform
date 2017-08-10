@@ -15,8 +15,8 @@
  */
 package com.canoo.dolphin.samples.processmonitor;
 
-import com.canoo.platform.server.spring.DolphinPlatformApplication;
 import com.canoo.dolphin.todo.server.AsyncServerRunner;
+import com.canoo.platform.remoting.server.spring.DolphinPlatformRemotingApplication;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 
-@DolphinPlatformApplication
+@DolphinPlatformRemotingApplication
 public class ProcessMonitorStarter {
 
     public static void main(String... args) {

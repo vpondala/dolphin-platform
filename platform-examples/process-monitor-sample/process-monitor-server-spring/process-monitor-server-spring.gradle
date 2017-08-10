@@ -20,5 +20,5 @@ mainClassName = 'com.canoo.dolphin.samples.processmonitor.ProcessMonitorStarter'
 
 dependencies {
   compile project(':process-monitor-server')
-  compile project(':dolphin-platform-server-spring')
+  compile project(':dolphin-platform-remoting-server-spring')
 }

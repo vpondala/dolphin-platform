@@ -16,8 +16,8 @@
 
 package com.canoo.dolphin.webdeployment.client;
 
-import com.canoo.platform.client.ClientContext;
-import com.canoo.platform.client.javafx.SimpleDolphinPlatformApplication;
+import com.canoo.platform.remoting.client.ClientContext;
+import com.canoo.platform.remoting.client.javafx.SimpleDolphinPlatformApplication;
 import com.canoo.dolphin.webdeployment.client.view.MyView;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

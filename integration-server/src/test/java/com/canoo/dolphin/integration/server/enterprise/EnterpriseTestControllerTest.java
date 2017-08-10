@@ -17,7 +17,7 @@ package com.canoo.dolphin.integration.server.enterprise;
 
 import com.canoo.dolphin.integration.enterprise.EnterpriseTestBean;
 import com.canoo.dolphin.integration.server.TestConfiguration;
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.platform.remoting.Property;
 import com.canoo.platform.spring.test.ControllerUnderTest;
 import com.canoo.platform.spring.test.SpringTestNGControllerTest;
 import org.springframework.boot.test.context.SpringBootTest;

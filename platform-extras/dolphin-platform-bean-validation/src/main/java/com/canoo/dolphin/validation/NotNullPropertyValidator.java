@@ -15,7 +15,7 @@
  */
 package com.canoo.dolphin.validation;
 
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.platform.remoting.Property;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

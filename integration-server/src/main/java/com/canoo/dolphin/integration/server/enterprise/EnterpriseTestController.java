@@ -16,10 +16,10 @@
 package com.canoo.dolphin.integration.server.enterprise;
 
 import com.canoo.dolphin.integration.enterprise.EnterpriseTestBean;
-import com.canoo.platform.server.DolphinController;
-import com.canoo.platform.server.DolphinModel;
-import com.canoo.platform.server.event.DolphinEventBus;
-import com.canoo.platform.server.event.Topic;
+import com.canoo.platform.remoting.server.DolphinController;
+import com.canoo.platform.remoting.server.DolphinModel;
+import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.Topic;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

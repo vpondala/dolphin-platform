@@ -16,7 +16,7 @@
 package com.canoo.dolphin.reactive;
 
 import com.canoo.platform.core.functional.Subscription;
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.platform.remoting.Property;
 
 /**
  * A transformed property is a {@link Property} that can be created by using

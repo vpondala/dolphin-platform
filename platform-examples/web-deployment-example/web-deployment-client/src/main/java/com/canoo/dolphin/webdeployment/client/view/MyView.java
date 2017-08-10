@@ -15,10 +15,10 @@
  */
 package com.canoo.dolphin.webdeployment.client.view;
 
-import com.canoo.platform.client.ClientContext;
-import com.canoo.platform.client.javafx.FXBinder;
+import com.canoo.platform.remoting.client.ClientContext;
+import com.canoo.platform.remoting.client.javafx.FXBinder;
 
-import com.canoo.platform.client.javafx.view.AbstractFXMLViewBinder;
+import com.canoo.platform.remoting.client.javafx.view.AbstractFXMLViewBinder;
 import com.canoo.dolphin.webdeployment.Constants;
 import com.canoo.dolphin.webdeployment.model.MyModel;
 import javafx.fxml.FXML;

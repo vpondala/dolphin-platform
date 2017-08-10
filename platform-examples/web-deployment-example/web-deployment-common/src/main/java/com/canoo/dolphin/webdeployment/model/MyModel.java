@@ -15,8 +15,8 @@
  */
 package com.canoo.dolphin.webdeployment.model;
 
-import com.canoo.dolphin.mapping.DolphinBean;
-import com.canoo.dolphin.mapping.Property;
+import com.canoo.platform.remoting.DolphinBean;
+import com.canoo.platform.remoting.Property;
 
 /**
  * Defines the model of the MVC that is defined in this example. When using Dolphin Platform a view-controller-pair will

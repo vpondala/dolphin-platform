@@ -16,8 +16,8 @@
 package com.canoo.dolphin.reactive;
 
 import com.canoo.platform.core.functional.Subscription;
-import com.canoo.dolphin.impl.AbstractProperty;
-import com.canoo.impl.platform.core.Assert;
+import com.canoo.dp.impl.remoting.AbstractProperty;
+import com.canoo.dp.impl.platform.core.Assert;
 import rx.functions.Action1;
 
 /**
