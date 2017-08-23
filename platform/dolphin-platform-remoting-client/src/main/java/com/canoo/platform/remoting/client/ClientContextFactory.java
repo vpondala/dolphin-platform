@@ -17,11 +17,10 @@ package com.canoo.platform.remoting.client;
 
 import com.canoo.dp.impl.client.ClientContextImpl;
 import com.canoo.dp.impl.client.DolphinPlatformHttpClientConnector;
-import com.canoo.dp.impl.remoting.codec.OptimizedJsonCodec;
-import com.canoo.dp.impl.platform.core.Assert;
 import com.canoo.dp.impl.client.legacy.ClientModelStore;
 import com.canoo.dp.impl.client.legacy.communication.AbstractClientConnector;
 import com.canoo.dp.impl.client.legacy.communication.RemotingExceptionHandler;
+import com.canoo.dp.impl.platform.core.Assert;
 import com.canoo.dp.impl.remoting.legacy.util.DolphinRemotingException;
 import com.canoo.dp.impl.remoting.legacy.util.Function;
 
@@ -51,7 +50,7 @@ public class ClientContextFactory {
         return new ClientContextImpl(clientConfiguration, new Function<ClientModelStore, AbstractClientConnector>() {
             @Override
             public AbstractClientConnector call(final ClientModelStore clientModelStore) {
-                return new DolphinPlatformHttpClientConnector(clientConfiguration, clientModelStore, OptimizedJsonCodec.getInstance(), new RemotingExceptionHandler() {
+                return new DolphinPlatformHttpClientConnector(clientConfiguration, clientModelStore, new RemotingExceptionHandler() {
                     @Override
                     public void handle(DolphinRemotingException e) {
                         for(RemotingExceptionHandler handler : clientConfiguration.getRemotingExceptionHandlers()) {

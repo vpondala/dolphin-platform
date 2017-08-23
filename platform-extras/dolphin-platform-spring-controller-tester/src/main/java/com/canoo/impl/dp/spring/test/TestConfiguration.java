@@ -29,7 +29,7 @@ import com.canoo.platform.remoting.client.ClientContext;
 import com.canoo.platform.server.client.ClientSession;
 import com.canoo.dp.impl.client.legacy.ClientModelStore;
 import com.canoo.dp.impl.client.legacy.communication.AbstractClientConnector;
-import com.canoo.dp.impl.remoting.legacy.communication.Command;
+import com.canoo.dp.impl.remoting.legacy.commands.Command;
 import com.canoo.dp.impl.remoting.legacy.util.Function;
 import org.springframework.web.context.WebApplicationContext;
 

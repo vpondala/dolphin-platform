@@ -15,23 +15,23 @@
  */
 package com.canoo.dp.impl.client;
 
-import com.canoo.dp.impl.remoting.PlatformRemotingConstants;
-import com.canoo.dp.impl.remoting.commands.DestroyContextCommand;
-import com.canoo.dp.impl.platform.client.HttpClientCookieHandler;
-import com.canoo.dp.impl.platform.client.HttpStatus;
-import com.canoo.dp.impl.platform.core.Assert;
-import com.canoo.platform.remoting.client.ClientConfiguration;
-import com.canoo.platform.client.ClientSessionSupport;
-import com.canoo.platform.remoting.client.DolphinSessionException;
-import com.canoo.platform.client.HttpURLConnectionHandler;
-import com.canoo.platform.core.functional.Function;
 import com.canoo.dp.impl.client.legacy.ClientModelStore;
 import com.canoo.dp.impl.client.legacy.communication.AbstractClientConnector;
 import com.canoo.dp.impl.client.legacy.communication.BlindCommandBatcher;
 import com.canoo.dp.impl.client.legacy.communication.RemotingExceptionHandler;
-import com.canoo.dp.impl.remoting.legacy.communication.Codec;
-import com.canoo.dp.impl.remoting.legacy.communication.Command;
+import com.canoo.dp.impl.platform.client.HttpClientCookieHandler;
+import com.canoo.dp.impl.platform.client.HttpStatus;
+import com.canoo.dp.impl.platform.core.Assert;
+import com.canoo.dp.impl.remoting.PlatformRemotingConstants;
+import com.canoo.dp.impl.remoting.codec.OptimizedJsonCodec;
+import com.canoo.dp.impl.remoting.commands.DestroyContextCommand;
+import com.canoo.dp.impl.remoting.legacy.commands.Command;
 import com.canoo.dp.impl.remoting.legacy.util.DolphinRemotingException;
+import com.canoo.platform.client.ClientSessionSupport;
+import com.canoo.platform.client.HttpURLConnectionHandler;
+import com.canoo.platform.core.functional.Function;
+import com.canoo.platform.remoting.client.ClientConfiguration;
+import com.canoo.platform.remoting.client.DolphinSessionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +47,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.canoo.dp.impl.platform.core.PlatformConstants.*;
+import static com.canoo.dp.impl.platform.core.PlatformConstants.ACCEPT_CHARSET_HEADER;
+import static com.canoo.dp.impl.platform.core.PlatformConstants.ACCEPT_HEADER;
+import static com.canoo.dp.impl.platform.core.PlatformConstants.CHARSET;
+import static com.canoo.dp.impl.platform.core.PlatformConstants.CONTENT_TYPE_HEADER;
+import static com.canoo.dp.impl.platform.core.PlatformConstants.JSON_MIME_TYPE;
+import static com.canoo.dp.impl.platform.core.PlatformConstants.POST_METHOD;
 
 /**
  * This class is used to sync the unique client scope id of the current dolphin
@@ -58,8 +63,6 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
 
     private final URL servletUrl;
 
-    private final Codec codec;
-
     private final HttpURLConnectionHandler responseHandler;
 
     private final HttpClientCookieHandler httpClientCookieHandler;
@@ -68,12 +71,11 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
 
     private final ClientSessionSupport clientSessionSupport;
 
-    public DolphinPlatformHttpClientConnector(final ClientConfiguration configuration, final ClientModelStore clientModelStore, final Codec codec, final RemotingExceptionHandler onException) {
+    public DolphinPlatformHttpClientConnector(final ClientConfiguration configuration, final ClientModelStore clientModelStore, final RemotingExceptionHandler onException) {
         super(clientModelStore, Assert.requireNonNull(configuration, "configuration").getUiExecutor(), new BlindCommandBatcher(), onException, configuration.getBackgroundExecutor());
         this.servletUrl = configuration.getServerEndpoint();
         this.httpClientCookieHandler = new HttpClientCookieHandler(configuration.getCookieStore());
         this.responseHandler = configuration.getResponseHandler();
-        this.codec = Assert.requireNonNull(codec, "codec");
         this.clientSessionSupport = new ClientSessionSupport(configuration.getConnectionFactory());
     }
 
@@ -107,7 +109,7 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
                         conn.setRequestProperty(ACCEPT_HEADER, JSON_MIME_TYPE);
                         conn.setRequestMethod(POST_METHOD);
                         httpClientCookieHandler.setRequestCookies(conn);
-                        String content = codec.encode(commands);
+                        String content = OptimizedJsonCodec.getInstance().encode(commands);
                         OutputStream w = conn.getOutputStream();
                         w.write(content.getBytes(CHARSET));
                         w.close();
@@ -126,7 +128,7 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
                             return new ArrayList<>();
                         } else {
                             String receivedContent = new String(inputStreamToByte(conn.getInputStream()), CHARSET);
-                            return codec.decode(receivedContent);
+                            return OptimizedJsonCodec.getInstance().decode(receivedContent);
                         }
                     } catch (Exception e) {
                         throw new RuntimeException("Error in communication", e);
