@@ -35,9 +35,9 @@ import com.canoo.dp.impl.remoting.PresentationModelBuilderFactory;
 import com.canoo.dp.impl.remoting.collections.ListMapperImpl;
 import com.canoo.dp.impl.remoting.legacy.commands.Command;
 import com.canoo.dp.impl.remoting.legacy.util.DirectExecutor;
-import com.canoo.dp.impl.remoting.legacy.util.Provider;
 import com.canoo.dp.impl.server.legacy.ServerDolphin;
 import com.canoo.dp.impl.server.legacy.ServerModelStore;
+import com.canoo.platform.core.functional.Provider;
 import com.canoo.platform.remoting.BeanManager;
 
 import java.util.ArrayList;

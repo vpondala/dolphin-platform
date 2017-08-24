@@ -22,7 +22,7 @@ import com.canoo.dp.impl.remoting.legacy.commands.Command;
 import com.canoo.dp.impl.remoting.legacy.commands.CreatePresentationModelCommand;
 import com.canoo.dp.impl.remoting.legacy.commands.ValueChangedCommand;
 import com.canoo.dp.impl.remoting.legacy.core.Attribute;
-import com.canoo.dp.impl.remoting.legacy.util.Provider;
+import com.canoo.platform.core.functional.Provider;
 
 import java.beans.PropertyChangeEvent;
 

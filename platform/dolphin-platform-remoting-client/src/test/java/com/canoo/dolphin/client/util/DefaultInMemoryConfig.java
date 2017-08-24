@@ -20,11 +20,11 @@ import com.canoo.dp.impl.client.legacy.ClientModelStore;
 import com.canoo.dp.impl.client.legacy.ModelSynchronizer;
 import com.canoo.dp.impl.client.legacy.communication.AbstractClientConnector;
 import com.canoo.dp.impl.client.legacy.communication.CommandBatcher;
-import com.canoo.dp.impl.remoting.legacy.util.Provider;
 import com.canoo.dp.impl.server.legacy.DefaultServerDolphin;
 import com.canoo.dp.impl.server.legacy.ServerConnector;
 import com.canoo.dp.impl.server.legacy.ServerDolphin;
 import com.canoo.dp.impl.server.legacy.ServerModelStore;
+import com.canoo.platform.core.functional.Provider;
 
 import java.util.concurrent.Executor;
 

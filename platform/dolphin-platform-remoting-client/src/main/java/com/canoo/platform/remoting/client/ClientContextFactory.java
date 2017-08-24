@@ -22,7 +22,7 @@ import com.canoo.dp.impl.client.legacy.communication.AbstractClientConnector;
 import com.canoo.dp.impl.client.legacy.communication.RemotingExceptionHandler;
 import com.canoo.dp.impl.platform.core.Assert;
 import com.canoo.dp.impl.remoting.legacy.util.DolphinRemotingException;
-import com.canoo.dp.impl.remoting.legacy.util.Function;
+import com.canoo.platform.core.functional.Function;
 
 import java.util.concurrent.CompletableFuture;
 
