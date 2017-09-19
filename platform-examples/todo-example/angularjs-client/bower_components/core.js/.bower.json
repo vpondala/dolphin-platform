@@ -1,7 +1,7 @@
 {
   "name": "core.js",
   "main": "client/core.js",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "Standard Library",
   "keywords": [
     "ES3",
@@ -44,11 +44,11 @@
     "node_modules",
     "tests"
   ],
-  "_release": "2.4.1",
+  "_release": "2.5.0",
   "_resolution": {
     "type": "version",
-    "tag": "v2.4.1",
-    "commit": "5e106f64c726edf2849f0babc9096ce6664b7368"
+    "tag": "v2.5.0",
+    "commit": "63ae52d7625b5ba9bf5cb27558e7d0ae705e39e0"
   },
   "_source": "https://github.com/zloirock/core-js.git",
   "_target": "^2.4.1",

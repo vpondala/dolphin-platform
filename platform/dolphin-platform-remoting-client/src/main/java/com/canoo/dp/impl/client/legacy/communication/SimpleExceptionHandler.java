@@ -16,7 +16,8 @@
 package com.canoo.dp.impl.client.legacy.communication;
 
 
-import com.canoo.dp.impl.remoting.legacy.util.DolphinRemotingException;
+import com.canoo.platform.remoting.DolphinRemotingException;
+import com.canoo.platform.remoting.client.RemotingExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

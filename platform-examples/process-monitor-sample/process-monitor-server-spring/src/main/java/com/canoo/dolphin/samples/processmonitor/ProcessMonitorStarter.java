@@ -33,7 +33,6 @@ public class ProcessMonitorStarter {
         SpringApplication.run(ProcessMonitorStarter.class, args);
     }
 
-
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
     public AsyncServerRunner createRunner() {

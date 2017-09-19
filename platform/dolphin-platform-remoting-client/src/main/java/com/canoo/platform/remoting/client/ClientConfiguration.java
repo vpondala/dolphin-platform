@@ -24,7 +24,6 @@ import com.canoo.platform.client.HttpURLConnectionFactory;
 import com.canoo.platform.client.HttpURLConnectionHandler;
 import com.canoo.platform.core.PlatformThreadFactory;
 import com.canoo.platform.core.functional.Subscription;
-import com.canoo.dp.impl.client.legacy.communication.RemotingExceptionHandler;
 import com.canoo.dp.impl.client.legacy.communication.SimpleExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

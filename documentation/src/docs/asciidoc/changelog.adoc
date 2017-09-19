@@ -8,6 +8,17 @@ be true most of the public API of the Dolphin Platform is stable since 0.8.5 and
 package structure or adding additional methods to public interfaces. In addition it will be best practice to not use any
 method of the API is annotated by `@Deprecated` since we plan to remove all this methods and classes for the final 1.0.0 release.
 
+== Version 0.18.0
+_Release date: Aug 25, 2017_
+
+* Legacy code merged in remoting modules (https://github.com/canoo/dolphin-platform/issues/586[issue])
+* Tests for all param types added to ActionTestController (https://github.com/canoo/dolphin-platform/issues/563[issue])
+* New BlindCommandBatcher in JS (https://github.com/canoo/dolphin-platform/issues/594[issue])
+* Some default scope annotations for Spring (https://github.com/canoo/dolphin-platform/issues/597[issue])
+* Coding standards for JS (https://github.com/canoo/dolphin-platform/issues/593[issue])
+* Automatic upload of documentation (https://github.com/canoo/dolphin-platform/issues/527[issue])
+* Smaller commands in remoting layer (https://github.com/canoo/dolphin-platform/issues/585[issue])
+
 == Version 0.17.0
 _Release date: Aug 10, 2017_
 

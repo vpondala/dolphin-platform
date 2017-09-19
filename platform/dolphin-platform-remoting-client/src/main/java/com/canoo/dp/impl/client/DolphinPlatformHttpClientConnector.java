@@ -18,20 +18,19 @@ package com.canoo.dp.impl.client;
 import com.canoo.dp.impl.client.legacy.ClientModelStore;
 import com.canoo.dp.impl.client.legacy.communication.AbstractClientConnector;
 import com.canoo.dp.impl.client.legacy.communication.BlindCommandBatcher;
-import com.canoo.dp.impl.client.legacy.communication.RemotingExceptionHandler;
 import com.canoo.dp.impl.platform.client.HttpClientCookieHandler;
 import com.canoo.dp.impl.platform.client.HttpStatus;
 import com.canoo.dp.impl.platform.core.Assert;
-import com.canoo.dp.impl.remoting.PlatformRemotingConstants;
 import com.canoo.dp.impl.remoting.codec.OptimizedJsonCodec;
 import com.canoo.dp.impl.remoting.commands.DestroyContextCommand;
 import com.canoo.dp.impl.remoting.legacy.commands.Command;
-import com.canoo.dp.impl.remoting.legacy.util.DolphinRemotingException;
 import com.canoo.platform.client.ClientSessionSupport;
 import com.canoo.platform.client.HttpURLConnectionHandler;
 import com.canoo.platform.core.functional.Function;
+import com.canoo.platform.remoting.DolphinRemotingException;
 import com.canoo.platform.remoting.client.ClientConfiguration;
 import com.canoo.platform.remoting.client.DolphinSessionException;
+import com.canoo.platform.remoting.client.RemotingExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +96,7 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
         }
 
         try {
-            return clientSessionSupport.doRequest(servletUrl, new Function<HttpURLConnection, List<Command>>() {
+            List<Command> responseCommands = clientSessionSupport.doRequest(servletUrl, new Function<HttpURLConnection, List<Command>>() {
                 @Override
                 public List<Command> call(HttpURLConnection conn) {
                     try {
@@ -122,6 +121,7 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
                         if (responseCode >= HttpStatus.SC_MULTIPLE_CHOICES) {
                             throw new DolphinHttpResponseException(responseCode, conn.getResponseMessage());
                         }
+
                         responseHandler.handle(conn);
                         httpClientCookieHandler.updateCookiesFromResponse(conn);
                         if (commands.size() == 1 && commands.get(0) == getReleaseCommand()) {
@@ -135,17 +135,11 @@ public class DolphinPlatformHttpClientConnector extends AbstractClientConnector 
                     }
                 }
             });
+            this.clientId.set(clientSessionSupport.getClientIdFor(servletUrl));
+            return responseCommands;
         } catch (Exception e) {
             throw new DolphinRemotingException("Error in remoting layer", e);
         }
-    }
-
-    private void updateClientId(HttpURLConnection conn) {
-        String clientIdInHeader = conn.getHeaderField(PlatformRemotingConstants.CLIENT_ID_HTTP_HEADER_NAME);
-        if (this.clientId.get() != null && !this.clientId.get().equals(clientIdInHeader)) {
-            throw new IllegalStateException("Error: client id conflict!");
-        }
-        this.clientId.set(clientIdInHeader);
     }
 
     private byte[] inputStreamToByte(InputStream is) throws IOException {

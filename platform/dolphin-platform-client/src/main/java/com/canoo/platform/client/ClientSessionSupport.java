@@ -56,6 +56,10 @@ public class ClientSessionSupport {
         clientSessionStore.resetSession(url);
     }
 
+    public String getClientIdFor(final URL url) {
+        return clientSessionStore.getClientIdentifierForUrl(url);
+    }
+
     public void doRequest(final URL url, final Callback<HttpURLConnection> callback) throws IOException {
         Assert.requireNonNull(callback, "callback");
 
