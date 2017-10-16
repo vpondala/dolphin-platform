@@ -18,7 +18,7 @@ package com.canoo.platform.remoting.server.event;
 import java.util.Arrays;
 import java.util.List;
 
-public class ListEventSessionFilter implements EventSessionFilter {
+public class ListEventSessionFilter implements EventFilter {
 
     private final List<String> sessionIds;
 

@@ -22,7 +22,7 @@ import java.io.Serializable;
  *
  * @author Hendrik Ebbers
  */
-public interface EventSessionFilter extends Serializable {
+public interface EventFilter extends Serializable {
 
     /**
      * Returns true if a event should be send to the subscriptions that are part of the client session (see {@link com.canoo.platform.server.client.ClientSession}) that is defined by the given sessionID
@@ -30,6 +30,6 @@ public interface EventSessionFilter extends Serializable {
      * @param sessionId the client session id
      * @return true if the event shoudl be send to all subsciptions of the client session, otherwise false
      */
-    boolean shouldHandleEvent(String sessionId);
+    boolean shouldHandleEvent(EventContext context);
 
 }

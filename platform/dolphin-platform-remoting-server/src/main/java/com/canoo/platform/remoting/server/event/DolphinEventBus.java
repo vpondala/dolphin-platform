@@ -43,14 +43,14 @@ public interface DolphinEventBus {
     <T extends Serializable> void publish(Topic<T> topic, T data);
 
     /**
-     * Publish a message to the given topic. For each subscription to the topic the given {@link EventSessionFilter} will be called to check if the data should be send to the subscription.
+     * Publish a message to the given topic. For each subscription to the topic the given {@link EventFilter} will be called to check if the data should be send to the subscription.
      *
      * @param topic  the topic
      * @param data   the data of the message
      * @param filter the filter
      * @param <T>    type of the data
      */
-    <T extends Serializable> void publish(final Topic<T> topic, final T data, EventSessionFilter filter);
+    <T extends Serializable> void publish(final Topic<T> topic, final T data, EventFilter filter);
 
     /**
      * Register as a listener for a given topic. All messages that will be published for the given address
@@ -60,4 +60,6 @@ public interface DolphinEventBus {
      * @param listener the listener
      */
     <T extends Serializable> Subscription subscribe(Topic<T> topic, MessageListener<? super T> listener);
+
+    <T extends Serializable> Subscription subscribe(Topic<T> topic, MessageListener<? super T> listener, EventFilter filter);
 }

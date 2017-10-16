@@ -16,7 +16,7 @@
 package com.canoo.dp.impl.server.event;
 
 import com.canoo.dp.impl.platform.core.Assert;
-import com.canoo.platform.remoting.server.event.EventSessionFilter;
+import com.canoo.platform.remoting.server.event.EventFilter;
 import com.canoo.platform.remoting.server.event.Message;
 import com.canoo.platform.remoting.server.event.Topic;
 
@@ -28,9 +28,9 @@ public class DolphinEvent<T extends Serializable> implements Serializable {
 
     private final String senderSessionId;
 
-    private final EventSessionFilter sessionFilter;
+    private final EventFilter sessionFilter;
 
-    public DolphinEvent(final String senderSessionId, final Message<T> message, final EventSessionFilter sessionFilter) {
+    public DolphinEvent(final String senderSessionId, final Message<T> message, final EventFilter sessionFilter) {
         this.senderSessionId = senderSessionId;
         this.message = Assert.requireNonNull(message, "message");
         this.sessionFilter = Assert.requireNonNull(sessionFilter, "sessionFilter");
@@ -48,7 +48,7 @@ public class DolphinEvent<T extends Serializable> implements Serializable {
         return senderSessionId;
     }
 
-    public EventSessionFilter getSessionFilter() {
+    public EventFilter getSessionFilter() {
         return sessionFilter;
     }
 }

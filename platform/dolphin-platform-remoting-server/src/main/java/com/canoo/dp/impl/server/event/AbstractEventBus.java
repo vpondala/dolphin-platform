@@ -23,7 +23,7 @@ import com.canoo.platform.core.functional.Callback;
 import com.canoo.platform.core.functional.Subscription;
 import com.canoo.platform.server.client.ClientSession;
 import com.canoo.platform.remoting.server.event.DolphinEventBus;
-import com.canoo.platform.remoting.server.event.EventSessionFilter;
+import com.canoo.platform.remoting.server.event.EventFilter;
 import com.canoo.platform.remoting.server.event.MessageListener;
 import com.canoo.platform.remoting.server.event.Topic;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public abstract class AbstractEventBus implements DolphinEventBus {
     }
 
     @Override
-    public <T extends Serializable> void publish(final Topic<T> topic, final T data, final EventSessionFilter filter) {
+    public <T extends Serializable> void publish(final Topic<T> topic, final T data, final EventFilter filter) {
         checkInitialization();
         publishData(topic, data, filter);
     }
@@ -132,7 +132,7 @@ public abstract class AbstractEventBus implements DolphinEventBus {
                         @Override
                         public void run() {
                             LOG.trace("Calling event listener for topic {} in Dolphin Platform context {}", topic.getName(), sessionId);
-                            final EventSessionFilter sessionFilter = event.getSessionFilter();
+                            final EventFilter sessionFilter = event.getSessionFilter();
                             if(sessionFilter == null || sessionFilter.shouldHandleEvent(sessionId)) {
                                 ((MessageListener<T>) listener).onMessage(event.getMessage());
                             }
@@ -169,7 +169,7 @@ public abstract class AbstractEventBus implements DolphinEventBus {
         return ret;
     }
 
-    private <T extends Serializable> void publishData(final Topic<T> topic, final T data, final EventSessionFilter filter) {
+    private <T extends Serializable> void publishData(final Topic<T> topic, final T data, final EventFilter filter) {
         final DolphinContext currentContext = getCurrentContext();
         final DolphinEvent event = new DolphinEvent(currentContext != null ? currentContext.getId() : null, new DefaultMessage(topic, data, System.currentTimeMillis()), filter);
 

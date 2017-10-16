@@ -15,11 +15,11 @@
  */
 package com.canoo.dp.impl.server.event;
 
-import com.canoo.platform.remoting.server.event.EventSessionFilter;
+import com.canoo.platform.remoting.server.event.EventFilter;
 
-public class DefaultEventSessionFilter implements EventSessionFilter {
+public class DefaultEventSessionFilter implements EventFilter {
 
-    public static final EventSessionFilter INSTANCE = new DefaultEventSessionFilter();
+    public static final EventFilter INSTANCE = new DefaultEventSessionFilter();
 
     private DefaultEventSessionFilter() {}
 
@@ -28,7 +28,7 @@ public class DefaultEventSessionFilter implements EventSessionFilter {
         return true;
     }
 
-    public static EventSessionFilter getInstance() {
+    public static EventFilter getInstance() {
         return INSTANCE;
     }
 }
