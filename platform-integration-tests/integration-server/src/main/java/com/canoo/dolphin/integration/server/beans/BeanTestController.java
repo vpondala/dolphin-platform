@@ -7,7 +7,7 @@ import com.canoo.platform.remoting.server.DolphinController;
 import com.canoo.platform.remoting.server.DolphinModel;
 import com.canoo.platform.remoting.server.RemotingContext;
 import com.canoo.platform.remoting.server.binding.PropertyBinder;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 import com.canoo.platform.server.client.ClientSession;
 
 import javax.annotation.PostConstruct;
@@ -29,7 +29,7 @@ public class BeanTestController {
     private BeanManager beanManager;
 
     @Inject
-    private DolphinEventBus dolphinEventBus;
+    private EventBus dolphinEventBus;
 
     @Inject
     private PropertyBinder propertyBinder;

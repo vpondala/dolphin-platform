@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 /**
  * The dolphin event bus that can be used to withContent messages to dolphin sessions.
- * The {@link DolphinEventBus} can be injected in any
+ * The {@link EventBus} can be injected in any
  * managed bean and will automatically publish the given data in the dolphin session.
  * This means that you ca subscribe your dolphin controller (see {@link DolphinController})
  * to the event bus and publish messages from any other bean like an REST endpoint.
@@ -31,7 +31,7 @@ import java.io.Serializable;
  *
  * @author Hendrik Ebbers
  */
-public interface DolphinEventBus {
+public interface EventBus {
 
     /**
      * Publish a message to the given topic

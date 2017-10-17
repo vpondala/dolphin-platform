@@ -16,7 +16,7 @@
 package com.canoo.dp.impl.server.event;
 
 import com.canoo.dp.impl.server.config.RemotingConfiguration;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 import com.canoo.platform.remoting.server.spi.EventBusProvider;
 
 public class DefaultEventBusProvider implements EventBusProvider {
@@ -29,7 +29,7 @@ public class DefaultEventBusProvider implements EventBusProvider {
     }
 
     @Override
-    public DolphinEventBus create(RemotingConfiguration configuration) {
+    public EventBus create(RemotingConfiguration configuration) {
         return new DefaultDolphinEventBus();
     }
 }

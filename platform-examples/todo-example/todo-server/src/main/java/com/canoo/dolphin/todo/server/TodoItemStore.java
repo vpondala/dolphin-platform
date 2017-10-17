@@ -15,7 +15,7 @@
  */
 package com.canoo.dolphin.todo.server;
 
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,11 +27,11 @@ import static com.canoo.dolphin.todo.server.ToDoEventTopics.ITEM_REMOVED;
 
 public class TodoItemStore {
 
-    private final DolphinEventBus eventBus;
+    private final EventBus eventBus;
 
     private final Map<String, Boolean> items = new HashMap<>();
 
-    public TodoItemStore(DolphinEventBus eventBus) {
+    public TodoItemStore(EventBus eventBus) {
         this.eventBus = eventBus;
     }
 

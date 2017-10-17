@@ -21,8 +21,8 @@ import com.canoo.dp.impl.server.binding.PropertyBinderImpl;
 import com.canoo.platform.remoting.server.ClientSessionExecutor;
 import com.canoo.platform.remoting.server.RemotingContext;
 import com.canoo.platform.remoting.server.binding.PropertyBinder;
+import com.canoo.platform.remoting.server.event.EventBus;
 import com.canoo.platform.server.client.ClientSession;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
 
 import java.util.concurrent.Executor;
 
@@ -30,13 +30,13 @@ public class RemotingContextImpl implements RemotingContext {
 
     private final DolphinContext dolphinContext;
 
-    private final DolphinEventBus eventBus;
+    private final EventBus eventBus;
 
     private final PropertyBinder propertyBinder = new PropertyBinderImpl();
 
     private final ClientSessionExecutor clientSessionExecutor;
 
-    public RemotingContextImpl(final DolphinContext dolphinContext, DolphinEventBus eventBus) {
+    public RemotingContextImpl(final DolphinContext dolphinContext, EventBus eventBus) {
         this.dolphinContext = Assert.requireNonNull(dolphinContext, "dolphinContext");
         this.eventBus = Assert.requireNonNull(eventBus, "eventBus");
         clientSessionExecutor = new ClientSessionExecutorImpl(new Executor() {
@@ -68,7 +68,7 @@ public class RemotingContextImpl implements RemotingContext {
     }
 
     @Override
-    public DolphinEventBus getEventBus() {
+    public EventBus getEventBus() {
         return eventBus;
     }
 

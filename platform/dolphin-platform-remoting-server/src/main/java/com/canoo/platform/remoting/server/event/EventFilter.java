@@ -18,7 +18,7 @@ package com.canoo.platform.remoting.server.event;
 import java.io.Serializable;
 
 /**
- * A filter that is used by the {@link DolphinEventBus} to check if a message / event should be send to a specific subscription. The filtering is done by checking the session id of the current client session (see {@link com.canoo.platform.server.client.ClientSession}) of the subscription.
+ * A filter that is used by the {@link EventBus} to check if a message / event should be send to a specific subscription. The filtering is done by checking the session id of the current client session (see {@link com.canoo.platform.server.client.ClientSession}) of the subscription.
  *
  * @author Hendrik Ebbers
  */

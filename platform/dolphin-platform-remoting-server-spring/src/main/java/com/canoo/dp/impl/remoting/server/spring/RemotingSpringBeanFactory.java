@@ -25,7 +25,7 @@ import com.canoo.dp.impl.server.context.RemotingContextImpl;
 import com.canoo.dp.impl.server.event.LazyEventBusInvocationHandler;
 import com.canoo.platform.remoting.server.RemotingContext;
 import com.canoo.platform.remoting.server.binding.PropertyBinder;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 import com.canoo.platform.server.spring.ClientScope;
 import com.canoo.platform.server.spring.SingletonScope;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +41,7 @@ public class RemotingSpringBeanFactory {
 
     @Bean(name = "remotingContext")
     @ClientScope
-    protected RemotingContext createRemotingContext(DolphinEventBus eventBus) {
+    protected RemotingContext createRemotingContext(EventBus eventBus) {
         Assert.requireNonNull(eventBus, "eventBus");
 
         final DolphinContextProvider contextProvider = PlatformBootstrap.getServerCoreComponents().getInstance(DolphinContextProvider.class);
@@ -66,14 +66,14 @@ public class RemotingSpringBeanFactory {
     }
 
     /**
-     * Method to create a spring managed {@link DolphinEventBus} instance in singleton scope.
+     * Method to create a spring managed {@link EventBus} instance in singleton scope.
      *
      * @return the instance
      */
     @Bean(name = "dolphinEventBus")
     @SingletonScope
-    protected DolphinEventBus createEventBus() {
-        return (DolphinEventBus) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{DolphinEventBus.class}, new LazyEventBusInvocationHandler());
+    protected EventBus createEventBus() {
+        return (EventBus) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{EventBus.class}, new LazyEventBusInvocationHandler());
     }
 
     @Bean(name = "propertyBinder")

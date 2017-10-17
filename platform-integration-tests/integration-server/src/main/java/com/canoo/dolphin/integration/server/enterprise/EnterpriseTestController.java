@@ -18,7 +18,7 @@ package com.canoo.dolphin.integration.server.enterprise;
 import com.canoo.dolphin.integration.enterprise.EnterpriseTestBean;
 import com.canoo.platform.remoting.server.DolphinController;
 import com.canoo.platform.remoting.server.DolphinModel;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 import com.canoo.platform.remoting.server.event.Topic;
 
 import javax.annotation.PostConstruct;
@@ -34,7 +34,7 @@ public class EnterpriseTestController {
     private EnterpriseTestBean model;
 
     @Inject
-    private DolphinEventBus eventBus;
+    private EventBus eventBus;
 
     @PostConstruct
     private void init() {

@@ -18,7 +18,7 @@ package com.canoo.platform.remoting.server.event;
 import java.io.Serializable;
 
 /**
- * An message of the dolphin platform event bus (see {@link DolphinEventBus}).
+ * An message of the dolphin platform event bus (see {@link EventBus}).
  * @author Hendrik Ebbers
  */
 public interface Message<T extends Serializable> extends Serializable{

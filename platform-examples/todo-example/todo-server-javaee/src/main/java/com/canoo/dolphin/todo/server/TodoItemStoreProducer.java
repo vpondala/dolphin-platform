@@ -15,7 +15,7 @@
  */
 package com.canoo.dolphin.todo.server;
 
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
@@ -24,7 +24,7 @@ public class TodoItemStoreProducer {
 
     @Produces
     @Singleton
-    public TodoItemStore createItemStore(DolphinEventBus eventBus) {
+    public TodoItemStore createItemStore(EventBus eventBus) {
         return new TodoItemStore(eventBus);
     }
 

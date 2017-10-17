@@ -1,7 +1,7 @@
 package com.canoo.dp.impl.server.event;
 
 import com.canoo.dp.impl.server.bootstrap.PlatformBootstrap;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 import com.canoo.platform.server.spi.ServerCoreComponents;
 
 import java.lang.reflect.InvocationHandler;
@@ -15,7 +15,7 @@ public class LazyEventBusInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         final ServerCoreComponents serverCoreComponents = PlatformBootstrap.getServerCoreComponents();
         if(serverCoreComponents != null) {
-            final DolphinEventBus instance = serverCoreComponents.getInstance(DolphinEventBus.class);
+            final EventBus instance = serverCoreComponents.getInstance(EventBus.class);
             if (instance != null) {
                 return method.invoke(instance, args);
             }

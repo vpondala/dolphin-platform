@@ -22,7 +22,7 @@ import com.canoo.dp.impl.server.context.DolphinContextProvider;
 import com.canoo.platform.core.functional.Callback;
 import com.canoo.platform.core.functional.Subscription;
 import com.canoo.platform.server.client.ClientSession;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 import com.canoo.platform.remoting.server.event.EventFilter;
 import com.canoo.platform.remoting.server.event.MessageListener;
 import com.canoo.platform.remoting.server.event.Topic;
@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class AbstractEventBus implements DolphinEventBus {
+public abstract class AbstractEventBus implements EventBus {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractEventBus.class);
 

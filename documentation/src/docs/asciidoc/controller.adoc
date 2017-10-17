@@ -295,7 +295,7 @@ public class MyViewController {
 === The event bus
 The Dolphin Platform provides its own event bus that can be used to provide interaction between several sessions or to
 access the Dolphin Platform from a background thread or endpoint. The event bus is defined by the
- `com.canoo.platform.remoting.server.event.DolphinEventBus` interface. Instances are managed objects in the application scope.
+ `com.canoo.platform.remoting.server.event.EventBus` interface. Instances are managed objects in the application scope.
 
 Example:
 

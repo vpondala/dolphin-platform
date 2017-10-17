@@ -16,10 +16,10 @@
 package com.canoo.platform.remoting.server.spi;
 
 import com.canoo.dp.impl.server.config.RemotingConfiguration;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 
 /**
- * The Dolphin Platform supports different implementations for the event bus (see {@link DolphinEventBus}). This is for example needed if the event bus should be used in a clustered or distributed environment. This intrerface provide a SPI that is loaded by the default Java SPI (see {@link java.util.ServiceLoader}) at runtime to provide a event bus implementation.
+ * The Dolphin Platform supports different implementations for the event bus (see {@link EventBus}). This is for example needed if the event bus should be used in a clustered or distributed environment. This intrerface provide a SPI that is loaded by the default Java SPI (see {@link java.util.ServiceLoader}) at runtime to provide a event bus implementation.
  *
  * @author Hendrik Ebbers
  */
@@ -36,6 +36,6 @@ public interface EventBusProvider {
      * @param configuration the configuration that can be used internally to create the event bus
      * @return the event bus
      */
-    DolphinEventBus create(RemotingConfiguration configuration);
+    EventBus create(RemotingConfiguration configuration);
 
 }

@@ -19,7 +19,7 @@ import com.canoo.platform.remoting.BeanManager;
 import com.canoo.platform.remoting.server.DolphinAction;
 import com.canoo.platform.remoting.server.DolphinController;
 import com.canoo.platform.remoting.server.DolphinModel;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 import com.canoo.platform.remoting.server.event.Message;
 import com.canoo.platform.remoting.server.event.MessageListener;
 import com.canoo.platform.remoting.server.event.Topic;
@@ -34,7 +34,7 @@ public class TestController {
     private BeanManager beanManager;
 
     @Autowired
-    private DolphinEventBus eventBus;
+    private EventBus eventBus;
 
     @DolphinModel
     private TestModel model;

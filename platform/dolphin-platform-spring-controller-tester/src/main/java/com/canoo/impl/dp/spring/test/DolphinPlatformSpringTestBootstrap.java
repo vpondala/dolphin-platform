@@ -29,7 +29,7 @@ import com.canoo.platform.remoting.client.ClientContext;
 import com.canoo.platform.remoting.server.ClientSessionExecutor;
 import com.canoo.platform.remoting.server.RemotingContext;
 import com.canoo.platform.remoting.server.binding.PropertyBinder;
-import com.canoo.platform.remoting.server.event.DolphinEventBus;
+import com.canoo.platform.remoting.server.event.EventBus;
 import com.canoo.platform.server.client.ClientSession;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
@@ -90,7 +90,7 @@ public class DolphinPlatformSpringTestBootstrap {
 
     @Bean(name = "remotingContext")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    protected RemotingContext createRemotingContext(final TestConfiguration testConfiguration, final PropertyBinder propertyBinder, final DolphinEventBus eventBus) {
+    protected RemotingContext createRemotingContext(final TestConfiguration testConfiguration, final PropertyBinder propertyBinder, final EventBus eventBus) {
         Assert.requireNonNull(testConfiguration, "testConfiguration");
         Assert.requireNonNull(propertyBinder, "propertyBinder");
         Assert.requireNonNull(eventBus, "eventBus");
@@ -121,7 +121,7 @@ public class DolphinPlatformSpringTestBootstrap {
             }
 
             @Override
-            public DolphinEventBus getEventBus() {
+            public EventBus getEventBus() {
                 return eventBus;
             }
 
@@ -133,13 +133,13 @@ public class DolphinPlatformSpringTestBootstrap {
     }
 
     /**
-     * Method to create a spring managed {@link DolphinEventBus} instance in singleton scope.
+     * Method to create a spring managed {@link EventBus} instance in singleton scope.
      *
      * @return the instance
      */
     @Bean(name = "dolphinEventBus")
     @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-    protected DolphinEventBus createEventBus(final TestConfiguration testConfiguration) {
+    protected EventBus createEventBus(final TestConfiguration testConfiguration) {
         Assert.requireNonNull(testConfiguration, "testConfiguration");
 
         final DolphinContextProvider contextProvider = new DolphinContextProvider() {

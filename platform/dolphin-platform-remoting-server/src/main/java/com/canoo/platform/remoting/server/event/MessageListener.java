@@ -18,7 +18,7 @@ package com.canoo.platform.remoting.server.event;
 import java.io.Serializable;
 
 /**
- * A handler that can be registered to the dolphin message bus (see {@link DolphinEventBus})
+ * A handler that can be registered to the dolphin message bus (see {@link EventBus})
  * to receive publish messages (see {@link Message}).
  *
  * @author Hendrik Ebbers
