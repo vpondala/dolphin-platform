@@ -1,6 +1,8 @@
 package com.canoo.platform.remoting.server.event;
 
-public interface EventContext {
+import java.io.Serializable;
+
+public interface EventContext extends Serializable{
 
     String getProviderType();
 
